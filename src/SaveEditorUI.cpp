@@ -79,14 +79,14 @@ void SaveEditorUI::DoRender()
 								{
 									ImGui::PushID(j);
 
-									//CheckboxCourseData("##Jiggy", s, showBackup, l, 1 << j);
-
-									bool value = false;
+									bool value = saveSlot->GetJiggy(l, j);
 									if (ImGui::Checkbox("##Jiggy", &value))
 									{
-										//saveData->saveSlots[saveSlot][copyIndex].SetFlag(flag, value);
-										//saveData->saveSlots[saveSlot][copyIndex].UpdateChecksum();
+										saveSlot->SetJiggy(l, j, value);
+										saveSlot->UpdateChecksum();
 									}
+
+									ImGui::SetItemTooltip(levelJiggiesNames[l][j]);
 
 									ImGui::PopID();
 
