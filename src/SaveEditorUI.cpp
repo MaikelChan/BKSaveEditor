@@ -50,7 +50,7 @@ void SaveEditorUI::DoRender()
 
 						static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_BordersOuter;
 
-						if (ImGui::BeginTable("LevelsTable", 5, flags))
+						if (ImGui::BeginTable("LevelsTable", 6, flags))
 						{
 							ImGui::TableSetupScrollFreeze(0, 1);
 							ImGui::TableSetupColumn("#");
@@ -58,27 +58,28 @@ void SaveEditorUI::DoRender()
 							ImGui::TableSetupColumn("Jiggies");
 							ImGui::TableSetupColumn("Honeycombs");
 							ImGui::TableSetupColumn("Note Score");
+							ImGui::TableSetupColumn("Play Time");
 
 							ImGui::TableHeadersRow();
 
-							for (int c = 0; c < TOTAL_LEVEL_COUNT; c++)
+							for (int l = 0; l < TOTAL_LEVEL_COUNT; l++)
 							{
-								ImGui::PushID(c);
+								ImGui::PushID(l);
 
 								ImGui::TableNextRow();
 
 								ImGui::TableSetColumnIndex(0);
-								ImGui::Text("%i", c + 1);
+								ImGui::Text("%i", l + 1);
 
 								ImGui::TableSetColumnIndex(1);
-								ImGui::Text("%s", levelNames[c]);
+								ImGui::Text("%s", levelNames[l]);
 
 								ImGui::TableSetColumnIndex(2);
-								for (int j = 0; j < levelJiggiesCount[c]; j++)
+								for (int j = 0; j < levelJiggiesCount[l]; j++)
 								{
 									ImGui::PushID(j);
 
-									//CheckboxCourseData("##Jiggy", s, showBackup, c, 1 << j);
+									//CheckboxCourseData("##Jiggy", s, showBackup, l, 1 << j);
 
 									bool value = false;
 									if (ImGui::Checkbox("##Jiggy", &value))
@@ -89,37 +90,45 @@ void SaveEditorUI::DoRender()
 
 									ImGui::PopID();
 
-									if (j < levelJiggiesCount[c] - 1) ImGui::SameLine();
+									if (j < levelJiggiesCount[l] - 1) ImGui::SameLine();
 								}
 
 								ImGui::TableSetColumnIndex(3);
-								for (int h = 0; h < levelHoneycombsCount[c]; h++)
+								for (int h = 0; h < levelHoneycombsCount[l]; h++)
 								{
 									ImGui::PushID(h);
 
-									//CheckboxCourseData("##Jiggy", s, showBackup, c, 1 << h);
-
-									bool value = false;
+									bool value = saveSlot->GetHoneycomb(l, h);
 									if (ImGui::Checkbox("##Honeycomb", &value))
 									{
-										//saveData->saveSlots[saveSlot][copyIndex].SetFlag(flag, value);
-										//saveData->saveSlots[saveSlot][copyIndex].UpdateChecksum();
+										saveSlot->SetHoneycomb(l, h, value);
+										saveSlot->UpdateChecksum();
 									}
+
+									ImGui::SetItemTooltip(levelHoneycombsNames[l][h]);
 
 									ImGui::PopID();
 
-									if (h < levelHoneycombsCount[c] - 1) ImGui::SameLine();
+									if (h < levelHoneycombsCount[l] - 1) ImGui::SameLine();
 								}
 
 								ImGui::TableSetColumnIndex(4);
 
-								if (levelHasNotes[c])
+								if (levelHasNotes[l])
 								{
 									uint8_t noteValue = 69;
-									if (ImGui::InputScalar("##Max Coins", ImGuiDataType_U8, &noteValue, NULL, NULL, "%u"))
+									if (ImGui::InputScalar("##Notes Score", ImGuiDataType_U8, &noteValue, NULL, NULL, "%u"))
 									{
 										//saveData->saveSlots[s][showBackup].UpdateChecksum();
 									}
+								}
+
+								ImGui::TableSetColumnIndex(5);
+
+								uint16_t playTime = 420;
+								if (ImGui::InputScalar("##Play Time", ImGuiDataType_U16, &playTime, NULL, NULL, "%u"))
+								{
+									//saveData->saveSlots[s][showBackup].UpdateChecksum();
 								}
 
 								ImGui::PopID();
