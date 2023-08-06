@@ -27,10 +27,14 @@ const char* const levelNames[]
 	"Click Clock Wood"
 };
 
+#pragma region Jiggies_Data
+
 const uint8_t levelJiggiesCount[]
 {
 	0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10
 };
+
+#pragma endregion
 
 #pragma region Honeycomb_Data
 
@@ -74,10 +78,16 @@ const char* const levelHoneycombsNames[TOTAL_LEVEL_COUNT][MAX_HONEYCOMBS_PER_LEV
 
 #pragma endregion
 
+#pragma region Notes_Data
+
+#define MAX_NOTES_PER_LEVEL 100
+
 const bool levelHasNotes[]
 {
 	false, false, true, true, true, true, true, true, true, true, true
 };
+
+#pragma endregion
 
 struct SaveSlot
 {
@@ -95,28 +105,8 @@ public:
 	uint8_t Unk[0x2];
 	uint32_t Checksum;
 
-	inline uint16_t CalculateChecksum() const
-	{
-		uint16_t checksum = 0;
-		//const uint8_t* p = &CapLevel;
-
-		//for (int i = 0; i < SAVE_SLOT_SIZE - 2; i++)
-		//{
-		//	checksum += *p++;
-		//}
-
-		return checksum;
-	}
-
-	inline void UpdateChecksum()
-	{
-		Checksum = CalculateChecksum();
-	}
-
-	inline bool IsValid()
-	{
-		return Checksum == CalculateChecksum();
-	}
+	void UpdateChecksum();
+	bool IsValid() const;
 
 	inline bool GetFlag(const uint32_t mask) const
 	{
@@ -167,17 +157,18 @@ public:
 class SaveData
 {
 public:
-	enum class Types { NotValid, PC, Nintendo64 };
-
-private:
 	SaveSlot saveSlots[TOTAL_NUM_SAVE_SLOTS] = {};
 	uint8_t unk[0x20] = {};
 
-public:
+	enum class Types { NotValid, PC, Nintendo64 };
+
 	SaveData();
 
 	static SaveData* Load(const std::string filePath);
 	static void Save(const std::string filePath, const SaveData* saveData);
+
+	static uint32_t TransformSeed(uint64_t* seed);
+	static uint32_t CalculateChecksum(uint8_t* start, uint8_t* end);
 
 	Types GetType() const;
 

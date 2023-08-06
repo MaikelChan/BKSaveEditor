@@ -312,33 +312,10 @@ void MainUI::EndianSwap() const
 	if (!saveData) return;
 	if (currentFileType != SaveData::Types::Nintendo64) return;
 
-	/*for (int s = 0; s < NUM_SAVE_SLOTS; s++)
+	for (int s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
 	{
-		for (int cp = 0; cp < NUM_COPIES; cp++)
-		{
-			saveData->saveSlots[s][cp].CapPos[0] = Swap16(saveData->saveSlots[s][cp].CapPos[0]);
-			saveData->saveSlots[s][cp].CapPos[1] = Swap16(saveData->saveSlots[s][cp].CapPos[1]);
-			saveData->saveSlots[s][cp].CapPos[2] = Swap16(saveData->saveSlots[s][cp].CapPos[2]);
-
-			saveData->saveSlots[s][cp].Flags = Swap32(saveData->saveSlots[s][cp].Flags);
-
-			saveData->saveSlots[s][cp].Magic = Swap16(saveData->saveSlots[s][cp].Magic);
-			saveData->saveSlots[s][cp].Checksum = Swap16(saveData->saveSlots[s][cp].Checksum);
-		}
+		saveData->saveSlots[s].Checksum = Swap32(saveData->saveSlots[s].Checksum);
 	}
-
-	for (int cp = 0; cp < NUM_COPIES; cp++)
-	{
-		for (int s = 0; s < NUM_SAVE_SLOTS; s++)
-		{
-			saveData->settings[cp].CoinScoreAges[s] = Swap32(saveData->settings[cp].CoinScoreAges[s]);
-		}
-
-		saveData->settings[cp].soundMode = Swap16(saveData->settings[cp].soundMode);
-		saveData->settings[cp].language = Swap16(saveData->settings[cp].language);
-		saveData->settings[cp].Magic = Swap16(saveData->settings[cp].Magic);
-		saveData->settings[cp].Checksum = Swap16(saveData->settings[cp].Checksum);
-	}*/
 }
 
 void MainUI::CompleteSlot(const uint8_t slotIndex) const
