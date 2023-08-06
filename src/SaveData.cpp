@@ -3,20 +3,42 @@
 #include <fstream>
 #include <exception>
 #include <cassert>
+#include "Utils.h"
+
+inline uint32_t SaveSlot::CalculateChecksum() const
+{
+	return SaveData::CalculateChecksum((uint8_t*)&Magic, (uint8_t*)&Checksum);
+}
 
 void SaveSlot::UpdateChecksum()
 {
-	Checksum = SaveData::CalculateChecksum((uint8_t*)&Magic, (uint8_t*)&Checksum);
+	Checksum = CalculateChecksum();
 }
 
 bool SaveSlot::IsValid() const
 {
-	return Checksum == SaveData::CalculateChecksum((uint8_t*)&Magic, (uint8_t*)&Checksum);
+	return Checksum == CalculateChecksum();
+}
+
+void GlobalData::UpdateChecksum()
+{
+	Checksum = CalculateChecksum();
+}
+
+uint32_t GlobalData::CalculateChecksum() const
+{
+	return SaveData::CalculateChecksum((uint8_t*)&Unk, (uint8_t*)&Checksum);
+}
+
+bool GlobalData::IsValid() const
+{
+	return Checksum == CalculateChecksum();
 }
 
 SaveData::SaveData()
 {
 	assert(sizeof(SaveSlot) == SAVE_SLOT_SIZE);
+	assert(sizeof(GlobalData) == GLOBAL_DATA_SIZE);
 	assert(sizeof(SaveData) == SAVE_DATA_SIZE);
 }
 
@@ -144,19 +166,18 @@ uint32_t SaveData::CalculateChecksum(uint8_t* start, uint8_t* end)
 
 SaveData::Types SaveData::GetType() const
 {
-	//if ((saveSlots[0][0].Magic == SAVE_SLOT_MAGIC_LE || saveSlots[0][1].Magic == SAVE_SLOT_MAGIC_LE) &&
-	//	(settings[0].Magic == SETTINGS_DATA_MAGIC_LE || settings[1].Magic == SETTINGS_DATA_MAGIC_LE))
-	//{
-	//	return SaveData::Types::PC;
-	//}
+	for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
+	{
+		uint32_t checksum = saveSlots[s].CalculateChecksum();
+		if (checksum == saveSlots[s].Checksum) return SaveData::Types::PC;
+		if (checksum == Swap32(saveSlots[s].Checksum)) return SaveData::Types::Nintendo64;
+	}
 
-	//if ((saveSlots[0][0].Magic == SAVE_SLOT_MAGIC_BE || saveSlots[0][1].Magic == SAVE_SLOT_MAGIC_BE) &&
-	//	(settings[0].Magic == SETTINGS_DATA_MAGIC_BE || settings[1].Magic == SETTINGS_DATA_MAGIC_BE))
-	//{
-	//	return SaveData::Types::Nintendo64;
-	//}
+	uint32_t checksum = globalData.CalculateChecksum();
+	if (checksum == globalData.Checksum) return SaveData::Types::PC;
+	if (checksum == Swap32(globalData.Checksum)) return SaveData::Types::Nintendo64;
 
-	return SaveData::Types::Nintendo64;
+	return SaveData::Types::NotValid;
 }
 
 SaveSlot* SaveData::GetSaveSlot(const uint8_t slotIndex)

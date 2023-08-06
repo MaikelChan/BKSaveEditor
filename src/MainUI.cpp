@@ -236,35 +236,23 @@ void MainUI::LoadingProcess() const
 
 	std::string message;
 
-	/*for (int s = 0; s < NUM_SAVE_SLOTS; s++)
+	for (int s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
 	{
-		if (saveData->saveSlots[s][0].IsValid()) continue;
+		SaveSlot* saveSlot = saveData->GetSaveSlot(s);
+		if (!saveSlot) continue;
 
-		if (saveData->saveSlots[s][1].IsValid())
+		if (!saveSlot->IsValid())
 		{
-			memcpy(&saveData->saveSlots[s][0], &saveData->saveSlots[s][1], SAVE_SLOT_SIZE);
-			message += std::string("Save slot \"") + tabNames[s] + "\" is corrupted, but valid data has been restored from the backup data.\n\n";
-		}
-		else
-		{
-			saveData->saveSlots[s][0].UpdateChecksum();
-			message += std::string("Save slot \"") + tabNames[s] + "\" is corrupted along with its backup. Data might be completely wrong.\n\n";
+			saveSlot->UpdateChecksum();
+			message += std::string("Save ") + tabNames[s] + " is corrupted. Data might be completely wrong.\n\n";
 		}
 	}
 
-	if (!saveData->settings[0].IsValid())
+	if (!saveData->globalData.IsValid())
 	{
-		if (saveData->settings[1].IsValid())
-		{
-			memcpy(&saveData->settings[0], &saveData->settings[1], SETTINGS_DATA_SIZE);
-			message += "Settings data is corrupted, but valid data has been restored from the backup data.\n\n";
-		}
-		else
-		{
-			saveData->settings[0].UpdateChecksum();
-			message += "Settings data is corrupted along with its backup. Data might be completely wrong.\n\n";
-		}
-	}*/
+		saveData->globalData.UpdateChecksum();
+		message += "Global data is corrupted. Data might be completely wrong.\n\n";
+	}
 
 	if (!message.empty())
 	{
@@ -316,6 +304,8 @@ void MainUI::EndianSwap() const
 	{
 		saveData->saveSlots[s].Checksum = Swap32(saveData->saveSlots[s].Checksum);
 	}
+
+	saveData->globalData.Checksum = Swap32(saveData->globalData.Checksum);
 }
 
 void MainUI::CompleteSlot(const uint8_t slotIndex) const

@@ -12,6 +12,8 @@
 
 #define TOTAL_LEVEL_COUNT 11
 
+#define GLOBAL_DATA_SIZE 0x20
+
 const char* const levelNames[]
 {
 	"Spiral Mountain",
@@ -105,6 +107,7 @@ public:
 	uint8_t Unk[0x2];
 	uint32_t Checksum;
 
+	inline uint32_t CalculateChecksum() const;
 	void UpdateChecksum();
 	bool IsValid() const;
 
@@ -154,11 +157,22 @@ public:
 	//}
 };
 
+struct GlobalData
+{
+public:
+	uint8_t Unk[0x1C];
+	uint32_t Checksum;
+
+	inline uint32_t CalculateChecksum() const;
+	void UpdateChecksum();
+	bool IsValid() const;
+};
+
 class SaveData
 {
 public:
 	SaveSlot saveSlots[TOTAL_NUM_SAVE_SLOTS] = {};
-	uint8_t unk[0x20] = {};
+	GlobalData globalData = {};
 
 	enum class Types { NotValid, PC, Nintendo64 };
 
