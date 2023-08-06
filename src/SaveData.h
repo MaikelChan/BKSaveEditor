@@ -14,7 +14,14 @@
 
 #define GLOBAL_DATA_SIZE 0x20
 
-const char* const levelNames[]
+#pragma region Levels_Data
+
+const uint8_t levelIndices[TOTAL_LEVEL_COUNT]
+{
+	10, 5, 0, 1, 2, 3, 4, 6, 9, 8, 7
+};
+
+const char* const levelNames[TOTAL_LEVEL_COUNT]
 {
 	"Spiral Mountain",
 	"Gruntilda's Lair",
@@ -28,6 +35,8 @@ const char* const levelNames[]
 	"Rusty Bucket Bay",
 	"Click Clock Wood"
 };
+
+#pragma endregion
 
 #pragma region Jiggies_Data
 
@@ -130,12 +139,12 @@ struct SaveSlot
 public:
 	uint8_t Magic;
 	uint8_t SlotIndex;
-	uint8_t Jiggies[0xD];
-	uint8_t Honeycombs[0x3];
-	uint8_t MumboTokens[0x10];
-	uint8_t Flags[0x25]; // ?
+	uint8_t Jiggies[13];
+	uint8_t Honeycombs[3];
+	uint8_t MumboTokens[16];
 	uint8_t NoteScores[0x8];
-	uint8_t Times[11 * 2];
+	uint16_t Times[TOTAL_LEVEL_COUNT];
+	uint8_t Flags[0x25]; // ?
 	uint8_t Items[5];
 	uint8_t Abilities[8];
 	uint8_t Unk[0x2];
@@ -180,6 +189,20 @@ public:
 		uint8_t index = levelJiggiesIndices[level][jiggy];
 		if (val) Jiggies[(index - 1) / 8] |= (1 << (index & 7));
 		else Jiggies[(index - 1) / 8] &= ~(1 << (index & 7));
+	}
+
+	inline uint8_t GetNotes(const uint8_t level)
+	{
+		if (!levelHasNotes[level]) return 0;
+
+		//uint8_t index = levelJiggiesIndices[level][jiggy];
+		//return (Jiggies[(index - 1) / 8] & (1 << (index & 7))) != 0;
+	}
+
+	inline bool GetPlayTime(const uint8_t level)
+	{
+		//uint8_t index = levelJiggiesIndices[level][jiggy];
+		return 0;// (Jiggies[(index - 1) / 8] & (1 << (index & 7))) != 0;
 	}
 
 	//inline uint8_t GetTotalStars()

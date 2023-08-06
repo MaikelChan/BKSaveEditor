@@ -58,7 +58,7 @@ void SaveEditorUI::DoRender()
 							ImGui::TableSetupColumn("Jiggies");
 							ImGui::TableSetupColumn("Honeycombs");
 							ImGui::TableSetupColumn("Note Score");
-							ImGui::TableSetupColumn("Play Time");
+							ImGui::TableSetupColumn("Play Time (s)");
 
 							ImGui::TableHeadersRow();
 
@@ -86,7 +86,8 @@ void SaveEditorUI::DoRender()
 										saveSlot->UpdateChecksum();
 									}
 
-									ImGui::SetItemTooltip(levelJiggiesNames[l][j]);
+									if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
+										ImGui::SetTooltip(levelJiggiesNames[l][j]);
 
 									ImGui::PopID();
 
@@ -105,7 +106,8 @@ void SaveEditorUI::DoRender()
 										saveSlot->UpdateChecksum();
 									}
 
-									ImGui::SetItemTooltip(levelHoneycombsNames[l][h]);
+									if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
+										ImGui::SetTooltip(levelHoneycombsNames[l][h]);
 
 									ImGui::PopID();
 
@@ -125,10 +127,9 @@ void SaveEditorUI::DoRender()
 
 								ImGui::TableSetColumnIndex(5);
 
-								uint16_t playTime = 420;
-								if (ImGui::InputScalar("##Play Time", ImGuiDataType_U16, &playTime, NULL, NULL, "%u"))
+								if (ImGui::InputScalar("##Play Time", ImGuiDataType_U16, &saveSlot->Times[levelIndices[l]], NULL, NULL, "%u"))
 								{
-									//saveData->saveSlots[s][showBackup].UpdateChecksum();
+									saveSlot->UpdateChecksum();
 								}
 
 								ImGui::PopID();
