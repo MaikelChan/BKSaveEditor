@@ -3,7 +3,6 @@
 #include "SaveEditorUI.h"
 #include "PopupDialog.h"
 #include "AboutWindow.h"
-#include "Utils.h"
 #include <fstream>
 #define JSON_USE_IMPLICIT_CONVERSIONS 0
 #include <nlohmann/json.hpp>
@@ -17,8 +16,6 @@ MainUI::MainUI() : BaseUI(nullptr)
 
 	currentFilePath.clear();
 	currentFileName.clear();
-	currentFileType = SaveData::Types::NotValid;
-	saveData = nullptr;
 
 	windowOpacity = 0.9f;
 
@@ -30,7 +27,6 @@ MainUI::MainUI() : BaseUI(nullptr)
 
 MainUI::~MainUI()
 {
-	ClearSaveData();
 	SaveConfig();
 
 	delete saveEditor;
@@ -123,7 +119,7 @@ void MainUI::DoRender()
 			ImGui::EndMenu();
 		}
 
-		if (saveData)
+		if (saveData.IsSaveFileLoaded())
 		{
 			std::string fileText = std::string("Current file: ") + currentFileName;
 
@@ -149,18 +145,6 @@ void MainUI::DoRender()
 
 		fileDialog.ClearSelected();
 	}
-}
-
-void MainUI::ClearSaveData()
-{
-	if (!saveData) return;
-
-	delete saveData;
-	saveData = nullptr;
-
-	currentFilePath.clear();
-	currentFileName.clear();
-	currentFileType = SaveData::Types::NotValid;
 }
 
 void MainUI::LoadConfig()
@@ -209,16 +193,13 @@ void MainUI::SaveConfig() const
 
 void MainUI::Load()
 {
-	ClearSaveData();
-
 	try
 	{
-		saveData = SaveData::Load(fileDialog.GetSelected().string().c_str());
+		saveData.Load(fileDialog.GetSelected().string());
+
 		currentFilePath = fileDialog.GetSelected().string();
 		currentFileName = fileDialog.GetSelected().filename().string();
-		currentFileType = saveData->GetType();
 
-		EndianSwap();
 		LoadingProcess();
 
 		saveEditor->SetIsVisible(true);
@@ -232,13 +213,13 @@ void MainUI::Load()
 
 void MainUI::LoadingProcess() const
 {
-	if (!saveData) return;
+	if (!saveData.IsSaveFileLoaded()) return;
 
 	std::string message;
 
 	for (int s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
 	{
-		SaveSlot* saveSlot = saveData->GetSaveSlot(s);
+		SaveSlot* saveSlot = saveData.GetSaveFile()->GetSaveSlot(s);
 		if (!saveSlot) continue;
 
 		if (!saveSlot->IsValid())
@@ -248,9 +229,9 @@ void MainUI::LoadingProcess() const
 		}
 	}
 
-	if (!saveData->globalData.IsValid())
+	if (!saveData.GetSaveFile()->globalData.IsValid())
 	{
-		saveData->globalData.UpdateChecksum();
+		saveData.GetSaveFile()->globalData.UpdateChecksum();
 		message += "Global data is corrupted. Data might be completely wrong.\n\n";
 	}
 
@@ -261,16 +242,16 @@ void MainUI::LoadingProcess() const
 	}
 }
 
-void MainUI::Save() const
+void MainUI::Save()
 {
-	if (!saveData) return;
+	if (!saveData.IsSaveFileLoaded()) return;
 
 	SavingProcess();
-	EndianSwap();
+	//EndianSwap();
 
 	try
 	{
-		SaveData::Save(currentFilePath.c_str(), saveData);
+		saveData.Save(currentFilePath);
 	}
 	catch (const std::runtime_error& error)
 	{
@@ -278,12 +259,12 @@ void MainUI::Save() const
 		popupDialog->SetIsVisible(true);
 	}
 
-	EndianSwap();
+	//EndianSwap();
 }
 
 void MainUI::SavingProcess() const
 {
-	if (!saveData) return;
+	if (!saveData.IsSaveFileLoaded()) return;
 
 	//for (int s = 0; s < NUM_SAVE_SLOTS; s++)
 	//{
@@ -295,22 +276,9 @@ void MainUI::SavingProcess() const
 	//memcpy(&saveData->settings[1], &saveData->settings[0], SETTINGS_DATA_SIZE);
 }
 
-void MainUI::EndianSwap() const
-{
-	if (!saveData) return;
-	if (currentFileType != SaveData::Types::Nintendo64) return;
-
-	for (int s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
-	{
-		saveData->saveSlots[s].Checksum = Swap32(saveData->saveSlots[s].Checksum);
-	}
-
-	saveData->globalData.Checksum = Swap32(saveData->globalData.Checksum);
-}
-
 void MainUI::CompleteSlot(const uint8_t slotIndex) const
 {
-	if (!saveData) return;
+	if (!saveData.IsSaveFileLoaded()) return;
 
 	/*memset(&saveData->saveSlots[slotIndex][0], 0, SAVE_SLOT_SIZE);
 
@@ -340,7 +308,7 @@ void MainUI::CompleteSlot(const uint8_t slotIndex) const
 
 void MainUI::DeleteSlot(const uint8_t slotIndex) const
 {
-	if (!saveData) return;
+	if (!saveData.IsSaveFileLoaded()) return;
 
 	//memset(&saveData->saveSlots[slotIndex][0], 0, SAVE_SLOT_SIZE);
 	//saveData->saveSlots[slotIndex][0].Magic = SAVE_SLOT_MAGIC_LE;

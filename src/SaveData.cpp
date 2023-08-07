@@ -1,87 +1,72 @@
 #include "SaveData.h"
-#include <string>
 #include <fstream>
 #include <exception>
 #include <cassert>
 #include "Utils.h"
 
-inline uint32_t SaveSlot::CalculateChecksum() const
-{
-	return SaveData::CalculateChecksum((uint8_t*)&Magic, (uint8_t*)&Checksum);
-}
-
-void SaveSlot::UpdateChecksum()
-{
-	Checksum = CalculateChecksum();
-}
-
-bool SaveSlot::IsValid() const
-{
-	return Checksum == CalculateChecksum();
-}
-
-void GlobalData::UpdateChecksum()
-{
-	Checksum = CalculateChecksum();
-}
-
-uint32_t GlobalData::CalculateChecksum() const
-{
-	return SaveData::CalculateChecksum((uint8_t*)&Unk, (uint8_t*)&Checksum);
-}
-
-bool GlobalData::IsValid() const
-{
-	return Checksum == CalculateChecksum();
-}
-
 SaveData::SaveData()
 {
 	assert(sizeof(SaveSlot) == SAVE_SLOT_SIZE);
 	assert(sizeof(GlobalData) == GLOBAL_DATA_SIZE);
-	assert(sizeof(SaveData) == SAVE_DATA_SIZE);
+	assert(sizeof(SaveFile) == SAVE_FILE_SIZE);
+
+	saveFile = nullptr;
+
+	currentFileType = SaveFile::Types::NotValid;
 }
 
-SaveData* SaveData::Load(const std::string filePath)
+SaveData::~SaveData()
+{
+	ClearSaveFile();
+}
+
+void SaveData::Load(const std::string filePath)
 {
 	std::ifstream stream = std::ifstream(filePath, std::ios::binary);
 
 	if (!stream || !stream.is_open())
 	{
 		throw std::runtime_error("There was an error trying to open open the file.");
-		return nullptr;
+		return;
 	}
 
 	stream.seekg(0, std::ios_base::end);
 	size_t size = stream.tellg();
 
-	if (size != SAVE_DATA_SIZE)
+	if (size != SAVE_FILE_SIZE)
 	{
 		stream.close();
 		throw std::runtime_error("The selected file is not a valid Banjo-Kazooie save file.");
-		return nullptr;
+		return;
 	}
 
-	SaveData* saveData = new SaveData();
+	SaveFile* saveFile = new SaveFile();
 
 	stream.seekg(0, std::ios_base::beg);
-	stream.read((char*)saveData, sizeof(SaveData));
+	stream.read((char*)saveFile, sizeof(SaveFile));
 	stream.close();
 
-	SaveData::Types type = saveData->GetType();
+	SaveFile::Types type = saveFile->GetType();
 
-	if (type == SaveData::Types::NotValid)
+	if (type == SaveFile::Types::NotValid)
 	{
-		delete saveData;
+		delete saveFile;
 		throw std::runtime_error("The selected file is not a valid Banjo-Kazooie save file.");
-		return nullptr;
+		return;
 	}
 
-	return saveData;
+	ClearSaveFile();
+
+	SaveData::saveFile = saveFile;
+	currentFileType = type;
+
+	EndianSwap();
 }
 
-void SaveData::Save(const std::string filePath, const SaveData* saveData)
+void SaveData::Save(const std::string filePath)
 {
+	if (!IsSaveFileLoaded()) return;
+
 	std::ofstream stream = std::ofstream(filePath, std::ios::binary);
 
 	if (!stream || !stream.is_open())
@@ -89,108 +74,34 @@ void SaveData::Save(const std::string filePath, const SaveData* saveData)
 		throw std::runtime_error(std::string("Can't open file \"") + filePath + "\".");
 	}
 
-	stream.write((char*)saveData, SAVE_DATA_SIZE);
+	stream.write((char*)saveFile, SAVE_FILE_SIZE);
 	stream.close();
 }
 
-uint32_t SaveData::TransformSeed(uint64_t* seed)
+void SaveData::ClearSaveFile()
 {
-	// ld         $a3, 0x0($a0)
-	// dsll32     $a2, $a3, 31
-	// dsll       $a1, $a3, 31
-	// dsrl       $a2, $a2, 31
-	// dsrl32     $a1, $a1, 0
-	// dsll32     $a3, $a3, 12
-	// or         $a2, $a2, $a1
-	// dsrl32     $a3, $a3, 0
-	// xor        $a2, $a2, $a3
-	// dsrl       $a3, $a2, 20
-	// andi       $a3, $a3, 0xFFF
-	// xor        $a3, $a3, $a2
-	// dsll32     $v0, $a3, 0
-	// sd         $a3, 0x0($a0)
-	// jr         $ra
-	// dsra32     $v0, $v0, 0
+	if (!IsSaveFileLoaded()) return;
 
-	uint64_t a1 = 0;
-	uint64_t a2 = 0;
-	uint64_t a3 = 0;
-	uint64_t v0 = 0;
+	delete saveFile;
+	saveFile = nullptr;
 
-	a3 = *seed;
-	a2 = a3 << (31 + 32);
-	a1 = a3 << 31;
-	a2 = a2 >> 31;
-	a1 = a1 >> (0 + 32);
-	a3 = a3 << (12 + 32);
-	a2 = a2 | a1;
-	a3 = a3 >> (0 + 32);
-	a2 = a2 ^ a3;
-	a3 = a2 >> 20;
-	a3 = a3 & 0xfff;
-	a3 = a3 ^ a2;
-	v0 = a3 << (0 + 32);
-	*seed = a3;
-	v0 = v0 >> (0 + 32);
-
-	return (uint32_t)v0;
+	currentFileType = SaveFile::Types::NotValid;
 }
 
-uint32_t SaveData::CalculateChecksum(uint8_t* start, uint8_t* end)
+void SaveData::EndianSwap() const
 {
-	uint8_t* p;
-	uint32_t shift = 0;
-	uint64_t seed = 0x8F809F473108B3C1;
-	uint32_t crc1 = 0;
-	uint32_t crc2 = 0;
-	uint32_t tmp;
+	if (!IsSaveFileLoaded()) return;
+	if (currentFileType != SaveFile::Types::Nintendo64) return;
 
-	for (p = start; p < end; p++)
+	for (int s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
 	{
-		seed += (uint64_t)(*p) << (shift & 15);
-		tmp = TransformSeed(&seed);
-		shift += 7;
-		crc1 ^= tmp;
+		for (int t = 0; t < TOTAL_LEVEL_COUNT; t++)
+		{
+			saveFile->saveSlots[s].Times[t] = Swap16(saveFile->saveSlots[s].Times[t]);
+		}
+
+		saveFile->saveSlots[s].Checksum = Swap32(saveFile->saveSlots[s].Checksum);
 	}
 
-	for (p = end - 1; p >= start; p--)
-	{
-		seed += (uint64_t)(*p) << (shift & 15);
-		tmp = TransformSeed(&seed);
-		shift += 3;
-		crc2 ^= tmp;
-	}
-
-	return crc1 ^ crc2;
-}
-
-SaveData::Types SaveData::GetType() const
-{
-	for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
-	{
-		uint32_t checksum = saveSlots[s].CalculateChecksum();
-		if (checksum == saveSlots[s].Checksum) return SaveData::Types::PC;
-		if (checksum == Swap32(saveSlots[s].Checksum)) return SaveData::Types::Nintendo64;
-	}
-
-	uint32_t checksum = globalData.CalculateChecksum();
-	if (checksum == globalData.Checksum) return SaveData::Types::PC;
-	if (checksum == Swap32(globalData.Checksum)) return SaveData::Types::Nintendo64;
-
-	return SaveData::Types::NotValid;
-}
-
-SaveSlot* SaveData::GetSaveSlot(const uint8_t slotIndex)
-{
-	uint8_t index = slotIndex;
-	if (index == 1) index = 2;
-	else if (index == 2) index = 1;
-
-	for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
-	{
-		if (saveSlots[s].Magic != SAVE_SLOT_MAGIC) continue;
-		if (saveSlots[s].SlotIndex == index + 1) return &saveSlots[s];
-	}
-
-	return nullptr;
+	saveFile->globalData.Checksum = Swap32(saveFile->globalData.Checksum);
 }

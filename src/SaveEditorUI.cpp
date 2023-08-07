@@ -21,8 +21,6 @@ void SaveEditorUI::DoRender()
 {
 	BaseUI::DoRender();
 
-	SaveData* saveData = mainUI->GetSaveData();
-
 	const ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->WorkPos);
 	ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -30,13 +28,16 @@ void SaveEditorUI::DoRender()
 	if (ImGui::Begin("Save Editor", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground))
 	{
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
-		if (saveData && ImGui::BeginTabBar("Save Slots", tab_bar_flags))
+
+		SaveFile* saveFile = mainUI->GetSaveFile();
+
+		if (saveFile && ImGui::BeginTabBar("Save Slots", tab_bar_flags))
 		{
 			for (int s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
 			{
 				if (ImGui::BeginTabItem(tabNames[s]))
 				{
-					SaveSlot* saveSlot = saveData->GetSaveSlot(s);
+					SaveSlot* saveSlot = saveFile->GetSaveSlot(s);
 
 					if (!saveSlot)
 					{
@@ -121,7 +122,7 @@ void SaveEditorUI::DoRender()
 									uint8_t noteValue = 69;
 									if (ImGui::InputScalar("##Notes Score", ImGuiDataType_U8, &noteValue, NULL, NULL, "%u"))
 									{
-										//saveData->saveSlots[s][showBackup].UpdateChecksum();
+										//saveFile->saveSlots[s][showBackup].UpdateChecksum();
 									}
 								}
 

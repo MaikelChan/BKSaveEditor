@@ -19,10 +19,10 @@ private:
 
 	ImGui::FileBrowser fileDialog;
 
+	SaveData saveData;
+
 	std::string currentFilePath;
 	std::string currentFileName;
-	SaveData::Types currentFileType;
-	SaveData* saveData;
 
 	float windowOpacity;
 
@@ -30,7 +30,7 @@ public:
 	MainUI();
 	~MainUI();
 
-	inline SaveData* GetSaveData() const { return saveData; }
+	inline SaveFile* GetSaveFile() const { return saveData.GetSaveFile(); }
 	inline float GetWindowOpacity() const { return windowOpacity; }
 
 protected:
@@ -38,16 +38,13 @@ protected:
 	virtual void DoRender() override;
 
 private:
-	void ClearSaveData();
-
 	void LoadConfig();
 	void SaveConfig() const;
 
 	void Load();
 	void LoadingProcess() const;
-	void Save() const;
+	void Save();
 	void SavingProcess() const;
-	void EndianSwap() const;
 
 	void CompleteSlot(const uint8_t slotIndex) const;
 	void DeleteSlot(const uint8_t slotIndex) const;
