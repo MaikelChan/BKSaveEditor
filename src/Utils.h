@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 struct Utils
 {
@@ -12,5 +13,14 @@ struct Utils
 	inline static uint32_t Swap32(const uint32_t value)
 	{
 		return (value << 24) | ((value & 0xff00) << 8) | ((value & 0xff0000) >> 8) | (value >> 24);
+	}
+
+	inline static std::string GetTimeString(const uint16_t value)
+	{
+		uint8_t h = value / 3600;
+		uint8_t m = (value % 3600) / 60;
+		uint8_t s = value % 60;
+
+		return std::to_string(h) + "h " + std::to_string(m) + "m " + std::to_string(s) + "s";
 	}
 };

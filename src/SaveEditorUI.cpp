@@ -1,6 +1,7 @@
 ﻿#include "SaveEditorUI.h"
 #include "MainUI.h"
 #include "SaveData.h"
+#include "Utils.h"
 
 SaveEditorUI::SaveEditorUI(const MainUI* mainUI) : BaseUI(mainUI)
 {
@@ -30,7 +31,7 @@ void SaveEditorUI::DoRender()
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
 		const SaveData& saveData = mainUI->GetSaveData();
-		SaveFile* saveFile = (&saveData)->GetSaveFile();
+		SaveFile* saveFile = saveData.GetSaveFile();
 
 		if (saveFile && ImGui::BeginTabBar("Save Slots", tab_bar_flags))
 		{
@@ -135,6 +136,9 @@ void SaveEditorUI::DoRender()
 									saveSlot->SetPlayTime(l, time, saveData.NeedsEndianSwap());
 									saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 								}
+
+								if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
+									ImGui::SetTooltip(Utils::GetTimeString(time).c_str());
 
 								ImGui::PopID();
 							}
