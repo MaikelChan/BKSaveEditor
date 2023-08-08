@@ -49,12 +49,58 @@ void SaveEditorUI::DoRender()
 					{
 						PrintChecksum(saveSlot->GetChecksum(saveData.NeedsEndianSwap()));
 
+						ImGui::SeparatorText("Held Items");
+
+						uint8_t mumboTokens = saveSlot->GetHeldItem(HeldItems::MumboTokens);
+						if (ImGui::InputScalar("Mumbo Tokens", ImGuiDataType_U8, &mumboTokens, NULL, NULL, "%u"))
+						{
+							if (mumboTokens > MAX_MUMBO_TOKENS) mumboTokens = MAX_MUMBO_TOKENS;
+							saveSlot->SetHeldItem(HeldItems::MumboTokens, mumboTokens);
+							saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+						}
+
+						uint8_t eggs = saveSlot->GetHeldItem(HeldItems::Eggs);
+						if (ImGui::InputScalar("Eggs", ImGuiDataType_U8, &eggs, NULL, NULL, "%u"))
+						{
+							if (eggs > MAX_EGGS) eggs = MAX_EGGS;
+							saveSlot->SetHeldItem(HeldItems::Eggs, eggs);
+							saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+						}
+
+						uint8_t redFeathers = saveSlot->GetHeldItem(HeldItems::RedFeathers);
+						if (ImGui::InputScalar("Red Feathers", ImGuiDataType_U8, &redFeathers, NULL, NULL, "%u"))
+						{
+							if (redFeathers > MAX_RED_FEATHERS) redFeathers = MAX_RED_FEATHERS;
+							saveSlot->SetHeldItem(HeldItems::RedFeathers, redFeathers);
+							saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+						}
+
+						uint8_t goldFeathers = saveSlot->GetHeldItem(HeldItems::GoldFeathers);
+						if (ImGui::InputScalar("Gold Feathers", ImGuiDataType_U8, &goldFeathers, NULL, NULL, "%u"))
+						{
+							if (goldFeathers > MAX_GOLD_FEATHERS) goldFeathers = MAX_GOLD_FEATHERS;
+							saveSlot->SetHeldItem(HeldItems::GoldFeathers, goldFeathers);
+							saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+						}
+
+						uint8_t jiggies = saveSlot->GetHeldItem(HeldItems::Jiggies);
+						if (ImGui::InputScalar("Jiggies", ImGuiDataType_U8, &jiggies, NULL, NULL, "%u"))
+						{
+							if (jiggies > JIGGIES_COUNT) jiggies = JIGGIES_COUNT;
+							saveSlot->SetHeldItem(HeldItems::Jiggies, jiggies);
+							saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+						}
+
 						ImGui::SeparatorText("Levels");
 
 						static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_BordersOuter;
 
 						if (ImGui::BeginTable("LevelsTable", 6, flags))
 						{
+							uint8_t totalJiggies = 0;
+							uint8_t totalHoneycombs = 0;
+							uint32_t totalPlayTime = 0;
+
 							ImGui::TableSetupScrollFreeze(0, 1);
 							ImGui::TableSetupColumn("#");
 							ImGui::TableSetupColumn("Name");
@@ -92,6 +138,8 @@ void SaveEditorUI::DoRender()
 									if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
 										ImGui::SetTooltip(levelJiggiesNames[l][j]);
 
+									if (value) totalJiggies++;
+
 									ImGui::PopID();
 
 									if (j < levelJiggiesCount[l] - 1) ImGui::SameLine();
@@ -111,6 +159,8 @@ void SaveEditorUI::DoRender()
 
 									if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
 										ImGui::SetTooltip(levelHoneycombsNames[l][h]);
+
+									if (value) totalHoneycombs++;
 
 									ImGui::PopID();
 
@@ -140,8 +190,36 @@ void SaveEditorUI::DoRender()
 								if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
 									ImGui::SetTooltip(Utils::GetTimeString(time).c_str());
 
+								totalPlayTime += time;
+
 								ImGui::PopID();
 							}
+
+							// Totals -----------------------------------------------
+
+							ImGui::TableNextRow();
+
+							ImGui::TableSetColumnIndex(0);
+							ImGui::Text("--");
+
+							ImGui::TableSetColumnIndex(1);
+							ImGui::Text("Totals");
+
+							ImGui::TableSetColumnIndex(2);
+							ImGui::Text("%u", totalJiggies);
+
+							ImGui::TableSetColumnIndex(3);
+							ImGui::Text("%u", totalHoneycombs);
+
+							ImGui::TableSetColumnIndex(4);
+							ImGui::Text("");
+
+							ImGui::TableSetColumnIndex(5);
+							ImGui::Text("%u", totalPlayTime);
+
+							if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
+								ImGui::SetTooltip(Utils::GetTimeString(totalPlayTime).c_str());
+
 							ImGui::EndTable();
 						}
 					}

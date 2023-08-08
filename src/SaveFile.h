@@ -8,12 +8,11 @@
 #define ACTUAL_NUM_SAVE_SLOTS 3
 #define SAVE_SLOT_MAGIC 0x11
 #define SAVE_SLOT_SIZE 0x78
-
-#define TOTAL_LEVEL_COUNT 11
-
 #define GLOBAL_DATA_SIZE 0x20
 
 #pragma region Levels_Data
+
+#define TOTAL_LEVEL_COUNT 11
 
 const uint8_t levelIndices[TOTAL_LEVEL_COUNT]
 {
@@ -133,6 +132,24 @@ const bool levelHasNotes[TOTAL_LEVEL_COUNT]
 
 #pragma endregion
 
+#pragma region Items Held
+
+#define MAX_MUMBO_TOKENS 116
+#define MAX_EGGS 200
+#define MAX_RED_FEATHERS 100
+#define MAX_GOLD_FEATHERS 20
+
+enum class HeldItems
+{
+	MumboTokens = 0,
+	Eggs,
+	RedFeathers,
+	GoldFeathers,
+	Jiggies
+};
+
+#pragma endregion
+
 struct SaveSlot
 {
 private:
@@ -179,6 +196,9 @@ public:
 
 	uint16_t GetPlayTime(const uint8_t level, const bool endianSwap) const;
 	void SetPlayTime(const uint8_t level, const uint16_t value, const bool endianSwap);
+
+	uint8_t GetHeldItem(const HeldItems heldItem) const;
+	void SetHeldItem(const HeldItems heldItem, const uint8_t value);
 
 	uint32_t GetChecksum(const bool endianSwap) const;
 };

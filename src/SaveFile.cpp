@@ -80,6 +80,16 @@ void SaveSlot::SetPlayTime(const uint8_t level, const uint16_t value, const bool
 	Times[levelIndices[level]] = endianSwap ? Utils::Swap16(value) : value;
 }
 
+uint8_t SaveSlot::GetHeldItem(const HeldItems heldItem) const
+{
+	return Items[static_cast<int>(heldItem)];
+}
+
+void SaveSlot::SetHeldItem(const HeldItems heldItem, const uint8_t value)
+{
+	Items[static_cast<int>(heldItem)] = value;
+}
+
 uint32_t SaveSlot::GetChecksum(const bool endianSwap) const
 {
 	return endianSwap ? Utils::Swap32(Checksum) : Checksum;
