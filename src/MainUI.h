@@ -30,7 +30,7 @@ public:
 	MainUI();
 	~MainUI();
 
-	inline SaveFile* GetSaveFile() const { return saveData.GetSaveFile(); }
+	inline const SaveData& GetSaveData() const { return saveData; }
 	inline float GetWindowOpacity() const { return windowOpacity; }
 
 protected:

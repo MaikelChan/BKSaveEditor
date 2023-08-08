@@ -1,51 +1,119 @@
 #include "SaveFile.h"
 #include "Utils.h"
 
-inline uint32_t SaveSlot::CalculateChecksum() const
+#pragma region SaveSlot
+
+uint32_t SaveSlot::CalculateChecksum() const
 {
 	return SaveFile::CalculateChecksum((uint8_t*)&Magic, (uint8_t*)&Checksum);
 }
 
-void SaveSlot::UpdateChecksum()
+void SaveSlot::UpdateChecksum(const bool endianSwap)
 {
-	Checksum = CalculateChecksum();
+	const uint32_t checksum = CalculateChecksum();
+	Checksum = endianSwap ? Utils::Swap32(checksum) : checksum;
 }
 
-bool SaveSlot::IsValid() const
+bool SaveSlot::IsValid(const bool endianSwap) const
 {
-	return Checksum == CalculateChecksum();
+	const uint32_t checksum = CalculateChecksum();
+	return Checksum == endianSwap ? Utils::Swap32(checksum) : checksum;
 }
+
+uint8_t SaveSlot::GetMagic() const
+{
+	return Magic;
+}
+
+uint8_t SaveSlot::GetSlotIndex() const
+{
+	return SlotIndex;
+}
+
+bool SaveSlot::GetHoneycomb(const uint8_t level, const uint8_t honeycomb) const
+{
+	uint8_t index = levelHoneycombsIndices[level][honeycomb];
+	return (Honeycombs[(index - 1) / 8] & (1 << (index & 7))) != 0;
+}
+
+void SaveSlot::SetHoneycomb(const uint8_t level, const uint8_t honeycomb, bool value)
+{
+	uint8_t index = levelHoneycombsIndices[level][honeycomb];
+	if (value) Honeycombs[(index - 1) / 8] |= (1 << (index & 7));
+	else Honeycombs[(index - 1) / 8] &= ~(1 << (index & 7));
+}
+
+bool SaveSlot::GetJiggy(const uint8_t level, const uint8_t jiggy) const
+{
+	uint8_t index = levelJiggiesIndices[level][jiggy];
+	return (Jiggies[(index - 1) / 8] & (1 << (index & 7))) != 0;
+}
+
+void SaveSlot::SetJiggy(const uint8_t level, const uint8_t jiggy, bool value)
+{
+	uint8_t index = levelJiggiesIndices[level][jiggy];
+	if (value) Jiggies[(index - 1) / 8] |= (1 << (index & 7));
+	else Jiggies[(index - 1) / 8] &= ~(1 << (index & 7));
+}
+
+uint8_t SaveSlot::GetNotes(const uint8_t level) const
+{
+	if (!levelHasNotes[level]) return 0;
+
+	//uint8_t index = levelJiggiesIndices[level][jiggy];
+	//return (Jiggies[(index - 1) / 8] & (1 << (index & 7))) != 0;
+}
+
+void SaveSlot::SetNotes(const uint8_t level, const uint8_t value) const
+{
+
+}
+
+uint16_t SaveSlot::GetPlayTime(const uint8_t level, const bool endianSwap) const
+{
+	uint16_t value = Times[levelIndices[level]];
+	return endianSwap ? Utils::Swap16(value) : value;
+}
+
+void SaveSlot::SetPlayTime(const uint8_t level, const uint16_t value, const bool endianSwap)
+{
+	Times[levelIndices[level]] = endianSwap ? Utils::Swap16(value) : value;
+}
+
+uint32_t SaveSlot::GetChecksum(const bool endianSwap) const
+{
+	return endianSwap ? Utils::Swap32(Checksum) : Checksum;
+}
+
+#pragma endregion
+
+#pragma region GlobalData
 
 uint32_t GlobalData::CalculateChecksum() const
 {
 	return SaveFile::CalculateChecksum((uint8_t*)&Unk, (uint8_t*)&Checksum);
 }
 
-void GlobalData::UpdateChecksum()
+void GlobalData::UpdateChecksum(const bool endianSwap)
 {
-	Checksum = CalculateChecksum();
+	const uint32_t checksum = CalculateChecksum();
+	Checksum = endianSwap ? Utils::Swap32(checksum) : checksum;
 }
 
-bool GlobalData::IsValid() const
+bool GlobalData::IsValid(const bool endianSwap) const
 {
-	return Checksum == CalculateChecksum();
+	const uint32_t checksum = CalculateChecksum();
+	return Checksum == endianSwap ? Utils::Swap32(checksum) : checksum;
 }
 
-SaveFile::Types SaveFile::GetType() const
+uint32_t GlobalData::GetChecksum(const bool endianSwap) const
 {
-	for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
-	{
-		uint32_t checksum = saveSlots[s].CalculateChecksum();
-		if (checksum == saveSlots[s].Checksum) return SaveFile::Types::PC;
-		if (checksum == Swap32(saveSlots[s].Checksum)) return SaveFile::Types::Nintendo64;
-	}
-
-	uint32_t checksum = globalData.CalculateChecksum();
-	if (checksum == globalData.Checksum) return SaveFile::Types::PC;
-	if (checksum == Swap32(globalData.Checksum)) return SaveFile::Types::Nintendo64;
-
-	return SaveFile::Types::NotValid;
+	return endianSwap ? Utils::Swap32(Checksum) : Checksum;
 }
+
+#pragma endregion
+
+#pragma region SaveFile
 
 SaveSlot* SaveFile::GetSaveSlot(const uint8_t slotIndex)
 {
@@ -55,8 +123,8 @@ SaveSlot* SaveFile::GetSaveSlot(const uint8_t slotIndex)
 
 	for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
 	{
-		if (saveSlots[s].Magic != SAVE_SLOT_MAGIC) continue;
-		if (saveSlots[s].SlotIndex == index + 1) return &saveSlots[s];
+		if (saveSlots[s].GetMagic() != SAVE_SLOT_MAGIC) continue;
+		if (saveSlots[s].GetSlotIndex() == index + 1) return &saveSlots[s];
 	}
 
 	return nullptr;
@@ -132,3 +200,5 @@ uint32_t SaveFile::CalculateChecksum(uint8_t* start, uint8_t* end)
 
 	return crc1 ^ crc2;
 }
+
+#pragma endregion

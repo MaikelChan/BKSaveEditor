@@ -12,7 +12,7 @@ SaveData::SaveData()
 
 	saveFile = nullptr;
 
-	currentFileType = SaveFile::Types::NotValid;
+	type = SaveData::Types::NotValid;
 }
 
 SaveData::~SaveData()
@@ -46,9 +46,9 @@ void SaveData::Load(const std::string filePath)
 	stream.read((char*)saveFile, sizeof(SaveFile));
 	stream.close();
 
-	SaveFile::Types type = saveFile->GetType();
+	SaveData::Types type = CalculateType(saveFile);
 
-	if (type == SaveFile::Types::NotValid)
+	if (type == SaveData::Types::NotValid)
 	{
 		delete saveFile;
 		throw std::runtime_error("The selected file is not a valid Banjo-Kazooie save file.");
@@ -58,9 +58,7 @@ void SaveData::Load(const std::string filePath)
 	ClearSaveFile();
 
 	SaveData::saveFile = saveFile;
-	currentFileType = type;
-
-	EndianSwap();
+	SaveData::type = type;
 }
 
 void SaveData::Save(const std::string filePath)
@@ -85,23 +83,23 @@ void SaveData::ClearSaveFile()
 	delete saveFile;
 	saveFile = nullptr;
 
-	currentFileType = SaveFile::Types::NotValid;
+	type = SaveData::Types::NotValid;
 }
 
-void SaveData::EndianSwap() const
+SaveData::Types SaveData::CalculateType(const SaveFile* saveFile)
 {
-	if (!IsSaveFileLoaded()) return;
-	if (currentFileType != SaveFile::Types::Nintendo64) return;
+	if (!saveFile) return SaveData::Types::NotValid;
 
-	for (int s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
+	for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
 	{
-		for (int t = 0; t < TOTAL_LEVEL_COUNT; t++)
-		{
-			saveFile->saveSlots[s].Times[t] = Swap16(saveFile->saveSlots[s].Times[t]);
-		}
-
-		saveFile->saveSlots[s].Checksum = Swap32(saveFile->saveSlots[s].Checksum);
+		uint32_t checksum = saveFile->saveSlots[s].CalculateChecksum();
+		if (checksum == saveFile->saveSlots[s].GetChecksum(false)) return SaveData::Types::PC;
+		if (checksum == saveFile->saveSlots[s].GetChecksum(true)) return SaveData::Types::Nintendo64;
 	}
 
-	saveFile->globalData.Checksum = Swap32(saveFile->globalData.Checksum);
+	uint32_t checksum = saveFile->globalData.CalculateChecksum();
+	if (checksum == saveFile->globalData.GetChecksum(false)) return SaveData::Types::PC;
+	if (checksum == saveFile->globalData.GetChecksum(true)) return SaveData::Types::Nintendo64;
+
+	return SaveData::Types::NotValid;
 }

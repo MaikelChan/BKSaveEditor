@@ -135,7 +135,7 @@ const bool levelHasNotes[TOTAL_LEVEL_COUNT]
 
 struct SaveSlot
 {
-public:
+private:
 	uint8_t Magic;
 	uint8_t SlotIndex;
 	uint8_t Jiggies[13];
@@ -149,92 +149,52 @@ public:
 	uint8_t Unk[0x2];
 	uint32_t Checksum;
 
-	inline uint32_t CalculateChecksum() const;
-	void UpdateChecksum();
-	bool IsValid() const;
+public:
+	uint32_t CalculateChecksum() const;
+	void UpdateChecksum(const bool endianSwap);
+	bool IsValid(const bool endianSwap) const;
 
-	inline bool GetFlag(const uint32_t mask) const
-	{
-		return 0; // (Flags & mask) != 0;
-	}
-
-	inline void SetFlag(const uint32_t mask, const bool value)
-	{
-		//if (value) Flags |= mask;
-		//else Flags &= ~mask;
-	}
-
-	inline bool GetHoneycomb(const uint8_t level, const uint8_t honeycomb) const
-	{
-		uint8_t index = levelHoneycombsIndices[level][honeycomb];
-		return (Honeycombs[(index - 1) / 8] & (1 << (index & 7))) != 0;
-	}
-
-	inline void SetHoneycomb(const uint8_t level, const uint8_t honeycomb, bool val)
-	{
-		uint8_t index = levelHoneycombsIndices[level][honeycomb];
-		if (val) Honeycombs[(index - 1) / 8] |= (1 << (index & 7));
-		else Honeycombs[(index - 1) / 8] &= ~(1 << (index & 7));
-	}
-
-	inline bool GetJiggy(const uint8_t level, const uint8_t jiggy)
-	{
-		uint8_t index = levelJiggiesIndices[level][jiggy];
-		return (Jiggies[(index - 1) / 8] & (1 << (index & 7))) != 0;
-	}
-
-	inline void SetJiggy(const uint8_t level, const uint8_t jiggy, bool val)
-	{
-		uint8_t index = levelJiggiesIndices[level][jiggy];
-		if (val) Jiggies[(index - 1) / 8] |= (1 << (index & 7));
-		else Jiggies[(index - 1) / 8] &= ~(1 << (index & 7));
-	}
-
-	inline uint8_t GetNotes(const uint8_t level)
-	{
-		if (!levelHasNotes[level]) return 0;
-
-		//uint8_t index = levelJiggiesIndices[level][jiggy];
-		//return (Jiggies[(index - 1) / 8] & (1 << (index & 7))) != 0;
-	}
-
-	inline bool GetPlayTime(const uint8_t level)
-	{
-		//uint8_t index = levelJiggiesIndices[level][jiggy];
-		return 0;// (Jiggies[(index - 1) / 8] & (1 << (index & 7))) != 0;
-	}
-
-	//inline uint8_t GetTotalStars()
+	//inline bool GetFlag(const uint32_t mask) const
 	//{
-	//	uint8_t count = 0;
-
-	//	for (int c = 0; c < COURSE_COUNT; c++)
-	//	{
-	//		for (int st = 0; st < courseStarCount[c]; st++)
-	//		{
-	//			if ((CourseData[c] & (1 << st)) != 0) count++;
-	//		}
-	//	}
-
-	//	if ((Flags & SAVE_FLAG_COLLECTED_TOAD_STAR_1) != 0) count++;
-	//	if ((Flags & SAVE_FLAG_COLLECTED_TOAD_STAR_2) != 0) count++;
-	//	if ((Flags & SAVE_FLAG_COLLECTED_TOAD_STAR_3) != 0) count++;
-	//	if ((Flags & SAVE_FLAG_COLLECTED_MIPS_STAR_1) != 0) count++;
-	//	if ((Flags & SAVE_FLAG_COLLECTED_MIPS_STAR_2) != 0) count++;
-
-	//	return count;
+	//	return 0; // (Flags & mask) != 0;
 	//}
+
+	//inline void SetFlag(const uint32_t mask, const bool value)
+	//{
+	//	//if (value) Flags |= mask;
+	//	//else Flags &= ~mask;
+	//}
+
+	uint8_t GetMagic() const;
+	uint8_t GetSlotIndex() const;
+
+	bool GetHoneycomb(const uint8_t level, const uint8_t honeycomb) const;
+	void SetHoneycomb(const uint8_t level, const uint8_t honeycomb, bool value);
+
+	bool GetJiggy(const uint8_t level, const uint8_t jiggy) const;
+	void SetJiggy(const uint8_t level, const uint8_t jiggy, bool value);
+
+	uint8_t GetNotes(const uint8_t level) const;
+	void SetNotes(const uint8_t level, const uint8_t value) const;
+
+	uint16_t GetPlayTime(const uint8_t level, const bool endianSwap) const;
+	void SetPlayTime(const uint8_t level, const uint16_t value, const bool endianSwap);
+
+	uint32_t GetChecksum(const bool endianSwap) const;
 };
 
 struct GlobalData
 {
-public:
+private:
 	uint8_t Unk[0x1C];
 	uint32_t Checksum;
 
-	inline uint32_t CalculateChecksum() const;
-	void UpdateChecksum();
-	bool IsValid() const;
+public:
+	uint32_t CalculateChecksum() const;
+	void UpdateChecksum(const bool endianSwap);
+	bool IsValid(const bool endianSwap) const;
+
+	uint32_t GetChecksum(const bool endianSwap) const;
 };
 
 struct SaveFile
@@ -242,9 +202,6 @@ struct SaveFile
 public:
 	SaveSlot saveSlots[TOTAL_NUM_SAVE_SLOTS] = {};
 	GlobalData globalData = {};
-
-	enum class Types { NotValid, PC, Nintendo64 };
-	Types GetType() const;
 
 	SaveSlot* GetSaveSlot(const uint8_t slotIndex);
 

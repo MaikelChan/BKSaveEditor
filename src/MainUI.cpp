@@ -222,16 +222,16 @@ void MainUI::LoadingProcess() const
 		SaveSlot* saveSlot = saveData.GetSaveFile()->GetSaveSlot(s);
 		if (!saveSlot) continue;
 
-		if (!saveSlot->IsValid())
+		if (!saveSlot->IsValid(saveData.NeedsEndianSwap()))
 		{
-			saveSlot->UpdateChecksum();
+			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 			message += std::string("Save ") + tabNames[s] + " is corrupted. Data might be completely wrong.\n\n";
 		}
 	}
 
-	if (!saveData.GetSaveFile()->globalData.IsValid())
+	if (!saveData.GetSaveFile()->globalData.IsValid(saveData.NeedsEndianSwap()))
 	{
-		saveData.GetSaveFile()->globalData.UpdateChecksum();
+		saveData.GetSaveFile()->globalData.UpdateChecksum(saveData.NeedsEndianSwap());
 		message += "Global data is corrupted. Data might be completely wrong.\n\n";
 	}
 
@@ -247,7 +247,6 @@ void MainUI::Save()
 	if (!saveData.IsSaveFileLoaded()) return;
 
 	SavingProcess();
-	//EndianSwap();
 
 	try
 	{
@@ -258,8 +257,6 @@ void MainUI::Save()
 		popupDialog->SetMessage(MessageTypes::Error, "Error", error.what());
 		popupDialog->SetIsVisible(true);
 	}
-
-	//EndianSwap();
 }
 
 void MainUI::SavingProcess() const

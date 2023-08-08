@@ -29,7 +29,8 @@ void SaveEditorUI::DoRender()
 	{
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
-		SaveFile* saveFile = mainUI->GetSaveFile();
+		const SaveData& saveData = mainUI->GetSaveData();
+		SaveFile* saveFile = (&saveData)->GetSaveFile();
 
 		if (saveFile && ImGui::BeginTabBar("Save Slots", tab_bar_flags))
 		{
@@ -45,7 +46,7 @@ void SaveEditorUI::DoRender()
 					}
 					else
 					{
-						PrintChecksum(saveSlot->Checksum);
+						PrintChecksum(saveSlot->GetChecksum(saveData.NeedsEndianSwap()));
 
 						ImGui::SeparatorText("Levels");
 
@@ -84,7 +85,7 @@ void SaveEditorUI::DoRender()
 									if (ImGui::Checkbox("##Jiggy", &value))
 									{
 										saveSlot->SetJiggy(l, j, value);
-										saveSlot->UpdateChecksum();
+										saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 									}
 
 									if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
@@ -104,7 +105,7 @@ void SaveEditorUI::DoRender()
 									if (ImGui::Checkbox("##Honeycomb", &value))
 									{
 										saveSlot->SetHoneycomb(l, h, value);
-										saveSlot->UpdateChecksum();
+										saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 									}
 
 									if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
@@ -128,9 +129,11 @@ void SaveEditorUI::DoRender()
 
 								ImGui::TableSetColumnIndex(5);
 
-								if (ImGui::InputScalar("##Play Time", ImGuiDataType_U16, &saveSlot->Times[levelIndices[l]], NULL, NULL, "%u"))
+								uint16_t time = saveSlot->GetPlayTime(l, saveData.NeedsEndianSwap());
+								if (ImGui::InputScalar("##Play Time", ImGuiDataType_U16, &time, NULL, NULL, "%u"))
 								{
-									saveSlot->UpdateChecksum();
+									saveSlot->SetPlayTime(l, time, saveData.NeedsEndianSwap());
+									saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 								}
 
 								ImGui::PopID();
