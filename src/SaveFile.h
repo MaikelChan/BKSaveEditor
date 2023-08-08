@@ -130,6 +130,11 @@ const bool levelHasNotes[TOTAL_LEVEL_COUNT]
 	false, false, true, true, true, true, true, true, true, true, true
 };
 
+const int8_t levelNotesBitOffsets[TOTAL_LEVEL_COUNT]
+{
+	-1, -1, 56, 49, 42, 35, 28, 21, 0, 7, 14
+};
+
 #pragma endregion
 
 #pragma region Items Held

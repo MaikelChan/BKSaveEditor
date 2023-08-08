@@ -60,13 +60,26 @@ uint8_t SaveSlot::GetNotes(const uint8_t level) const
 {
 	if (!levelHasNotes[level]) return 0;
 
-	//uint8_t index = levelJiggiesIndices[level][jiggy];
-	//return (Jiggies[(index - 1) / 8] & (1 << (index & 7))) != 0;
+	const uint64_t* noteValuesPtr = reinterpret_cast<const uint64_t*>(NoteScores);
+	const uint64_t noteValues = Utils::Swap64(*noteValuesPtr); // TODO: Would this change on a PC version save file?
+	const int8_t bitOffset = levelNotesBitOffsets[level];
+
+	return (noteValues >> bitOffset) & 0x7F;
 }
 
 void SaveSlot::SetNotes(const uint8_t level, const uint8_t value) const
 {
+	if (!levelHasNotes[level]) return;
 
+	uint64_t* noteValuesPtr = const_cast<uint64_t*>(reinterpret_cast<const uint64_t*>(NoteScores));
+	uint64_t noteValues = Utils::Swap64(*noteValuesPtr); // TODO: Would this change on a PC version save file?
+	const int8_t bitOffset = levelNotesBitOffsets[level];
+
+	const uint64_t mask = static_cast<uint64_t>(0x7f) << bitOffset;
+	noteValues &= ~mask;
+	noteValues |= static_cast<uint64_t>(value & 0x7f) << bitOffset;
+
+	*noteValuesPtr = Utils::Swap64(noteValues);
 }
 
 uint16_t SaveSlot::GetPlayTime(const uint8_t level, const bool endianSwap) const

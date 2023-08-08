@@ -171,10 +171,12 @@ void SaveEditorUI::DoRender()
 
 								if (levelHasNotes[l])
 								{
-									uint8_t noteValue = 69;
+									uint8_t noteValue = saveSlot->GetNotes(l);
 									if (ImGui::InputScalar("##Notes Score", ImGuiDataType_U8, &noteValue, NULL, NULL, "%u"))
 									{
-										//saveFile->saveSlots[s][showBackup].UpdateChecksum();
+										if (noteValue > MAX_NOTES_PER_LEVEL) noteValue = MAX_NOTES_PER_LEVEL;
+										saveSlot->SetNotes(l, noteValue);
+										saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 									}
 								}
 

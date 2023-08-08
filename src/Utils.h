@@ -15,6 +15,11 @@ struct Utils
 		return (value << 24) | ((value & 0xff00) << 8) | ((value & 0xff0000) >> 8) | (value >> 24);
 	}
 
+	inline static uint64_t Swap64(const uint64_t value)
+	{
+		return (value << 56) | ((value & 0xff00) << 40) | ((value & 0xff0000) << 24) | ((value & 0xff000000) << 8) | ((value & 0xff00000000) >> 8) | ((value & 0xff0000000000) >> 24) | ((value & 0xff000000000000) >> 40) | (value >> 56);
+	}
+
 	inline static std::string GetTimeString(const uint16_t value)
 	{
 		uint8_t h = value / 3600;
