@@ -17,7 +17,7 @@ void SaveSlot::UpdateChecksum(const bool endianSwap)
 bool SaveSlot::IsValid(const bool endianSwap) const
 {
 	const uint32_t checksum = CalculateChecksum();
-	return Checksum == endianSwap ? Utils::Swap32(checksum) : checksum;
+	return Checksum == (endianSwap ? Utils::Swap32(checksum) : checksum);
 }
 
 uint8_t SaveSlot::GetMagic() const
@@ -113,7 +113,7 @@ void GlobalData::UpdateChecksum(const bool endianSwap)
 bool GlobalData::IsValid(const bool endianSwap) const
 {
 	const uint32_t checksum = CalculateChecksum();
-	return Checksum == endianSwap ? Utils::Swap32(checksum) : checksum;
+	return Checksum == (endianSwap ? Utils::Swap32(checksum) : checksum);
 }
 
 uint32_t GlobalData::GetChecksum(const bool endianSwap) const
