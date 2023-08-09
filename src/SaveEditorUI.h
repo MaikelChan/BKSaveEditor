@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include "BaseUI.h"
+#include "SaveData.h"
 class MainUI;
 
 #define CONFIG_FILE_NAME "config.json"
@@ -27,7 +28,9 @@ protected:
 	virtual void DoRender() override;
 
 private:
-	bool CheckboxSaveFlags(const char* label, const uint8_t saveSlot, const uint8_t copyIndex, const uint32_t flag) const;
-	bool CheckboxCourseData(const char* label, const uint8_t saveSlot, const uint8_t copyIndex, const uint8_t courseIndex, const uint8_t flag) const;
+	bool CheckboxProgressFlags(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag) const;
 	void PrintChecksum(const uint32_t checksum) const;
+	void PrintHeader(const char* label) const;
+	void RenderMainSection(const SaveData& saveData, SaveSlot* saveSlot);
+	void RenderProgressFlagsSection(const SaveData& saveData, SaveSlot* saveSlot);
 };

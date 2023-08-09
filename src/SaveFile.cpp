@@ -93,6 +93,19 @@ void SaveSlot::SetPlayTime(const uint8_t level, const uint16_t value, const bool
 	Times[levelIndices[level]] = endianSwap ? Utils::Swap16(value) : value;
 }
 
+bool SaveSlot::GetProgressFlag(const ProgressFlags flag) const
+{
+	const uint8_t index = static_cast<uint8_t>(flag);
+	return Flags[index / 8] & (1 << (index & 7));
+}
+
+void SaveSlot::SetProgressFlag(const ProgressFlags flag, const bool value)
+{
+	const uint8_t index = static_cast<uint8_t>(flag);
+	if (value) Flags[index / 8] |= (1 << (index & 7));
+	else Flags[index / 8] &= ~(1 << (index & 7));
+}
+
 uint8_t SaveSlot::GetHeldItem(const HeldItems heldItem) const
 {
 	return Items[static_cast<int>(heldItem)];
