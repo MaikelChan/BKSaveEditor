@@ -106,6 +106,29 @@ void SaveSlot::SetProgressFlag(const ProgressFlags flag, const bool value)
 	else Flags[index / 8] &= ~(1 << (index & 7));
 }
 
+uint8_t SaveSlot::GetProgressValue(const ProgressFlags flag, const uint8_t bitsCount) const
+{
+	uint8_t value = 0;
+	const uint8_t index = static_cast<uint8_t>(flag);
+
+	for (uint8_t i = 0; i < bitsCount; i++)
+	{
+		value |= (GetProgressFlag(static_cast<ProgressFlags>(index + i)) << i);
+	}
+
+	return value;
+}
+
+void SaveSlot::SetProgressValue(const ProgressFlags flag, const uint8_t bitsCount, const uint8_t value)
+{
+	const uint8_t index = static_cast<uint8_t>(flag);
+
+	for (uint8_t i = 0; i < bitsCount; i++)
+	{
+		SetProgressFlag(static_cast<ProgressFlags>(index + i), (value >> i) & 1);
+	}
+}
+
 uint8_t SaveSlot::GetHeldItem(const HeldItems heldItem) const
 {
 	return Items[static_cast<int>(heldItem)];
