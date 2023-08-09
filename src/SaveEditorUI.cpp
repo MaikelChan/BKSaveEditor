@@ -423,6 +423,7 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 	{
 		uint8_t totalJiggies = 0;
 		uint8_t totalHoneycombs = 0;
+		uint16_t totalNotes = 0;
 		uint32_t totalPlayTime = 0;
 
 		ImGui::TableSetupScrollFreeze(0, 1);
@@ -502,6 +503,8 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 					saveSlot->SetNotes(l, noteValue);
 					saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 				}
+
+				totalNotes += noteValue;
 			}
 
 			ImGui::TableSetColumnIndex(5);
@@ -538,7 +541,7 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 		ImGui::Text("%u", totalHoneycombs);
 
 		ImGui::TableSetColumnIndex(4);
-		ImGui::Text("");
+		ImGui::Text("%u", totalNotes);
 
 		ImGui::TableSetColumnIndex(5);
 		ImGui::Text("%u", totalPlayTime);
