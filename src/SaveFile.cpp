@@ -139,6 +139,52 @@ void SaveSlot::SetHeldItem(const HeldItems heldItem, const uint8_t value)
 	Items[static_cast<int>(heldItem)] = value;
 }
 
+bool SaveSlot::GetLearnedAbility(const Abilities ability) const
+{
+	const uint8_t index = static_cast<uint8_t>(ability);
+
+	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(LearnedAbilities));
+	uint32_t abilityValues = Utils::Swap32(*abilityValuesPtr); // TODO: Would this change on a PC version save file?
+
+	return abilityValues & (1 << index);
+}
+
+void SaveSlot::SetLearnedAbility(const Abilities ability, const bool value)
+{
+	const uint8_t index = static_cast<uint8_t>(ability);
+
+	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(LearnedAbilities));
+	uint32_t abilityValues = Utils::Swap32(*abilityValuesPtr); // TODO: Would this change on a PC version save file?
+
+	if (value) abilityValues |= (1 << index);
+	else abilityValues &= ~(1 << index);
+
+	*abilityValuesPtr = Utils::Swap32(abilityValues);
+}
+
+bool SaveSlot::GetUsedAbility(const Abilities ability) const
+{
+	const uint8_t index = static_cast<uint8_t>(ability);
+
+	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(UsedAbilities));
+	uint32_t abilityValues = Utils::Swap32(*abilityValuesPtr); // TODO: Would this change on a PC version save file?
+
+	return abilityValues & (1 << index);
+}
+
+void SaveSlot::SetUsedAbility(const Abilities ability, const bool value)
+{
+	const uint8_t index = static_cast<uint8_t>(ability);
+
+	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(UsedAbilities));
+	uint32_t abilityValues = Utils::Swap32(*abilityValuesPtr); // TODO: Would this change on a PC version save file?
+
+	if (value) abilityValues |= (1 << index);
+	else abilityValues &= ~(1 << index);
+
+	*abilityValuesPtr = Utils::Swap32(abilityValues);
+}
+
 uint32_t SaveSlot::GetChecksum(const bool endianSwap) const
 {
 	return endianSwap ? Utils::Swap32(Checksum) : Checksum;

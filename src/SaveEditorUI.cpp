@@ -328,91 +328,114 @@ void SaveEditorUI::DoRender()
 	ImGui::End();
 }
 
-bool SaveEditorUI::CheckboxProgressFlags(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag) const
-{
-	bool value = saveSlot->GetProgressFlag(flag);
-
-	if (ImGui::Checkbox(label, &value))
-	{
-		saveSlot->SetProgressFlag(flag, value);
-		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-	}
-
-	return value;
-}
-
-uint8_t SaveEditorUI::InputProgressFlags(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag, const uint8_t bitsCount, const uint8_t maxValue) const
-{
-	uint8_t value = saveSlot->GetProgressValue(flag, bitsCount);
-
-	ImGui::SetNextItemWidth(28);
-	if (ImGui::InputScalar(label, ImGuiDataType_U8, &value, NULL, NULL, "%u"))
-	{
-		if (value > maxValue) value = maxValue;
-		saveSlot->SetProgressValue(flag, bitsCount, value);
-		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-	}
-
-	return value;
-}
-
-void SaveEditorUI::PrintChecksum(const uint32_t checksum) const
-{
-	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - ImGui::CalcTextSize("Checksum: 0xFFFFFFFF").x - 32);
-	ImGui::TextColored(ImVec4(0.7f, 0.5f, 0.6f, 1.0f), "Checksum: 0x%x", checksum);
-}
-
-void SaveEditorUI::PrintHeader(const char* label) const
-{
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.5f, 0.6f, 1.0f));
-	ImGui::SeparatorText(label);
-	ImGui::PopStyleColor();
-}
-
 void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlot)
 {
 	if (!ImGui::BeginTabItem("Main")) return;
 
-	ImGui::SeparatorText("Held Items");
-
-	uint8_t mumboTokens = saveSlot->GetHeldItem(HeldItems::MumboTokens);
-	if (ImGui::InputScalar("Mumbo Tokens", ImGuiDataType_U8, &mumboTokens, NULL, NULL, "%u"))
+	if (ImGui::BeginTable("ItemsAbilitiesTable", 2, 0))
 	{
-		if (mumboTokens > MAX_MUMBO_TOKENS) mumboTokens = MAX_MUMBO_TOKENS;
-		saveSlot->SetHeldItem(HeldItems::MumboTokens, mumboTokens);
-		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-	}
+		ImGui::TableSetupColumn("Column1", ImGuiTableColumnFlags_WidthStretch, 0.25f);
+		ImGui::TableSetupColumn("Column2", ImGuiTableColumnFlags_WidthStretch);
 
-	uint8_t eggs = saveSlot->GetHeldItem(HeldItems::Eggs);
-	if (ImGui::InputScalar("Eggs", ImGuiDataType_U8, &eggs, NULL, NULL, "%u"))
-	{
-		if (eggs > MAX_EGGS) eggs = MAX_EGGS;
-		saveSlot->SetHeldItem(HeldItems::Eggs, eggs);
-		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-	}
+		ImGui::TableNextRow();
 
-	uint8_t redFeathers = saveSlot->GetHeldItem(HeldItems::RedFeathers);
-	if (ImGui::InputScalar("Red Feathers", ImGuiDataType_U8, &redFeathers, NULL, NULL, "%u"))
-	{
-		if (redFeathers > MAX_RED_FEATHERS) redFeathers = MAX_RED_FEATHERS;
-		saveSlot->SetHeldItem(HeldItems::RedFeathers, redFeathers);
-		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-	}
+		ImGui::TableSetColumnIndex(0);
 
-	uint8_t goldFeathers = saveSlot->GetHeldItem(HeldItems::GoldFeathers);
-	if (ImGui::InputScalar("Gold Feathers", ImGuiDataType_U8, &goldFeathers, NULL, NULL, "%u"))
-	{
-		if (goldFeathers > MAX_GOLD_FEATHERS) goldFeathers = MAX_GOLD_FEATHERS;
-		saveSlot->SetHeldItem(HeldItems::GoldFeathers, goldFeathers);
-		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-	}
+		ImGui::SeparatorText("Held Items");
 
-	uint8_t jiggies = saveSlot->GetHeldItem(HeldItems::Jiggies);
-	if (ImGui::InputScalar("Jiggies", ImGuiDataType_U8, &jiggies, NULL, NULL, "%u"))
-	{
-		if (jiggies > JIGGIES_COUNT) jiggies = JIGGIES_COUNT;
-		saveSlot->SetHeldItem(HeldItems::Jiggies, jiggies);
-		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+		ImGui::PushItemWidth(40);
+
+		uint8_t mumboTokens = saveSlot->GetHeldItem(HeldItems::MumboTokens);
+		if (ImGui::InputScalar("Mumbo Tokens", ImGuiDataType_U8, &mumboTokens, NULL, NULL, "%u"))
+		{
+			if (mumboTokens > MAX_MUMBO_TOKENS) mumboTokens = MAX_MUMBO_TOKENS;
+			saveSlot->SetHeldItem(HeldItems::MumboTokens, mumboTokens);
+			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+		}
+
+		uint8_t eggs = saveSlot->GetHeldItem(HeldItems::Eggs);
+		if (ImGui::InputScalar("Eggs", ImGuiDataType_U8, &eggs, NULL, NULL, "%u"))
+		{
+			if (eggs > MAX_EGGS) eggs = MAX_EGGS;
+			saveSlot->SetHeldItem(HeldItems::Eggs, eggs);
+			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+		}
+
+		uint8_t redFeathers = saveSlot->GetHeldItem(HeldItems::RedFeathers);
+		if (ImGui::InputScalar("Red Feathers", ImGuiDataType_U8, &redFeathers, NULL, NULL, "%u"))
+		{
+			if (redFeathers > MAX_RED_FEATHERS) redFeathers = MAX_RED_FEATHERS;
+			saveSlot->SetHeldItem(HeldItems::RedFeathers, redFeathers);
+			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+		}
+
+		uint8_t goldFeathers = saveSlot->GetHeldItem(HeldItems::GoldFeathers);
+		if (ImGui::InputScalar("Gold Feathers", ImGuiDataType_U8, &goldFeathers, NULL, NULL, "%u"))
+		{
+			if (goldFeathers > MAX_GOLD_FEATHERS) goldFeathers = MAX_GOLD_FEATHERS;
+			saveSlot->SetHeldItem(HeldItems::GoldFeathers, goldFeathers);
+			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+		}
+
+		uint8_t jiggies = saveSlot->GetHeldItem(HeldItems::Jiggies);
+		if (ImGui::InputScalar("Jiggies", ImGuiDataType_U8, &jiggies, NULL, NULL, "%u"))
+		{
+			if (jiggies > JIGGIES_COUNT) jiggies = JIGGIES_COUNT;
+			saveSlot->SetHeldItem(HeldItems::Jiggies, jiggies);
+			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+		}
+
+		ImGui::PopItemWidth();
+
+		ImGui::TableSetColumnIndex(1);
+
+		ImGui::SeparatorText("Learned / Used Abilities");
+
+		if (ImGui::BeginTable("AbilitiesTable", 4, 0))
+		{
+			ImGui::TableSetupColumn("Column1", ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn("Column2", ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn("Column3", ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn("Column4", ImGuiTableColumnFlags_WidthStretch);
+
+			ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+
+			CheckboxAbility(saveData, saveSlot, "Barge", Abilities::ABILITY_0_BARGE);
+			CheckboxAbility(saveData, saveSlot, "Beak Bomb", Abilities::ABILITY_1_BEAK_BOMB);
+			CheckboxAbility(saveData, saveSlot, "Beak Buster", Abilities::ABILITY_2_BEAK_BUSTER);
+			CheckboxAbility(saveData, saveSlot, "Camera Control", Abilities::ABILITY_3_CAMERA_CONTROL);
+			CheckboxAbility(saveData, saveSlot, "Claw Swipe", Abilities::ABILITY_4_CLAW_SWIPE);
+
+			ImGui::TableSetColumnIndex(1);
+
+			CheckboxAbility(saveData, saveSlot, "Climb", Abilities::ABILITY_5_CLIMB);
+			CheckboxAbility(saveData, saveSlot, "Eggs", Abilities::ABILITY_6_EGGS);
+			CheckboxAbility(saveData, saveSlot, "Feathery Flap", Abilities::ABILITY_7_FEATHERY_FLAP);
+			CheckboxAbility(saveData, saveSlot, "Flap Flip", Abilities::ABILITY_8_FLAP_FLIP);
+			CheckboxAbility(saveData, saveSlot, "Flight", Abilities::ABILITY_9_FLIGHT);
+
+			ImGui::TableSetColumnIndex(2);
+
+			CheckboxAbility(saveData, saveSlot, "Jump Higher", Abilities::ABILITY_A_HOLD_A_JUMP_HIGHER);
+			CheckboxAbility(saveData, saveSlot, "Ratatat Rap", Abilities::ABILITY_B_RATATAT_RAP);
+			CheckboxAbility(saveData, saveSlot, "Roll", Abilities::ABILITY_C_ROLL);
+			CheckboxAbility(saveData, saveSlot, "Shock Jump", Abilities::ABILITY_D_SHOCK_JUMP);
+			CheckboxAbility(saveData, saveSlot, "Wading Boots", Abilities::ABILITY_E_WADING_BOOTS);
+
+			ImGui::TableSetColumnIndex(3);
+
+			CheckboxAbility(saveData, saveSlot, "Dive", Abilities::ABILITY_F_DIVE);
+			CheckboxAbility(saveData, saveSlot, "Talon Trot", Abilities::ABILITY_10_TALON_TROT);
+			CheckboxAbility(saveData, saveSlot, "Turbo Talon", Abilities::ABILITY_11_TURBO_TALON);
+			CheckboxAbility(saveData, saveSlot, "Wonderwing", Abilities::ABILITY_12_WONDERWING);
+			CheckboxAbility(saveData, saveSlot, "Open Notedoors", Abilities::ABILITY_13_1ST_NOTEDOOR);
+
+			ImGui::EndTable();
+		}
+
+		ImGui::EndTable();
 	}
 
 	ImGui::SeparatorText("Levels");
@@ -819,4 +842,68 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 	}
 
 	ImGui::EndTabItem();
+}
+
+bool SaveEditorUI::CheckboxProgressFlags(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag) const
+{
+	bool value = saveSlot->GetProgressFlag(flag);
+
+	if (ImGui::Checkbox(label, &value))
+	{
+		saveSlot->SetProgressFlag(flag, value);
+		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+
+	return value;
+}
+
+uint8_t SaveEditorUI::InputProgressFlags(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag, const uint8_t bitsCount, const uint8_t maxValue) const
+{
+	uint8_t value = saveSlot->GetProgressValue(flag, bitsCount);
+
+	ImGui::SetNextItemWidth(28);
+	if (ImGui::InputScalar(label, ImGuiDataType_U8, &value, NULL, NULL, "%u"))
+	{
+		if (value > maxValue) value = maxValue;
+		saveSlot->SetProgressValue(flag, bitsCount, value);
+		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+
+	return value;
+}
+
+void SaveEditorUI::CheckboxAbility(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const Abilities ability) const
+{
+	bool learned = saveSlot->GetLearnedAbility(ability);
+	bool used = saveSlot->GetUsedAbility(ability);
+
+	char learnedId[64];
+	snprintf(learnedId, 64, "##%s Learned", label);
+
+	if (ImGui::Checkbox(learnedId, &learned))
+	{
+		saveSlot->SetLearnedAbility(ability, learned);
+		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Checkbox(label, &used))
+	{
+		saveSlot->SetUsedAbility(ability, used);
+		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+}
+
+void SaveEditorUI::PrintChecksum(const uint32_t checksum) const
+{
+	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - ImGui::CalcTextSize("Checksum: 0xFFFFFFFF").x - 32);
+	ImGui::TextColored(ImVec4(0.7f, 0.5f, 0.6f, 1.0f), "Checksum: 0x%x", checksum);
+}
+
+void SaveEditorUI::PrintHeader(const char* label) const
+{
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.5f, 0.6f, 1.0f));
+	ImGui::SeparatorText(label);
+	ImGui::PopStyleColor();
 }
