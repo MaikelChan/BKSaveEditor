@@ -402,6 +402,28 @@ enum class Abilities
 
 #pragma endregion
 
+#pragma region Stop_N_Swop
+
+enum class SnS
+{
+	COLLECTED_ICE_KEY = 18,
+	COLLECTED_CYAN_EGG,
+	COLLECTED_PINK_EGG,
+	COLLECTED_BLUE_EGG,
+	COLLECTED_GREEN_EGG,
+	COLLECTED_RED_EGG,
+	COLLECTED_YELLOW_EGG,
+	UNLOCKED_ICE_KEY,
+	UNLOCKED_CYAN_EGG,
+	UNLOCKED_PINK_EGG,
+	UNLOCKED_BLUE_EGG,
+	UNLOCKED_GREEN_EGG,
+	UNLOCKED_RED_EGG,
+	UNLOCKED_YELLOW_EGG,
+};
+
+#pragma endregion
+
 struct SaveSlot
 {
 private:
@@ -471,7 +493,8 @@ public:
 struct GlobalData
 {
 private:
-	uint8_t Unk[0x1C];
+	uint32_t SnsItems;
+	uint8_t Padding[0x18];
 	uint32_t Checksum;
 
 public:
@@ -479,16 +502,22 @@ public:
 	void UpdateChecksum(const bool endianSwap);
 	bool IsValid(const bool endianSwap) const;
 
+	bool GetSnsItem(const SnS snsItem) const;
+	void SetSnsItem(const SnS snsItem, const bool value);
+
 	uint32_t GetChecksum(const bool endianSwap) const;
 };
 
 struct SaveFile
 {
-public:
+private:
 	SaveSlot saveSlots[TOTAL_NUM_SAVE_SLOTS] = {};
 	GlobalData globalData = {};
 
+public:
+	SaveSlot* GetRawSaveSlot(const uint8_t slotIndex);
 	SaveSlot* GetSaveSlot(const uint8_t slotIndex);
+	GlobalData* GetGlobalData();
 
 	static uint32_t TransformSeed(uint64_t* seed);
 	static uint32_t CalculateChecksum(uint8_t* start, uint8_t* end);

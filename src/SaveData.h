@@ -27,5 +27,5 @@ public:
 private:
 	void ClearSaveFile();
 
-	static Types CalculateType(const SaveFile* saveFile);
+	static Types CalculateType(SaveFile* saveFile);
 };

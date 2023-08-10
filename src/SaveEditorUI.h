@@ -9,9 +9,9 @@ class MainUI;
 
 const char* const tabNames[]
 {
-	"Slot 1 (Banjo Sleeping)",
-	"Slot 2 (Banjo Cooking)",
-	"Slot 3 (Banjo Playing)"
+	"Game 1 (Banjo Sleeping)",
+	"Game 2 (Banjo Cooking)",
+	"Game 3 (Banjo Playing)"
 };
 
 class SaveEditorUI : public BaseUI
@@ -34,6 +34,7 @@ private:
 	bool CheckboxProgressFlags(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag) const;
 	uint8_t InputProgressFlags(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag, const uint8_t bitsCount, const uint8_t maxValue) const;
 	void CheckboxAbility(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const Abilities ability) const;
+	void CheckboxSnS(const SaveData& saveData, const char* label, const SnS unlockedSnsItem, const SnS collectedSnsItem) const;
 	void PrintChecksum(const uint32_t checksum) const;
 	void PrintHeader(const char* label) const;
 };

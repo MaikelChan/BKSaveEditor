@@ -229,9 +229,9 @@ void MainUI::LoadingProcess() const
 		}
 	}
 
-	if (!saveData.GetSaveFile()->globalData.IsValid(saveData.NeedsEndianSwap()))
+	if (!saveData.GetSaveFile()->GetGlobalData()->IsValid(saveData.NeedsEndianSwap()))
 	{
-		saveData.GetSaveFile()->globalData.UpdateChecksum(saveData.NeedsEndianSwap());
+		saveData.GetSaveFile()->GetGlobalData()->UpdateChecksum(saveData.NeedsEndianSwap());
 		message += "Global data is corrupted. Data might be completely wrong.\n\n";
 	}
 

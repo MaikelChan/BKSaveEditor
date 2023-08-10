@@ -61,10 +61,9 @@ uint8_t SaveSlot::GetNotes(const uint8_t level) const
 	if (!levelHasNotes[level]) return 0;
 
 	const uint64_t* noteValuesPtr = reinterpret_cast<const uint64_t*>(NoteScores);
-	const uint64_t noteValues = Utils::Swap64(*noteValuesPtr); // TODO: Would this change on a PC version save file?
 	const int8_t bitOffset = levelNotesBitOffsets[level];
 
-	return (noteValues >> bitOffset) & 0x7F;
+	return (Utils::Swap64(*noteValuesPtr) >> bitOffset) & 0x7F;
 }
 
 void SaveSlot::SetNotes(const uint8_t level, const uint8_t value) const
@@ -72,14 +71,11 @@ void SaveSlot::SetNotes(const uint8_t level, const uint8_t value) const
 	if (!levelHasNotes[level]) return;
 
 	uint64_t* noteValuesPtr = const_cast<uint64_t*>(reinterpret_cast<const uint64_t*>(NoteScores));
-	uint64_t noteValues = Utils::Swap64(*noteValuesPtr); // TODO: Would this change on a PC version save file?
 	const int8_t bitOffset = levelNotesBitOffsets[level];
 
 	const uint64_t mask = static_cast<uint64_t>(0x7f) << bitOffset;
-	noteValues &= ~mask;
-	noteValues |= static_cast<uint64_t>(value & 0x7f) << bitOffset;
-
-	*noteValuesPtr = Utils::Swap64(noteValues);
+	*noteValuesPtr &= Utils::Swap64(~mask);
+	*noteValuesPtr |= Utils::Swap64(static_cast<uint64_t>(value & 0x7f) << bitOffset);
 }
 
 uint16_t SaveSlot::GetPlayTime(const uint8_t level, const bool endianSwap) const
@@ -142,47 +138,35 @@ void SaveSlot::SetHeldItem(const HeldItems heldItem, const uint8_t value)
 bool SaveSlot::GetLearnedAbility(const Abilities ability) const
 {
 	const uint8_t index = static_cast<uint8_t>(ability);
-
 	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(LearnedAbilities));
-	uint32_t abilityValues = Utils::Swap32(*abilityValuesPtr); // TODO: Would this change on a PC version save file?
 
-	return abilityValues & (1 << index);
+	return Utils::Swap32(*abilityValuesPtr) & (1 << index);
 }
 
 void SaveSlot::SetLearnedAbility(const Abilities ability, const bool value)
 {
 	const uint8_t index = static_cast<uint8_t>(ability);
-
 	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(LearnedAbilities));
-	uint32_t abilityValues = Utils::Swap32(*abilityValuesPtr); // TODO: Would this change on a PC version save file?
 
-	if (value) abilityValues |= (1 << index);
-	else abilityValues &= ~(1 << index);
-
-	*abilityValuesPtr = Utils::Swap32(abilityValues);
+	if (value) *abilityValuesPtr |= Utils::Swap32(1 << index);
+	else *abilityValuesPtr &= Utils::Swap32(~(1 << index));
 }
 
 bool SaveSlot::GetUsedAbility(const Abilities ability) const
 {
 	const uint8_t index = static_cast<uint8_t>(ability);
-
 	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(UsedAbilities));
-	uint32_t abilityValues = Utils::Swap32(*abilityValuesPtr); // TODO: Would this change on a PC version save file?
 
-	return abilityValues & (1 << index);
+	return Utils::Swap32(*abilityValuesPtr) & (1 << index);
 }
 
 void SaveSlot::SetUsedAbility(const Abilities ability, const bool value)
 {
 	const uint8_t index = static_cast<uint8_t>(ability);
-
 	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(UsedAbilities));
-	uint32_t abilityValues = Utils::Swap32(*abilityValuesPtr); // TODO: Would this change on a PC version save file?
 
-	if (value) abilityValues |= (1 << index);
-	else abilityValues &= ~(1 << index);
-
-	*abilityValuesPtr = Utils::Swap32(abilityValues);
+	if (value) *abilityValuesPtr |= Utils::Swap32(1 << index);
+	else *abilityValuesPtr &= Utils::Swap32(~(1 << index));
 }
 
 uint32_t SaveSlot::GetChecksum(const bool endianSwap) const
@@ -196,7 +180,7 @@ uint32_t SaveSlot::GetChecksum(const bool endianSwap) const
 
 uint32_t GlobalData::CalculateChecksum() const
 {
-	return SaveFile::CalculateChecksum((uint8_t*)&Unk, (uint8_t*)&Checksum);
+	return SaveFile::CalculateChecksum((uint8_t*)&SnsItems, (uint8_t*)&Checksum);
 }
 
 void GlobalData::UpdateChecksum(const bool endianSwap)
@@ -211,6 +195,20 @@ bool GlobalData::IsValid(const bool endianSwap) const
 	return Checksum == (endianSwap ? Utils::Swap32(checksum) : checksum);
 }
 
+bool GlobalData::GetSnsItem(const SnS snsItem) const
+{
+	const uint8_t index = static_cast<uint8_t>(snsItem);
+	return Utils::Swap32(SnsItems) & (1 << index);
+}
+
+void GlobalData::SetSnsItem(const SnS snsItem, const bool value)
+{
+	const uint8_t index = static_cast<uint8_t>(snsItem);
+
+	if (value) SnsItems |= Utils::Swap32(1 << index);
+	else SnsItems &= Utils::Swap32(~(1 << index));
+}
+
 uint32_t GlobalData::GetChecksum(const bool endianSwap) const
 {
 	return endianSwap ? Utils::Swap32(Checksum) : Checksum;
@@ -219,6 +217,11 @@ uint32_t GlobalData::GetChecksum(const bool endianSwap) const
 #pragma endregion
 
 #pragma region SaveFile
+
+SaveSlot* SaveFile::GetRawSaveSlot(const uint8_t slotIndex)
+{
+	return &saveSlots[slotIndex];
+}
 
 SaveSlot* SaveFile::GetSaveSlot(const uint8_t slotIndex)
 {
@@ -233,6 +236,11 @@ SaveSlot* SaveFile::GetSaveSlot(const uint8_t slotIndex)
 	}
 
 	return nullptr;
+}
+
+GlobalData* SaveFile::GetGlobalData()
+{
+	return &globalData;
 }
 
 uint32_t SaveFile::TransformSeed(uint64_t* seed)

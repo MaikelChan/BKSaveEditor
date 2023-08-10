@@ -86,20 +86,20 @@ void SaveData::ClearSaveFile()
 	type = SaveData::Types::NotValid;
 }
 
-SaveData::Types SaveData::CalculateType(const SaveFile* saveFile)
+SaveData::Types SaveData::CalculateType(SaveFile* saveFile)
 {
 	if (!saveFile) return SaveData::Types::NotValid;
 
 	for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
 	{
-		uint32_t checksum = saveFile->saveSlots[s].CalculateChecksum();
-		if (checksum == saveFile->saveSlots[s].GetChecksum(false)) return SaveData::Types::PC;
-		if (checksum == saveFile->saveSlots[s].GetChecksum(true)) return SaveData::Types::Nintendo64;
+		uint32_t checksum = saveFile->GetRawSaveSlot(s)->CalculateChecksum();
+		if (checksum == saveFile->GetRawSaveSlot(s)->GetChecksum(false)) return SaveData::Types::PC;
+		if (checksum == saveFile->GetRawSaveSlot(s)->GetChecksum(true)) return SaveData::Types::Nintendo64;
 	}
 
-	uint32_t checksum = saveFile->globalData.CalculateChecksum();
-	if (checksum == saveFile->globalData.GetChecksum(false)) return SaveData::Types::PC;
-	if (checksum == saveFile->globalData.GetChecksum(true)) return SaveData::Types::Nintendo64;
+	uint32_t checksum = saveFile->GetGlobalData()->CalculateChecksum();
+	if (checksum == saveFile->GetGlobalData()->GetChecksum(false)) return SaveData::Types::PC;
+	if (checksum == saveFile->GetGlobalData()->GetChecksum(true)) return SaveData::Types::Nintendo64;
 
 	return SaveData::Types::NotValid;
 }
