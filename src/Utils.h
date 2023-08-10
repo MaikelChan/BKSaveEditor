@@ -20,9 +20,9 @@ struct Utils
 		return (value << 56) | ((value & 0xff00) << 40) | ((value & 0xff0000) << 24) | ((value & 0xff000000) << 8) | ((value & 0xff00000000) >> 8) | ((value & 0xff0000000000) >> 24) | ((value & 0xff000000000000) >> 40) | (value >> 56);
 	}
 
-	inline static std::string GetTimeString(const uint16_t value)
+	inline static std::string GetTimeString(const uint32_t value)
 	{
-		uint8_t h = value / 3600;
+		uint16_t h = value / 3600;
 		uint8_t m = (value % 3600) / 60;
 		uint8_t s = value % 60;
 
