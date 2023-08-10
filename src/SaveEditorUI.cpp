@@ -240,7 +240,7 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 				}
 
 				if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
-					ImGui::SetTooltip(levelJiggiesNames[l][j]);
+					ImGui::SetTooltip("%s", levelJiggiesNames[l][j]);
 
 				if (value) totalJiggies++;
 
@@ -262,7 +262,7 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 				}
 
 				if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
-					ImGui::SetTooltip(levelHoneycombsNames[l][h]);
+					ImGui::SetTooltip("%s", levelHoneycombsNames[l][h]);
 
 				if (value) totalHoneycombs++;
 
@@ -296,7 +296,7 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 			}
 
 			if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
-				ImGui::SetTooltip(Utils::GetTimeString(time).c_str());
+				ImGui::SetTooltip("%s", Utils::GetTimeString(time).c_str());
 
 			totalPlayTime += time;
 
@@ -326,7 +326,7 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 		ImGui::Text("%u", totalPlayTime);
 
 		if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
-			ImGui::SetTooltip(Utils::GetTimeString(totalPlayTime).c_str());
+			ImGui::SetTooltip("%s", Utils::GetTimeString(totalPlayTime).c_str());
 
 		ImGui::EndTable();
 	}
