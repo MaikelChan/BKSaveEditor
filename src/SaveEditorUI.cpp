@@ -314,13 +314,13 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 		ImGui::Text("Totals");
 
 		ImGui::TableSetColumnIndex(2);
-		ImGui::Text("%u", totalJiggies);
+		ImGui::Text("%u / %u", totalJiggies, JIGGIES_COUNT);
 
 		ImGui::TableSetColumnIndex(3);
-		ImGui::Text("%u", totalHoneycombs);
+		ImGui::Text("%u / %u", totalHoneycombs, HONEYCOMB_COUNT);
 
 		ImGui::TableSetColumnIndex(4);
-		ImGui::Text("%u", totalNotes);
+		ImGui::Text("%u / %u", totalNotes, NOTES_COUNT);
 
 		ImGui::TableSetColumnIndex(5);
 		ImGui::Text("%u", totalPlayTime);
