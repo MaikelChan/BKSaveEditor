@@ -638,7 +638,7 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "Statue Hat Open", ProgressFlags::FILEPROG_A1_STATUE_HAT_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "GV Lobby Coffin Open", ProgressFlags::FILEPROG_A2_GV_LOBBY_COFFIN_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Jump Pad Active", ProgressFlags::FILEPROG_C7_LAIR_JUMP_PAD_ACTIVE);
-		CheckboxProgressFlags(saveData, saveSlot, "Crypt Gate", ProgressFlags::FILEPROG_85_LAIR_CRYPT_GATE_OPEN);
+		CheckboxProgressFlags(saveData, saveSlot, "Crypt Gate Open", ProgressFlags::FILEPROG_A5_LAIR_CRYPT_GATE_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Crypt Coffin Open", ProgressFlags::FILEPROG_9E_CRYPT_COFFIN_LID_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Transformed in Crypt", ProgressFlags::FILEPROG_F7_HAS_TRANSFORMED_IN_CRYPT);
 		CheckboxProgressFlags(saveData, saveSlot, "Water Level 1", ProgressFlags::FILEPROG_23_LAIR_WATER_LEVEL_1);
