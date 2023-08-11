@@ -47,7 +47,6 @@ const char* const levelNames[TOTAL_LEVEL_COUNT]
 #pragma region Jiggies_Data
 
 #define JIGGIES_COUNT 100
-#define MAX_JIGGIES_PER_LEVEL 10
 
 const Range levelJiggiesIndexRanges[TOTAL_LEVEL_COUNT]
 {
@@ -84,41 +83,35 @@ const char* const levelJiggiesNames[JIGGIES_COUNT + 1]
 #pragma region Honeycomb_Data
 
 #define HONEYCOMB_COUNT 24
-#define MAX_HONEYCOMBS_PER_LEVEL 6
 
-const uint8_t levelHoneycombsCount[TOTAL_LEVEL_COUNT]
+const Range levelHoneycombsIndexRanges[TOTAL_LEVEL_COUNT]
 {
-	6, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2
+	{ 0x13, 0x18 }, // Spiral Mountain
+	{ 0x00, 0x00 }, // Gruntilda's Lair
+	{ 0x01, 0x02 }, // Mumbo's Mountain
+	{ 0x03, 0x04 }, // Treasure Trove Cove
+	{ 0x05, 0x06 }, // Clanker's Cavern
+	{ 0x07, 0x08 }, // Bubblegloop Swamp
+	{ 0x09, 0x0A }, // Freezeezy Peak
+	{ 0x0B, 0x0C }, // Gobi's Valley
+	{ 0x11, 0x12 }, // Mad Monster Mansion
+	{ 0x0F, 0x10 }, // Rusty Bucket Bay
+	{ 0x0D, 0x0E }  // Click Clock Wood
 };
 
-const uint8_t levelHoneycombsIndices[TOTAL_LEVEL_COUNT][MAX_HONEYCOMBS_PER_LEVEL]
+const char* const levelHoneycombsNames[HONEYCOMB_COUNT + 1]
 {
-	{ 0x13, 0x14, 0x15, 0x16, 0x17, 0x18 }, // Spiral Mountain
-	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // Gruntilda's Lair
-	{ 0x01, 0x02, 0x00, 0x00, 0x00, 0x00 }, // Mumbo's Mountain
-	{ 0x03, 0x04, 0x00, 0x00, 0x00, 0x00 }, // Treasure Trove Cove
-	{ 0x05, 0x06, 0x00, 0x00, 0x00, 0x00 }, // Clanker's Cavern
-	{ 0x07, 0x08, 0x00, 0x00, 0x00, 0x00 }, // Bubblegloop Swamp
-	{ 0x09, 0x0A, 0x00, 0x00, 0x00, 0x00 }, // Freezeezy Peak
-	{ 0x0B, 0x0C, 0x00, 0x00, 0x00, 0x00 }, // Gobi's Valley
-	{ 0x11, 0x12, 0x00, 0x00, 0x00, 0x00 }, // Mad Monster Mansion
-	{ 0x0F, 0x10, 0x00, 0x00, 0x00, 0x00 }, // Rusty Bucket Bay
-	{ 0x0D, 0x0E, 0x00, 0x00, 0x00, 0x00 }  // Click Clock Wood
-};
-
-const char* const levelHoneycombsNames[TOTAL_LEVEL_COUNT][MAX_HONEYCOMBS_PER_LEVEL]
-{
-	{ "Stump",          "Waterfall",      "Underwater", "Tree", "Coliwobble", "Quarries" }, // Spiral Mountain
-	{ "",               "",               "",           "",     "",           ""         }, // Gruntilda's Lair
-	{ "Hill",           "Juju",           "",           "",     "",           ""         }, // Mumbo's Mountain
-	{ "Underwater",     "Floating Box",   "",           "",     "",           ""         }, // Treasure Trove Cove
-	{ "Underwater",     "Above Water",    "",           "",     "",           ""         }, // Clanker's Cavern
-	{ "Mumbo's Skull",  "Tanktup",        "",           "",     "",           ""         }, // Bubblegloop Swamp
-	{ "Wozza's Cave",   "Sir Slush",      "",           "",     "",           ""         }, // Freezeezy Peak
-	{ "Cactus",         "Gobi",           "",           "",     "",           ""         }, // Gobi's Valley
-	{ "Church Rafters", "Floorboard",     "",           "",     "",           ""         }, // Mad Monster Mansion
-	{ "Boat House",     "Engine Room",    "",           "",     "",           ""         }, // Rusty Bucket Bay
-	{ "Gnawty's House", "Nabnut's House", "",           "",     "",           ""         }  // Click Clock Wood
+	"",
+	"Hill",           "Juju",                                                           // Mumbo's Mountain
+	"Underwater",     "Floating Box",                                                   // Treasure Trove Cove
+	"Underwater",     "Above Water",                                                    // Clanker's Cavern
+	"Mumbo's Skull",  "Tanktup",                                                        // Bubblegloop Swamp
+	"Wozza's Cave",   "Sir Slush",                                                      // Freezeezy Peak
+	"Cactus",         "Gobi",                                                           // Gobi's Valley
+	"Gnawty's House", "Nabnut's House",                                                 // Click Clock Wood
+	"Boat House",     "Engine Room",                                                    // Rusty Bucket Bay
+	"Church Rafters", "Floorboard",                                                     // Mad Monster Mansion
+	"Stump",          "Waterfall",      "Underwater", "Tree", "Coliwobble", "Quarries"  // Spiral Mountain
 };
 
 #pragma endregion
@@ -126,7 +119,7 @@ const char* const levelHoneycombsNames[TOTAL_LEVEL_COUNT][MAX_HONEYCOMBS_PER_LEV
 #pragma region MumboTokens_Data
 
 #define MUMBO_TOKEN_COUNT 126
-#define ACTUAL_MUMBO_TOKEN_COUNT 116
+#define ACTUAL_MUMBO_TOKEN_COUNT 115
 
 const Range levelMumboTokensIndexRanges[TOTAL_LEVEL_COUNT]
 {
@@ -202,7 +195,7 @@ enum class MumboTokens
 	MUMBOTOKEN_37_MMM_IN_THE_MAZE,
 	MUMBOTOKEN_38_MMM_BEHIND_CHURCH,
 	MUMBOTOKEN_39_MMM_INSIDE_WHIPCRACK_IN_FOUNTAIN,
-	MUMBOTOKEN_3A_MMM_TOP_OF_WOOD_BEAM_INSIDE_CHURCH,
+	MUMBOTOKEN_3A_MMM_TOP_OF_RAFTER_INSIDE_CHURCH,
 	MUMBOTOKEN_3B_MMM_TOP_OF_STOOL_INSIDE_CHURCH,
 	MUMBOTOKEN_3C_MMM_TOP_OF_TUMBLARS_SHED,
 	MUMBOTOKEN_3D_MMM_INSIDE_LOGGO_AND_INSIDE_BARREL_IN_CELLAR, // Bug: Two tokens have same ID
@@ -262,7 +255,7 @@ enum class MumboTokens
 	MUMBOTOKEN_73_CCW_WINTER_SIR_SLUSH_BETWEEN_BIG_FLOWER_AND_MUMBOS_SKULL
 };
 
-const char* const MumboTokenNames[ACTUAL_MUMBO_TOKEN_COUNT]
+const char* const MumboTokenNames[ACTUAL_MUMBO_TOKEN_COUNT + 1]
 {
 	"",
 	"Stump near Conga",
@@ -322,7 +315,7 @@ const char* const MumboTokenNames[ACTUAL_MUMBO_TOKEN_COUNT]
 	"In the maze",
 	"Behind the church",
 	"Inside the Whipcrack in the fountain",
-	"On top of the wood beam inside the church",
+	"On top of the wood rafter inside the church",
 	"On top of the stool inside the church",
 	"On top of Tumblar's shed",
 	"Inside Loggo / Inside barrel in cellar (Game bug: these two tokens share the same ID)",
@@ -716,8 +709,8 @@ public:
 	bool GetJiggy(const uint8_t jiggy) const;
 	void SetJiggy(const uint8_t jiggy, bool value);
 
-	bool GetHoneycomb(const uint8_t level, const uint8_t honeycomb) const;
-	void SetHoneycomb(const uint8_t level, const uint8_t honeycomb, bool value);
+	bool GetHoneycomb(const uint8_t honeycomb) const;
+	void SetHoneycomb(const uint8_t honeycomb, bool value);
 
 	bool GetMumboToken(const uint8_t token) const;
 	void SetMumboToken(const uint8_t token, bool value);

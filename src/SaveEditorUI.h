@@ -28,7 +28,7 @@ protected:
 	virtual void DoRender() override;
 
 private:
-	void RenderMainSection(const SaveData& saveData, SaveSlot* saveSlot);
+	void RenderLevelDataSection(const SaveData& saveData, SaveSlot* saveSlot);
 	void RenderAbilitiesItemsSection(const SaveData& saveData, SaveSlot* saveSlot);
 	void RenderProgressFlagsSection(const SaveData& saveData, SaveSlot* saveSlot);
 	void RenderGlobalDataSection(const SaveData& saveData, SaveFile* saveFile);

@@ -41,17 +41,15 @@ void SaveSlot::SetJiggy(const uint8_t jiggy, bool value)
 	else Jiggies[(jiggy - 1) / 8] &= ~(1 << (jiggy & 7));
 }
 
-bool SaveSlot::GetHoneycomb(const uint8_t level, const uint8_t honeycomb) const
+bool SaveSlot::GetHoneycomb(const uint8_t honeycomb) const
 {
-	uint8_t index = levelHoneycombsIndices[level][honeycomb];
-	return (Honeycombs[(index - 1) / 8] & (1 << (index & 7))) != 0;
+	return (Honeycombs[(honeycomb - 1) / 8] & (1 << (honeycomb & 7))) != 0;
 }
 
-void SaveSlot::SetHoneycomb(const uint8_t level, const uint8_t honeycomb, bool value)
+void SaveSlot::SetHoneycomb(const uint8_t honeycomb, bool value)
 {
-	uint8_t index = levelHoneycombsIndices[level][honeycomb];
-	if (value) Honeycombs[(index - 1) / 8] |= (1 << (index & 7));
-	else Honeycombs[(index - 1) / 8] &= ~(1 << (index & 7));
+	if (value) Honeycombs[(honeycomb - 1) / 8] |= (1 << (honeycomb & 7));
+	else Honeycombs[(honeycomb - 1) / 8] &= ~(1 << (honeycomb & 7));
 }
 
 bool SaveSlot::GetMumboToken(const uint8_t token) const

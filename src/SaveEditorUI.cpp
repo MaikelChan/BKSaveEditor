@@ -55,7 +55,7 @@ void SaveEditorUI::DoRender()
 
 						if (ImGui::BeginTabBar("Sections", tab_bar_flags))
 						{
-							RenderMainSection(saveData, saveSlot);
+							RenderLevelDataSection(saveData, saveSlot);
 							RenderAbilitiesItemsSection(saveData, saveSlot);
 							RenderProgressFlagsSection(saveData, saveSlot);
 
@@ -75,7 +75,7 @@ void SaveEditorUI::DoRender()
 	ImGui::End();
 }
 
-void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlot)
+void SaveEditorUI::RenderLevelDataSection(const SaveData& saveData, SaveSlot* saveSlot)
 {
 	if (!ImGui::BeginTabItem("Level Data")) return;
 
@@ -143,25 +143,27 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
 
-			for (int h = 0; h < levelHoneycombsCount[l]; h++)
+			for (int h = levelHoneycombsIndexRanges[l].min; h <= levelHoneycombsIndexRanges[l].max; h++)
 			{
+				if (levelHoneycombsIndexRanges[l].Count() == 0) continue;
+
 				ImGui::PushID(h);
 
-				bool value = saveSlot->GetHoneycomb(l, h);
+				bool value = saveSlot->GetHoneycomb(h);
 				if (ImGui::Checkbox("##Honeycomb", &value))
 				{
-					saveSlot->SetHoneycomb(l, h, value);
+					saveSlot->SetHoneycomb(h, value);
 					saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 				}
 
 				if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
-					ImGui::SetTooltip("%s", levelHoneycombsNames[l][h]);
+					ImGui::SetTooltip("%s", levelHoneycombsNames[h]);
 
 				if (value) totalHoneycombs++;
 
 				ImGui::PopID();
 
-				if (h < levelHoneycombsCount[l] - 1) ImGui::SameLine();
+				if (h < levelHoneycombsIndexRanges[l].max) ImGui::SameLine();
 			}
 
 			ImGui::PopStyleVar();
