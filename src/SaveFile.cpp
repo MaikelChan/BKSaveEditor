@@ -30,6 +30,19 @@ uint8_t SaveSlot::GetSlotIndex() const
 	return SlotIndex;
 }
 
+bool SaveSlot::GetJiggy(const uint8_t level, const uint8_t jiggy) const
+{
+	uint8_t index = levelJiggiesIndices[level][jiggy];
+	return (Jiggies[(index - 1) / 8] & (1 << (index & 7))) != 0;
+}
+
+void SaveSlot::SetJiggy(const uint8_t level, const uint8_t jiggy, bool value)
+{
+	uint8_t index = levelJiggiesIndices[level][jiggy];
+	if (value) Jiggies[(index - 1) / 8] |= (1 << (index & 7));
+	else Jiggies[(index - 1) / 8] &= ~(1 << (index & 7));
+}
+
 bool SaveSlot::GetHoneycomb(const uint8_t level, const uint8_t honeycomb) const
 {
 	uint8_t index = levelHoneycombsIndices[level][honeycomb];
@@ -43,17 +56,15 @@ void SaveSlot::SetHoneycomb(const uint8_t level, const uint8_t honeycomb, bool v
 	else Honeycombs[(index - 1) / 8] &= ~(1 << (index & 7));
 }
 
-bool SaveSlot::GetJiggy(const uint8_t level, const uint8_t jiggy) const
+bool SaveSlot::GetMumboToken(const uint8_t token) const
 {
-	uint8_t index = levelJiggiesIndices[level][jiggy];
-	return (Jiggies[(index - 1) / 8] & (1 << (index & 7))) != 0;
+	return (MumboTokens[(token - 1) / 8] & (1 << (token & 7))) != 0;
 }
 
-void SaveSlot::SetJiggy(const uint8_t level, const uint8_t jiggy, bool value)
+void SaveSlot::SetMumboToken(const uint8_t token, bool value)
 {
-	uint8_t index = levelJiggiesIndices[level][jiggy];
-	if (value) Jiggies[(index - 1) / 8] |= (1 << (index & 7));
-	else Jiggies[(index - 1) / 8] &= ~(1 << (index & 7));
+	if (value) MumboTokens[(token - 1) / 8] |= (1 << (token & 7));
+	else MumboTokens[(token - 1) / 8] &= ~(1 << (token & 7));
 }
 
 uint8_t SaveSlot::GetNotes(const uint8_t level) const

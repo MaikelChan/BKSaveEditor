@@ -29,7 +29,9 @@ protected:
 
 private:
 	void RenderMainSection(const SaveData& saveData, SaveSlot* saveSlot);
+	void RenderMumboTokensSection(const SaveData& saveData, SaveSlot* saveSlot);
 	void RenderProgressFlagsSection(const SaveData& saveData, SaveSlot* saveSlot);
+	void RenderGlobalDataSection(const SaveData& saveData, SaveFile* saveFile);
 
 	bool CheckboxProgressFlags(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag) const;
 	uint8_t InputProgressFlags(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag, const uint8_t bitsCount, const uint8_t maxValue) const;

@@ -42,7 +42,12 @@ void SaveEditorUI::DoRender()
 
 					if (!saveSlot)
 					{
-						ImGui::Text("The slot is empty.");
+						const char emptyText[] = "The slot is empty.";
+						ImVec2 size = ImGui::CalcTextSize(emptyText);
+						ImVec2 windowSize = ImGui::GetWindowSize();
+						ImGui::SetCursorPosX((windowSize.x / 2.0f) - (size.x / 2.0f));
+						ImGui::SetCursorPosY((windowSize.y / 2.0f) - (size.y / 2.0f));
+						ImGui::Text("%s", emptyText);
 					}
 					else
 					{
@@ -51,6 +56,7 @@ void SaveEditorUI::DoRender()
 						if (ImGui::BeginTabBar("Sections", tab_bar_flags))
 						{
 							RenderMainSection(saveData, saveSlot);
+							RenderMumboTokensSection(saveData, saveSlot);
 							RenderProgressFlagsSection(saveData, saveSlot);
 
 							ImGui::EndTabBar();
@@ -61,22 +67,7 @@ void SaveEditorUI::DoRender()
 				}
 			}
 
-			if (ImGui::BeginTabItem("Global Data"))
-			{
-				PrintChecksum(saveFile->GetGlobalData()->GetChecksum(saveData.NeedsEndianSwap()));
-
-				ImGui::SeparatorText("Unlocked / Collected Stop 'N' Swop Items");
-
-				CheckboxSnS(saveData, "Cyan Egg", SnS::UNLOCKED_CYAN_EGG, SnS::COLLECTED_CYAN_EGG);
-				CheckboxSnS(saveData, "Pink Egg", SnS::UNLOCKED_PINK_EGG, SnS::COLLECTED_PINK_EGG);
-				CheckboxSnS(saveData, "Blue Egg", SnS::UNLOCKED_BLUE_EGG, SnS::COLLECTED_BLUE_EGG);
-				CheckboxSnS(saveData, "Green Egg", SnS::UNLOCKED_GREEN_EGG, SnS::COLLECTED_GREEN_EGG);
-				CheckboxSnS(saveData, "Red Egg", SnS::UNLOCKED_RED_EGG, SnS::COLLECTED_RED_EGG);
-				CheckboxSnS(saveData, "Yellow Egg", SnS::UNLOCKED_YELLOW_EGG, SnS::COLLECTED_YELLOW_EGG);
-				CheckboxSnS(saveData, "Ice Key", SnS::UNLOCKED_ICE_KEY, SnS::COLLECTED_ICE_KEY);
-
-				ImGui::EndTabItem();
-			}
+			RenderGlobalDataSection(saveData, saveFile);
 
 			ImGui::EndTabBar();
 		}
@@ -327,6 +318,72 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 
 		if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
 			ImGui::SetTooltip("%s", Utils::GetTimeString(totalPlayTime).c_str());
+
+		ImGui::EndTable();
+	}
+
+	ImGui::EndTabItem();
+}
+
+void SaveEditorUI::RenderMumboTokensSection(const SaveData& saveData, SaveSlot* saveSlot)
+{
+	if (!ImGui::BeginTabItem("Mumbo Tokens")) return;
+
+	ImGui::Text("This section is still incomplete. You can toggle all the Mumbo tokens in the game,\nbut there's still no info about where in the game each one is located.");
+
+	if (ImGui::Button("Have All", ImVec2(80, 0)))
+	{
+		for (uint8_t t = 0; t < MUMBO_TOKEN_COUNT; t++)
+		{
+			saveSlot->SetMumboToken(t, true);
+		}
+
+		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Have None", ImVec2(80, 0)))
+	{
+		for (uint8_t t = 0; t < MUMBO_TOKEN_COUNT; t++)
+		{
+			saveSlot->SetMumboToken(t, false);
+		}
+
+		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+
+	ImGui::SeparatorText("Mumbo Tokens");
+
+	ImGuiTableFlags tableFlags = ImGuiTableFlags_ScrollY;
+	if (ImGui::BeginTable("MumboTokensTable", 3, tableFlags))
+	{
+		ImGui::TableSetupColumn("Column1", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Column2", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Column3", ImGuiTableColumnFlags_WidthStretch);
+
+		ImGui::TableNextRow();
+
+		const uint8_t tokensPerColumn = MUMBO_TOKEN_COUNT / 3;
+		for (uint8_t c = 0; c < 3; c++)
+		{
+			ImGui::TableSetColumnIndex(c);
+
+			for (uint8_t t = 0; t < tokensPerColumn; t++)
+			{
+				uint8_t index = (tokensPerColumn * c) + t;
+
+				char name[16];
+				snprintf(name, 16, "Mumbo Token %u", index);
+
+				bool value = saveSlot->GetMumboToken(index);
+				if (ImGui::Checkbox(name, &value))
+				{
+					saveSlot->SetMumboToken(index, value);
+					saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+				}
+			}
+		}
 
 		ImGui::EndTable();
 	}
@@ -596,6 +653,25 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 
 		ImGui::EndTable();
 	}
+
+	ImGui::EndTabItem();
+}
+
+void SaveEditorUI::RenderGlobalDataSection(const SaveData& saveData, SaveFile* saveFile)
+{
+	if (!ImGui::BeginTabItem("Global Data")) return;
+
+	PrintChecksum(saveFile->GetGlobalData()->GetChecksum(saveData.NeedsEndianSwap()));
+
+	ImGui::SeparatorText("Unlocked / Collected Stop 'N' Swop Items");
+
+	CheckboxSnS(saveData, "Cyan Egg", SnS::UNLOCKED_CYAN_EGG, SnS::COLLECTED_CYAN_EGG);
+	CheckboxSnS(saveData, "Pink Egg", SnS::UNLOCKED_PINK_EGG, SnS::COLLECTED_PINK_EGG);
+	CheckboxSnS(saveData, "Blue Egg", SnS::UNLOCKED_BLUE_EGG, SnS::COLLECTED_BLUE_EGG);
+	CheckboxSnS(saveData, "Green Egg", SnS::UNLOCKED_GREEN_EGG, SnS::COLLECTED_GREEN_EGG);
+	CheckboxSnS(saveData, "Red Egg", SnS::UNLOCKED_RED_EGG, SnS::COLLECTED_RED_EGG);
+	CheckboxSnS(saveData, "Yellow Egg", SnS::UNLOCKED_YELLOW_EGG, SnS::COLLECTED_YELLOW_EGG);
+	CheckboxSnS(saveData, "Ice Key", SnS::UNLOCKED_ICE_KEY, SnS::COLLECTED_ICE_KEY);
 
 	ImGui::EndTabItem();
 }

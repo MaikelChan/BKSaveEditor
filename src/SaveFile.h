@@ -120,6 +120,12 @@ const char* const levelHoneycombsNames[TOTAL_LEVEL_COUNT][MAX_HONEYCOMBS_PER_LEV
 
 #pragma endregion
 
+#pragma region MumboTokens_Data
+
+#define MUMBO_TOKEN_COUNT 126
+
+#pragma endregion
+
 #pragma region Notes_Data
 
 #define NOTES_COUNT 900
@@ -438,7 +444,7 @@ private:
 	uint8_t Items[5];
 	uint8_t LearnedAbilities[4];
 	uint8_t UsedAbilities[4];
-	uint8_t Unk[0x2];
+	uint8_t Padding[0x2];
 	uint32_t Checksum;
 
 public:
@@ -446,25 +452,17 @@ public:
 	void UpdateChecksum(const bool endianSwap);
 	bool IsValid(const bool endianSwap) const;
 
-	//inline bool GetFlag(const uint32_t mask) const
-	//{
-	//	return 0; // (Flags & mask) != 0;
-	//}
-
-	//inline void SetFlag(const uint32_t mask, const bool value)
-	//{
-	//	//if (value) Flags |= mask;
-	//	//else Flags &= ~mask;
-	//}
-
 	uint8_t GetMagic() const;
 	uint8_t GetSlotIndex() const;
+
+	bool GetJiggy(const uint8_t level, const uint8_t jiggy) const;
+	void SetJiggy(const uint8_t level, const uint8_t jiggy, bool value);
 
 	bool GetHoneycomb(const uint8_t level, const uint8_t honeycomb) const;
 	void SetHoneycomb(const uint8_t level, const uint8_t honeycomb, bool value);
 
-	bool GetJiggy(const uint8_t level, const uint8_t jiggy) const;
-	void SetJiggy(const uint8_t level, const uint8_t jiggy, bool value);
+	bool GetMumboToken(const uint8_t token) const;
+	void SetMumboToken(const uint8_t token, bool value);
 
 	uint8_t GetNotes(const uint8_t level) const;
 	void SetNotes(const uint8_t level, const uint8_t value) const;
