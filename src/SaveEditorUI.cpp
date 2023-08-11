@@ -555,7 +555,7 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "MMM Jiggy", ProgressFlags::FILEPROG_19_MMM_WITCH_SWITCH_JIGGY_PRESSED);
 		CheckboxProgressFlags(saveData, saveSlot, "RBB Jiggy", ProgressFlags::FILEPROG_1C_RBB_WITCH_SWITCH_JIGGY_PRESSED);
 		CheckboxProgressFlags(saveData, saveSlot, "CCW Jiggy", ProgressFlags::FILEPROG_46_CCW_WITCH_SWITCH_JIGGY_PRESSED);
-		CheckboxProgressFlags(saveData, saveSlot, "CCW Puzzle Podium", ProgressFlags::FILEPROG_53_CCW_PUZZLE_PODIUM_SWITCH_PRESSED);
+		CheckboxProgressFlags(saveData, saveSlot, "CCW Podium Switch", ProgressFlags::FILEPROG_53_CCW_PUZZLE_PODIUM_SWITCH_PRESSED);
 
 		PrintHeader("Pressed Misc Switches");
 		CheckboxProgressFlags(saveData, saveSlot, "Water Switch 1", ProgressFlags::FILEPROG_22_WATER_SWITCH_1_PRESSED);
@@ -579,7 +579,7 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "RBB Touched Oven", ProgressFlags::FILEPROG_A9_HAS_TOUCHED_RBB_OVEN);
 		CheckboxProgressFlags(saveData, saveSlot, "RBB Swim Oily Water", ProgressFlags::FILEPROG_AB_SWIM_OILY_WATER);
 		CheckboxProgressFlags(saveData, saveSlot, "RBB Dive Oily Water", ProgressFlags::FILEPROG_AC_DIVE_OILY_WATER);
-		CheckboxProgressFlags(saveData, saveSlot, "CCW Puzzle Podium", ProgressFlags::FILEPROG_54_CCW_PUZZLE_PODIUM_ACTIVE);
+		CheckboxProgressFlags(saveData, saveSlot, "CCW Podium Active", ProgressFlags::FILEPROG_54_CCW_PUZZLE_PODIUM_ACTIVE);
 		CheckboxProgressFlags(saveData, saveSlot, "CCW Spring Open", ProgressFlags::FILEPROG_8B_CCW_SPRING_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "CCW Summer Open", ProgressFlags::FILEPROG_8C_CCW_SUMMER_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "CCW Autumn Open", ProgressFlags::FILEPROG_8D_CCW_AUTUMN_OPEN);
@@ -627,7 +627,7 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 
 		PrintHeader("SM / Lair Events");
 		CheckboxProgressFlags(saveData, saveSlot, "Skipped Tutorial", ProgressFlags::FILEPROG_DB_SKIPPED_TUTORIAL);
-		CheckboxProgressFlags(saveData, saveSlot, "Stood on Jigsaw Podium", ProgressFlags::FILEPROG_16_STOOD_ON_JIGSAW_PODIUM);
+		CheckboxProgressFlags(saveData, saveSlot, "Stood on Jiggy Podium", ProgressFlags::FILEPROG_16_STOOD_ON_JIGSAW_PODIUM);
 		CheckboxProgressFlags(saveData, saveSlot, "Have Enough Jiggies", ProgressFlags::FILEPROG_17_HAS_HAD_ENOUGH_JIGSAW_PIECES);
 		CheckboxProgressFlags(saveData, saveSlot, "Used All Jiggies", ProgressFlags::FILEPROG_DE_USED_ALL_YOUR_PUZZLE_PIECES);
 		CheckboxProgressFlags(saveData, saveSlot, "Remove All Jiggies", ProgressFlags::FILEPROG_DF_CAN_REMOVE_ALL_PUZZLE_PIECES);
@@ -645,7 +645,7 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "Water Level 2", ProgressFlags::FILEPROG_25_LAIR_WATER_LEVEL_2);
 		CheckboxProgressFlags(saveData, saveSlot, "Water Level 3", ProgressFlags::FILEPROG_27_LAIR_WATER_LEVEL_3);
 		CheckboxProgressFlags(saveData, saveSlot, "Met Dingpot", ProgressFlags::FILEPROG_F3_MET_DINGPOT);
-		CheckboxProgressFlags(saveData, saveSlot, "Seen Puzzle Podium Door", ProgressFlags::FILEPROG_F6_SEEN_DOOR_OF_GRUNTY_PUZZLE_PODIUM);
+		CheckboxProgressFlags(saveData, saveSlot, "Seen Grunty Podium Door", ProgressFlags::FILEPROG_F6_SEEN_DOOR_OF_GRUNTY_PUZZLE_PODIUM);
 
 		PrintHeader("Furnace Fun");
 		CheckboxProgressFlags(saveData, saveSlot, "BK Instructions", ProgressFlags::FILEPROG_55_FF_BK_SQUARE_INSTRUCTIONS);
