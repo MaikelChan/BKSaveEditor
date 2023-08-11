@@ -30,17 +30,15 @@ uint8_t SaveSlot::GetSlotIndex() const
 	return SlotIndex;
 }
 
-bool SaveSlot::GetJiggy(const uint8_t level, const uint8_t jiggy) const
+bool SaveSlot::GetJiggy(const uint8_t jiggy) const
 {
-	uint8_t index = levelJiggiesIndices[level][jiggy];
-	return (Jiggies[(index - 1) / 8] & (1 << (index & 7))) != 0;
+	return (Jiggies[(jiggy - 1) / 8] & (1 << (jiggy & 7))) != 0;
 }
 
-void SaveSlot::SetJiggy(const uint8_t level, const uint8_t jiggy, bool value)
+void SaveSlot::SetJiggy(const uint8_t jiggy, bool value)
 {
-	uint8_t index = levelJiggiesIndices[level][jiggy];
-	if (value) Jiggies[(index - 1) / 8] |= (1 << (index & 7));
-	else Jiggies[(index - 1) / 8] &= ~(1 << (index & 7));
+	if (value) Jiggies[(jiggy - 1) / 8] |= (1 << (jiggy & 7));
+	else Jiggies[(jiggy - 1) / 8] &= ~(1 << (jiggy & 7));
 }
 
 bool SaveSlot::GetHoneycomb(const uint8_t level, const uint8_t honeycomb) const

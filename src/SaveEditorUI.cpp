@@ -114,25 +114,27 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
 
-			for (int j = 0; j < levelJiggiesCount[l]; j++)
+			for (int j = levelJiggiesIndexRanges[l].min; j <= levelJiggiesIndexRanges[l].max; j++)
 			{
+				if (levelJiggiesIndexRanges[l].Count() == 0) continue;
+
 				ImGui::PushID(j);
 
-				bool value = saveSlot->GetJiggy(l, j);
+				bool value = saveSlot->GetJiggy(j);
 				if (ImGui::Checkbox("##Jiggy", &value))
 				{
-					saveSlot->SetJiggy(l, j, value);
+					saveSlot->SetJiggy(j, value);
 					saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 				}
 
 				if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
-					ImGui::SetTooltip("%s", levelJiggiesNames[l][j]);
+					ImGui::SetTooltip("%s", levelJiggiesNames[j]);
 
 				if (value) totalJiggies++;
 
 				ImGui::PopID();
 
-				if (j < levelJiggiesCount[l] - 1) ImGui::SameLine();
+				if (j < levelJiggiesIndexRanges[l].max) ImGui::SameLine();
 			}
 
 			ImGui::PopStyleVar();
