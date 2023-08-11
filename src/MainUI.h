@@ -44,7 +44,6 @@ private:
 	void Load();
 	void LoadingProcess() const;
 	void Save();
-	void SavingProcess() const;
 
 	void CompleteSlot(const uint8_t slotIndex) const;
 	void DeleteSlot(const uint8_t slotIndex) const;

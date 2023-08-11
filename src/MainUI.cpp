@@ -72,35 +72,28 @@ void MainUI::DoRender()
 			ImGui::EndMenu();
 		}
 
-		//if (saveData && ImGui::BeginMenu("Tools"))
-		//{
-		//	for (int s = 0; s < NUM_SAVE_SLOTS; s++)
-		//	{
-		//		if (ImGui::BeginMenu(tabNames[s]))
-		//		{
-		//			if (ImGui::MenuItem("100% Complete"))
-		//			{
-		//				CompleteSlot(s);
-		//			}
+		if (saveData.IsSaveFileLoaded() && ImGui::BeginMenu("Tools"))
+		{
+			for (int s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
+			{
+				if (ImGui::BeginMenu(tabNames[s]))
+				{
+					//if (ImGui::MenuItem("100% Complete"))
+					//{
+					//	CompleteSlot(s);
+					//}
 
-		//			if (ImGui::MenuItem("Delete"))
-		//			{
-		//				DeleteSlot(s);
-		//			}
+					if (ImGui::MenuItem("Delete"))
+					{
+						DeleteSlot(s);
+					}
 
-		//			ImGui::EndMenu();
-		//		}
-		//	}
+					ImGui::EndMenu();
+				}
+			}
 
-		//	ImGui::Separator();
-
-		//	//if (ImGui::MenuItem("Show backup data", NULL, saveEditor->showBackup))
-		//	//{
-		//	//	saveEditor->showBackup = !saveEditor->showBackup;
-		//	//}
-
-		//	ImGui::EndMenu();
-		//}
+			ImGui::EndMenu();
+		}
 
 		if (ImGui::BeginMenu("Settings"))
 		{
@@ -246,8 +239,6 @@ void MainUI::Save()
 {
 	if (!saveData.IsSaveFileLoaded()) return;
 
-	SavingProcess();
-
 	try
 	{
 		saveData.Save(currentFilePath);
@@ -259,55 +250,17 @@ void MainUI::Save()
 	}
 }
 
-void MainUI::SavingProcess() const
-{
-	if (!saveData.IsSaveFileLoaded()) return;
-
-	//for (int s = 0; s < NUM_SAVE_SLOTS; s++)
-	//{
-	//	saveData->saveSlots[s][0].Magic = SAVE_SLOT_MAGIC_LE;
-	//	memcpy(&saveData->saveSlots[s][1], &saveData->saveSlots[s][0], SAVE_SLOT_SIZE);
-	//}
-
-	//saveData->settings[0].Magic = SETTINGS_DATA_MAGIC_LE;
-	//memcpy(&saveData->settings[1], &saveData->settings[0], SETTINGS_DATA_SIZE);
-}
-
 void MainUI::CompleteSlot(const uint8_t slotIndex) const
 {
 	if (!saveData.IsSaveFileLoaded()) return;
-
-	/*memset(&saveData->saveSlots[slotIndex][0], 0, SAVE_SLOT_SIZE);
-
-	saveData->saveSlots[slotIndex][0].Flags = 0x1f10ffcf;
-
-	for (int c = 0; c < COURSE_COUNT; c++)
-	{
-		for (int st = 0; st < courseStarCount[c]; st++)
-		{
-			saveData->saveSlots[slotIndex][0].CourseData[c] |= (1 << st);
-		}
-
-		if (courseHasCannon[c])
-		{
-			saveData->saveSlots[slotIndex][0].CourseData[c + 1] |= SAVE_COURSE_FLAG_STAR_CANNON_OPEN;
-		}
-	}
-
-	for (int c = 0; c < COURSE_STAGES_COUNT; c++)
-	{
-		saveData->saveSlots[slotIndex][0].CourseCoinScores[c] = 100;
-	}
-
-	saveData->saveSlots[slotIndex][0].Magic = SAVE_SLOT_MAGIC_LE;
-	saveData->saveSlots[slotIndex][0].UpdateChecksum();*/
 }
 
 void MainUI::DeleteSlot(const uint8_t slotIndex) const
 {
 	if (!saveData.IsSaveFileLoaded()) return;
 
-	//memset(&saveData->saveSlots[slotIndex][0], 0, SAVE_SLOT_SIZE);
-	//saveData->saveSlots[slotIndex][0].Magic = SAVE_SLOT_MAGIC_LE;
-	//saveData->saveSlots[slotIndex][0].UpdateChecksum();
+	SaveSlot* saveSlot = saveData.GetSaveFile()->GetSaveSlot(slotIndex);
+
+	memset(saveSlot, 0, SAVE_SLOT_SIZE);
+	saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 }
