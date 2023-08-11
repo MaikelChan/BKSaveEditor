@@ -56,7 +56,7 @@ void SaveEditorUI::DoRender()
 						if (ImGui::BeginTabBar("Sections", tab_bar_flags))
 						{
 							RenderMainSection(saveData, saveSlot);
-							RenderMumboTokensSection(saveData, saveSlot);
+							RenderAbilitiesItemsSection(saveData, saveSlot);
 							RenderProgressFlagsSection(saveData, saveSlot);
 
 							ImGui::EndTabBar();
@@ -77,117 +77,9 @@ void SaveEditorUI::DoRender()
 
 void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlot)
 {
-	if (!ImGui::BeginTabItem("Main")) return;
+	if (!ImGui::BeginTabItem("Level Data")) return;
 
-	if (ImGui::BeginTable("ItemsAbilitiesTable", 2, 0))
-	{
-		ImGui::TableSetupColumn("Column1", ImGuiTableColumnFlags_WidthStretch, 0.25f);
-		ImGui::TableSetupColumn("Column2", ImGuiTableColumnFlags_WidthStretch);
-
-		ImGui::TableNextRow();
-
-		ImGui::TableSetColumnIndex(0);
-
-		ImGui::SeparatorText("Held Items");
-
-		ImGui::PushItemWidth(40);
-
-		uint8_t mumboTokens = saveSlot->GetHeldItem(HeldItems::MumboTokens);
-		if (ImGui::InputScalar("Mumbo Tokens", ImGuiDataType_U8, &mumboTokens, NULL, NULL, "%u"))
-		{
-			if (mumboTokens > MAX_MUMBO_TOKENS) mumboTokens = MAX_MUMBO_TOKENS;
-			saveSlot->SetHeldItem(HeldItems::MumboTokens, mumboTokens);
-			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-		}
-
-		uint8_t eggs = saveSlot->GetHeldItem(HeldItems::Eggs);
-		if (ImGui::InputScalar("Eggs", ImGuiDataType_U8, &eggs, NULL, NULL, "%u"))
-		{
-			if (eggs > MAX_EGGS) eggs = MAX_EGGS;
-			saveSlot->SetHeldItem(HeldItems::Eggs, eggs);
-			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-		}
-
-		uint8_t redFeathers = saveSlot->GetHeldItem(HeldItems::RedFeathers);
-		if (ImGui::InputScalar("Red Feathers", ImGuiDataType_U8, &redFeathers, NULL, NULL, "%u"))
-		{
-			if (redFeathers > MAX_RED_FEATHERS) redFeathers = MAX_RED_FEATHERS;
-			saveSlot->SetHeldItem(HeldItems::RedFeathers, redFeathers);
-			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-		}
-
-		uint8_t goldFeathers = saveSlot->GetHeldItem(HeldItems::GoldFeathers);
-		if (ImGui::InputScalar("Gold Feathers", ImGuiDataType_U8, &goldFeathers, NULL, NULL, "%u"))
-		{
-			if (goldFeathers > MAX_GOLD_FEATHERS) goldFeathers = MAX_GOLD_FEATHERS;
-			saveSlot->SetHeldItem(HeldItems::GoldFeathers, goldFeathers);
-			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-		}
-
-		uint8_t jiggies = saveSlot->GetHeldItem(HeldItems::Jiggies);
-		if (ImGui::InputScalar("Jiggies", ImGuiDataType_U8, &jiggies, NULL, NULL, "%u"))
-		{
-			if (jiggies > JIGGIES_COUNT) jiggies = JIGGIES_COUNT;
-			saveSlot->SetHeldItem(HeldItems::Jiggies, jiggies);
-			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-		}
-
-		ImGui::PopItemWidth();
-
-		ImGui::TableSetColumnIndex(1);
-
-		ImGui::SeparatorText("Learned / Used Abilities");
-
-		if (ImGui::BeginTable("AbilitiesTable", 4, 0))
-		{
-			ImGui::TableSetupColumn("Column1", ImGuiTableColumnFlags_WidthStretch);
-			ImGui::TableSetupColumn("Column2", ImGuiTableColumnFlags_WidthStretch);
-			ImGui::TableSetupColumn("Column3", ImGuiTableColumnFlags_WidthStretch);
-			ImGui::TableSetupColumn("Column4", ImGuiTableColumnFlags_WidthStretch);
-
-			ImGui::TableNextRow();
-
-			ImGui::TableSetColumnIndex(0);
-
-			CheckboxAbility(saveData, saveSlot, "Barge", Abilities::ABILITY_0_BARGE);
-			CheckboxAbility(saveData, saveSlot, "Beak Bomb", Abilities::ABILITY_1_BEAK_BOMB);
-			CheckboxAbility(saveData, saveSlot, "Beak Buster", Abilities::ABILITY_2_BEAK_BUSTER);
-			CheckboxAbility(saveData, saveSlot, "Camera Control", Abilities::ABILITY_3_CAMERA_CONTROL);
-			CheckboxAbility(saveData, saveSlot, "Claw Swipe", Abilities::ABILITY_4_CLAW_SWIPE);
-
-			ImGui::TableSetColumnIndex(1);
-
-			CheckboxAbility(saveData, saveSlot, "Climb", Abilities::ABILITY_5_CLIMB);
-			CheckboxAbility(saveData, saveSlot, "Eggs", Abilities::ABILITY_6_EGGS);
-			CheckboxAbility(saveData, saveSlot, "Feathery Flap", Abilities::ABILITY_7_FEATHERY_FLAP);
-			CheckboxAbility(saveData, saveSlot, "Flap Flip", Abilities::ABILITY_8_FLAP_FLIP);
-			CheckboxAbility(saveData, saveSlot, "Flight", Abilities::ABILITY_9_FLIGHT);
-
-			ImGui::TableSetColumnIndex(2);
-
-			CheckboxAbility(saveData, saveSlot, "Jump Higher", Abilities::ABILITY_A_HOLD_A_JUMP_HIGHER);
-			CheckboxAbility(saveData, saveSlot, "Ratatat Rap", Abilities::ABILITY_B_RATATAT_RAP);
-			CheckboxAbility(saveData, saveSlot, "Roll", Abilities::ABILITY_C_ROLL);
-			CheckboxAbility(saveData, saveSlot, "Shock Jump", Abilities::ABILITY_D_SHOCK_JUMP);
-			CheckboxAbility(saveData, saveSlot, "Wading Boots", Abilities::ABILITY_E_WADING_BOOTS);
-
-			ImGui::TableSetColumnIndex(3);
-
-			CheckboxAbility(saveData, saveSlot, "Dive", Abilities::ABILITY_F_DIVE);
-			CheckboxAbility(saveData, saveSlot, "Talon Trot", Abilities::ABILITY_10_TALON_TROT);
-			CheckboxAbility(saveData, saveSlot, "Turbo Talon", Abilities::ABILITY_11_TURBO_TALON);
-			CheckboxAbility(saveData, saveSlot, "Wonderwing", Abilities::ABILITY_12_WONDERWING);
-			CheckboxAbility(saveData, saveSlot, "Open Notedoors", Abilities::ABILITY_13_1ST_NOTEDOOR);
-
-			ImGui::EndTable();
-		}
-
-		ImGui::EndTable();
-	}
-
-	ImGui::SeparatorText("Levels");
-
-	static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_BordersOuter;
+	ImGuiTableFlags flags = ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_BordersOuter;
 
 	if (ImGui::BeginTable("LevelsTable", 6, flags))
 	{
@@ -219,6 +111,9 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 			ImGui::Text("%s", levelNames[l]);
 
 			ImGui::TableSetColumnIndex(2);
+
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
+
 			for (int j = 0; j < levelJiggiesCount[l]; j++)
 			{
 				ImGui::PushID(j);
@@ -240,7 +135,12 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 				if (j < levelJiggiesCount[l] - 1) ImGui::SameLine();
 			}
 
+			ImGui::PopStyleVar();
+
 			ImGui::TableSetColumnIndex(3);
+
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
+
 			for (int h = 0; h < levelHoneycombsCount[l]; h++)
 			{
 				ImGui::PushID(h);
@@ -261,6 +161,8 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 
 				if (h < levelHoneycombsCount[l] - 1) ImGui::SameLine();
 			}
+
+			ImGui::PopStyleVar();
 
 			ImGui::TableSetColumnIndex(4);
 
@@ -322,71 +224,173 @@ void SaveEditorUI::RenderMainSection(const SaveData& saveData, SaveSlot* saveSlo
 		ImGui::EndTable();
 	}
 
+	if (ImGui::BeginTable("MumboTokensTable", 3, flags))
+	{
+		uint32_t totalMumboTokens = 0;
+
+		ImGui::TableSetupScrollFreeze(0, 1);
+		ImGui::TableSetupColumn("#");
+		ImGui::TableSetupColumn("Name");
+		ImGui::TableSetupColumn("Mumbo Tokens");
+
+		ImGui::TableHeadersRow();
+
+		for (int l = 1; l < TOTAL_LEVEL_COUNT; l++)
+		{
+			ImGui::PushID(l);
+
+			ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("%i", l + 1);
+
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text("%s", levelNames[l]);
+
+			ImGui::TableSetColumnIndex(2);
+
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
+
+			for (int t = levelMumboTokensIndexRanges[l].min; t <= levelMumboTokensIndexRanges[l].max; t++)
+			{
+				ImGui::PushID(t);
+
+				bool value = saveSlot->GetMumboToken(t);
+				if (ImGui::Checkbox("##Token", &value))
+				{
+					saveSlot->SetMumboToken(t, value);
+					saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+				}
+
+				if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
+					ImGui::SetTooltip("%s", MumboTokenNames[t]);
+
+				if (value) totalMumboTokens++;
+
+				ImGui::PopID();
+
+				if (t < levelMumboTokensIndexRanges[l].max) ImGui::SameLine();
+			}
+
+			ImGui::PopStyleVar();
+
+			ImGui::PopID();
+		}
+
+		// Totals -----------------------------------------------
+
+		ImGui::TableNextRow();
+
+		ImGui::TableSetColumnIndex(0);
+		ImGui::Text("--");
+
+		ImGui::TableSetColumnIndex(1);
+		ImGui::Text("Totals");
+
+		ImGui::TableSetColumnIndex(2);
+		ImGui::Text("%u / %u", totalMumboTokens, ACTUAL_MUMBO_TOKEN_COUNT);
+
+		ImGui::EndTable();
+	}
+
 	ImGui::EndTabItem();
 }
 
-void SaveEditorUI::RenderMumboTokensSection(const SaveData& saveData, SaveSlot* saveSlot)
+void SaveEditorUI::RenderAbilitiesItemsSection(const SaveData& saveData, SaveSlot* saveSlot)
 {
-	if (!ImGui::BeginTabItem("Mumbo Tokens")) return;
+	if (!ImGui::BeginTabItem("Abilities / Items")) return;
 
-	ImGui::Text("This section is still incomplete. You can toggle all the Mumbo tokens in the game,\nbut there's still no info about where in the game each one is located.");
+	ImGui::SeparatorText("Learned / Used Abilities");
 
-	if (ImGui::Button("Have All", ImVec2(80, 0)))
-	{
-		for (uint8_t t = 0; t < MUMBO_TOKEN_COUNT; t++)
-		{
-			saveSlot->SetMumboToken(t, true);
-		}
-
-		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-	}
-
-	ImGui::SameLine();
-
-	if (ImGui::Button("Have None", ImVec2(80, 0)))
-	{
-		for (uint8_t t = 0; t < MUMBO_TOKEN_COUNT; t++)
-		{
-			saveSlot->SetMumboToken(t, false);
-		}
-
-		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-	}
-
-	ImGui::SeparatorText("Mumbo Tokens");
-
-	ImGuiTableFlags tableFlags = ImGuiTableFlags_ScrollY;
-	if (ImGui::BeginTable("MumboTokensTable", 3, tableFlags))
+	if (ImGui::BeginTable("AbilitiesTable", 4, 0))
 	{
 		ImGui::TableSetupColumn("Column1", ImGuiTableColumnFlags_WidthStretch);
 		ImGui::TableSetupColumn("Column2", ImGuiTableColumnFlags_WidthStretch);
 		ImGui::TableSetupColumn("Column3", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Column4", ImGuiTableColumnFlags_WidthStretch);
 
 		ImGui::TableNextRow();
 
-		const uint8_t tokensPerColumn = MUMBO_TOKEN_COUNT / 3;
-		for (uint8_t c = 0; c < 3; c++)
-		{
-			ImGui::TableSetColumnIndex(c);
+		ImGui::TableSetColumnIndex(0);
 
-			for (uint8_t t = 0; t < tokensPerColumn; t++)
-			{
-				uint8_t index = (tokensPerColumn * c) + t;
+		CheckboxAbility(saveData, saveSlot, "Barge", Abilities::ABILITY_0_BARGE);
+		CheckboxAbility(saveData, saveSlot, "Beak Bomb", Abilities::ABILITY_1_BEAK_BOMB);
+		CheckboxAbility(saveData, saveSlot, "Beak Buster", Abilities::ABILITY_2_BEAK_BUSTER);
+		CheckboxAbility(saveData, saveSlot, "Camera Control", Abilities::ABILITY_3_CAMERA_CONTROL);
+		CheckboxAbility(saveData, saveSlot, "Claw Swipe", Abilities::ABILITY_4_CLAW_SWIPE);
 
-				char name[16];
-				snprintf(name, 16, "Mumbo Token %u", index);
+		ImGui::TableSetColumnIndex(1);
 
-				bool value = saveSlot->GetMumboToken(index);
-				if (ImGui::Checkbox(name, &value))
-				{
-					saveSlot->SetMumboToken(index, value);
-					saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-				}
-			}
-		}
+		CheckboxAbility(saveData, saveSlot, "Climb", Abilities::ABILITY_5_CLIMB);
+		CheckboxAbility(saveData, saveSlot, "Eggs", Abilities::ABILITY_6_EGGS);
+		CheckboxAbility(saveData, saveSlot, "Feathery Flap", Abilities::ABILITY_7_FEATHERY_FLAP);
+		CheckboxAbility(saveData, saveSlot, "Flap Flip", Abilities::ABILITY_8_FLAP_FLIP);
+		CheckboxAbility(saveData, saveSlot, "Flight", Abilities::ABILITY_9_FLIGHT);
+
+		ImGui::TableSetColumnIndex(2);
+
+		CheckboxAbility(saveData, saveSlot, "Jump Higher", Abilities::ABILITY_A_HOLD_A_JUMP_HIGHER);
+		CheckboxAbility(saveData, saveSlot, "Ratatat Rap", Abilities::ABILITY_B_RATATAT_RAP);
+		CheckboxAbility(saveData, saveSlot, "Roll", Abilities::ABILITY_C_ROLL);
+		CheckboxAbility(saveData, saveSlot, "Shock Jump", Abilities::ABILITY_D_SHOCK_JUMP);
+		CheckboxAbility(saveData, saveSlot, "Wading Boots", Abilities::ABILITY_E_WADING_BOOTS);
+
+		ImGui::TableSetColumnIndex(3);
+
+		CheckboxAbility(saveData, saveSlot, "Dive", Abilities::ABILITY_F_DIVE);
+		CheckboxAbility(saveData, saveSlot, "Talon Trot", Abilities::ABILITY_10_TALON_TROT);
+		CheckboxAbility(saveData, saveSlot, "Turbo Talon", Abilities::ABILITY_11_TURBO_TALON);
+		CheckboxAbility(saveData, saveSlot, "Wonderwing", Abilities::ABILITY_12_WONDERWING);
+		CheckboxAbility(saveData, saveSlot, "Open Notedoors", Abilities::ABILITY_13_1ST_NOTEDOOR);
 
 		ImGui::EndTable();
 	}
+
+	ImGui::SeparatorText("Held Items");
+
+	ImGui::PushItemWidth(40);
+
+	uint8_t mumboTokens = saveSlot->GetHeldItem(HeldItems::MumboTokens);
+	if (ImGui::InputScalar("Mumbo Tokens", ImGuiDataType_U8, &mumboTokens, NULL, NULL, "%u"))
+	{
+		if (mumboTokens > MAX_MUMBO_TOKENS) mumboTokens = MAX_MUMBO_TOKENS;
+		saveSlot->SetHeldItem(HeldItems::MumboTokens, mumboTokens);
+		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+
+	uint8_t eggs = saveSlot->GetHeldItem(HeldItems::Eggs);
+	if (ImGui::InputScalar("Eggs", ImGuiDataType_U8, &eggs, NULL, NULL, "%u"))
+	{
+		if (eggs > MAX_EGGS) eggs = MAX_EGGS;
+		saveSlot->SetHeldItem(HeldItems::Eggs, eggs);
+		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+
+	uint8_t redFeathers = saveSlot->GetHeldItem(HeldItems::RedFeathers);
+	if (ImGui::InputScalar("Red Feathers", ImGuiDataType_U8, &redFeathers, NULL, NULL, "%u"))
+	{
+		if (redFeathers > MAX_RED_FEATHERS) redFeathers = MAX_RED_FEATHERS;
+		saveSlot->SetHeldItem(HeldItems::RedFeathers, redFeathers);
+		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+
+	uint8_t goldFeathers = saveSlot->GetHeldItem(HeldItems::GoldFeathers);
+	if (ImGui::InputScalar("Gold Feathers", ImGuiDataType_U8, &goldFeathers, NULL, NULL, "%u"))
+	{
+		if (goldFeathers > MAX_GOLD_FEATHERS) goldFeathers = MAX_GOLD_FEATHERS;
+		saveSlot->SetHeldItem(HeldItems::GoldFeathers, goldFeathers);
+		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+
+	uint8_t jiggies = saveSlot->GetHeldItem(HeldItems::Jiggies);
+	if (ImGui::InputScalar("Jiggies", ImGuiDataType_U8, &jiggies, NULL, NULL, "%u"))
+	{
+		if (jiggies > JIGGIES_COUNT) jiggies = JIGGIES_COUNT;
+		saveSlot->SetHeldItem(HeldItems::Jiggies, jiggies);
+		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+
+	ImGui::PopItemWidth();
 
 	ImGui::EndTabItem();
 }

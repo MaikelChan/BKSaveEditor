@@ -29,7 +29,7 @@ protected:
 
 private:
 	void RenderMainSection(const SaveData& saveData, SaveSlot* saveSlot);
-	void RenderMumboTokensSection(const SaveData& saveData, SaveSlot* saveSlot);
+	void RenderAbilitiesItemsSection(const SaveData& saveData, SaveSlot* saveSlot);
 	void RenderProgressFlagsSection(const SaveData& saveData, SaveSlot* saveSlot);
 	void RenderGlobalDataSection(const SaveData& saveData, SaveFile* saveFile);
 

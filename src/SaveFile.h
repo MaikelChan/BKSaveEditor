@@ -10,6 +10,14 @@
 #define SAVE_SLOT_SIZE 0x78
 #define GLOBAL_DATA_SIZE 0x20
 
+struct Range
+{
+	uint8_t min;
+	uint8_t max;
+
+	inline uint8_t Count() { return (max + 1) - min; }
+};
+
 #pragma region Levels_Data
 
 #define TOTAL_LEVEL_COUNT 11
@@ -123,6 +131,297 @@ const char* const levelHoneycombsNames[TOTAL_LEVEL_COUNT][MAX_HONEYCOMBS_PER_LEV
 #pragma region MumboTokens_Data
 
 #define MUMBO_TOKEN_COUNT 126
+#define ACTUAL_MUMBO_TOKEN_COUNT 116
+#define MAX_MUMBO_TOKENS_PER_LEVEL 25
+
+const uint8_t levelMumboTokensCount[TOTAL_LEVEL_COUNT]
+{
+	0, 10, 5, 10, 5, 10, 10, 10, 15, 15, 25
+};
+
+//const uint8_t levelMumboTokensIndices[TOTAL_LEVEL_COUNT][MAX_MUMBO_TOKENS_PER_LEVEL]
+//{
+//	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // Spiral Mountain
+//	{ 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // Gruntilda's Lair
+//	{ 0x01, 0x02, 0x03, 0x04, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // Mumbo's Mountain
+//	{ 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // Treasure Trove Cove
+//	{ 0x10, 0x11, 0x12, 0x13, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // Clanker's Cavern
+//	{ 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // Bubblegloop Swamp
+//	{ 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // Freezeezy Peak
+//	{ 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // Gobi's Valley
+//	{ 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // Mad Monster Mansion
+//	{ 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // Rusty Bucket Bay
+//	{ 0x5B, 0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x72, 0x73 }  // Click Clock Wood
+//};
+
+//const uint8_t levelMumboTokensIndexRanges[TOTAL_LEVEL_COUNT][2]
+//{
+//	{ 0x00, 0x00 }, // Spiral Mountain
+//	{ 0x51, 0x5A }, // Gruntilda's Lair
+//	{ 0x01, 0x05 }, // Mumbo's Mountain
+//	{ 0x06, 0x0F }, // Treasure Trove Cove
+//	{ 0x10, 0x14 }, // Clanker's Cavern
+//	{ 0x15, 0x1E }, // Bubblegloop Swamp
+//	{ 0x1F, 0x28 }, // Freezeezy Peak
+//	{ 0x29, 0x32 }, // Gobi's Valley
+//	{ 0x33, 0x41 }, // Mad Monster Mansion
+//	{ 0x42, 0x50 }, // Rusty Bucket Bay
+//	{ 0x5B, 0x73 }  // Click Clock Wood
+//};
+
+const Range levelMumboTokensIndexRanges[TOTAL_LEVEL_COUNT]
+{
+	{ 0x00, 0x00 }, // Spiral Mountain
+	{ 0x51, 0x5A }, // Gruntilda's Lair
+	{ 0x01, 0x05 }, // Mumbo's Mountain
+	{ 0x06, 0x0F }, // Treasure Trove Cove
+	{ 0x10, 0x14 }, // Clanker's Cavern
+	{ 0x15, 0x1E }, // Bubblegloop Swamp
+	{ 0x1F, 0x28 }, // Freezeezy Peak
+	{ 0x29, 0x32 }, // Gobi's Valley
+	{ 0x33, 0x41 }, // Mad Monster Mansion
+	{ 0x42, 0x50 }, // Rusty Bucket Bay
+	{ 0x5B, 0x73 }  // Click Clock Wood
+};
+
+enum class MumboTokens
+{
+	MUMBOTOKEN_01_MM_STUMP_NEAR_CONGA = 1,
+	MUMBOTOKEN_02_MM_BEHIND_RUINS,
+	MUMBOTOKEN_03_MM_UNDER_RAMP_TO_MUMBOS_SKULL,
+	MUMBOTOKEN_04_MM_BEHIND_PINK_JINJO,
+	MUMBOTOKEN_05_MM_INSIDE_TICKERS_TOWER,
+	MUMBOTOKEN_06_TTC_INSIDE_SALTY_HIPPO,
+	MUMBOTOKEN_07_TTC_INSIDE_LOCKUP_1,
+	MUMBOTOKEN_08_TTC_INSIDE_LOCKUP_2,
+	MUMBOTOKEN_09_TTC_SALTY_HIPPO_MAST,
+	MUMBOTOKEN_0A_TTC_BEHIND_LIGHTHOUSE_DOOR,
+	MUMBOTOKEN_0B_TTC_ON_FLOATING_BOX,
+	MUMBOTOKEN_0C_TTC_BEHIND_PILLAR_UNDERWATER,
+	MUMBOTOKEN_0D_TTC_POND_BOTTOM,
+	MUMBOTOKEN_0E_TTC_FLOATING_ABOVE_SHOCKJUMP_PAD,
+	MUMBOTOKEN_0F_TTC_BEHIND_NIPPER,
+	MUMBOTOKEN_10_CC_CHOMPA_BEHIND_CLANKERS_TAIL,
+	MUMBOTOKEN_11_CC_ABOVE_LEVEL_ENTRANCE,
+	MUMBOTOKEN_12_CC_TUNNEL_RIGHT_OF_CLANKER,
+	MUMBOTOKEN_13_CC_ALCOVE_WITH_OPEN_GRATE,
+	MUMBOTOKEN_14_CC_CLANKERS_LEFT_TOOTH,
+	MUMBOTOKEN_15_BGS_UNDER_HUT_1,
+	MUMBOTOKEN_16_BGS_UNDER_HUT_2,
+	MUMBOTOKEN_17_BGS_TOP_OF_POLE_NEXT_TO_BIG_EGG,
+	MUMBOTOKEN_18_BGS_BEHIND_YELLOW_JINJO,
+	MUMBOTOKEN_19_BGS_FLOATING_BETWEEN_HUT_AND_CROCTUS,
+	MUMBOTOKEN_1A_BGS_BEHIND_MUMBOS_SKULL,
+	MUMBOTOKEN_1B_BGS_ALCOVE_ABOVE_YELLOW_FLIBBITS,
+	MUMBOTOKEN_1C_BGS_BEHIND_TIPTUP,
+	MUMBOTOKEN_1D_BGS_INSIDE_MR_VILES,
+	MUMBOTOKEN_1E_BGS_INSIDE_MUMBOS_SKULL,
+	MUMBOTOKEN_1F_FP_SNOWMAN_LEFT_FOOT,
+	MUMBOTOKEN_20_FP_SNOWMAN_RIGHT_FOOT,
+	MUMBOTOKEN_21_FP_BEHIND_PILE_PRESENT_BOXES,
+	MUMBOTOKEN_22_FP_ABOVE_CHIMNEY_FLIGHT_PAD,
+	MUMBOTOKEN_23_FP_INSIDE_SIR_SLUSH_NEAR_SNOWMANS_LEFT_FOOT,
+	MUMBOTOKEN_24_FP_INSIDE_SIR_SLUSH_NEAR_SNOWMANS_RIGHT_FOOT,
+	MUMBOTOKEN_25_FP_CHRISTMAS_TREE_POT,
+	MUMBOTOKEN_26_FP_TIP_OF_SCARF,
+	MUMBOTOKEN_27_FP_WATER_BEHIND_SNOWMAN,
+	MUMBOTOKEN_28_FP_INSIDE_BOGGYS_IGLOO,
+	MUMBOTOKEN_29_GV_TOP_OF_JINXYS_NOSE,
+	MUMBOTOKEN_2A_GV_SAND_RIGHT_OF_JINXY,
+	MUMBOTOKEN_2B_GV_BOTTOM_OF_MOAT,
+	MUMBOTOKEN_2C_GV_TOP_OF_WATER_PYRAMID,
+	MUMBOTOKEN_2D_GV_FRONT_OF_STAR_DOOR,
+	MUMBOTOKEN_2E_GV_INSIDE_MEMORY_GAME_ROOM,
+	MUMBOTOKEN_2F_GV_BEHIND_SANDYBUTTS_SARCOPHAGUS,
+	MUMBOTOKEN_30_GV_INSIDE_WATER_PYRAMID,
+	MUMBOTOKEN_31_GV_NEXT_TO_RUBEE,
+	MUMBOTOKEN_32_GV_INSIDE_JINXY,
+	MUMBOTOKEN_33_MMM_HIDDEN_NEAR_FOUNTAIN,
+	MUMBOTOKEN_34_MMM_NEAR_FRONT_TUMBLARS_SHED,
+	MUMBOTOKEN_35_MMM_ALCOVE_CLOCK_TOWER,
+	MUMBOTOKEN_36_MMM_NEXT_TO_MAZE_HEDGE_RAMP,
+	MUMBOTOKEN_37_MMM_IN_THE_MAZE,
+	MUMBOTOKEN_38_MMM_BEHIND_CHURCH,
+	MUMBOTOKEN_39_MMM_INSIDE_WHIPCRACK_IN_FOUNTAIN,
+	MUMBOTOKEN_3A_MMM_TOP_OF_WOOD_BEAM_INSIDE_CHURCH,
+	MUMBOTOKEN_3B_MMM_TOP_OF_STOOL_INSIDE_CHURCH,
+	MUMBOTOKEN_3C_MMM_TOP_OF_TUMBLARS_SHED,
+	MUMBOTOKEN_3D_MMM_INSIDE_LOGGO_AND_INSIDE_BARREL_IN_CELLAR, // Bug: Two tokens have same ID
+	MUMBOTOKEN_3E_MMM_IN_CHIMNEY_INSIDE_DINNING_ROOM,
+	MUMBOTOKEN_3F_MMM_INSIDE_WELL,
+	MUMBOTOKEN_40_MMM_INSIDE_BEDROOM,
+	MUMBOTOKEN_41_MMM_SINK_IN_LOGGOS_ROOM,
+	MUMBOTOKEN_42_RBB_TOP_OF_SHIPS_CHIMNEY,
+	MUMBOTOKEN_43_RBB_SHIPS_PROW,
+	MUMBOTOKEN_44_RBB_ON_LIFE_BOAT,
+	MUMBOTOKEN_45_RBB_FRONT_OF_CHOMPA_LEFT_OF_SHIP,
+	MUMBOTOKEN_46_RBB_TOXIC_WASTE_POND,
+	MUMBOTOKEN_47_RBB_UNDER_CHOMPA_IN_WITCH_SWITCH_TOWER,
+	MUMBOTOKEN_48_RBB_UNDER_CHOMPA_INSIDE_FIRST_BLUE_CONTAINER,
+	MUMBOTOKEN_49_RBB_TOP_OF_BOX_INSIDE_SECOND_BLUE_CONTAINER,
+	MUMBOTOKEN_4A_RBB_TOP_OF_BUNK_IN_CABIN,
+	MUMBOTOKEN_4B_RBB_INSIDE_NAVIGATION_ROOM,
+	MUMBOTOKEN_4C_RBB_INSIDE_KITCHEN,
+	MUMBOTOKEN_4D_RBB_ENGINE_ROOM_LEFT_PIPE,
+	MUMBOTOKEN_4E_RBB_ENGINE_ROOM_RIGHT_PIPE,
+	MUMBOTOKEN_4F_RBB_ENGINE_ROOM_SPINNING_PLATFORM,
+	MUMBOTOKEN_50_RBB_TOP_OF_BOX_INSIDE_TNT_ROOM,
+	MUMBOTOKEN_51_LAIR_BEHIND_PURPLE_CAULDRON,
+	MUMBOTOKEN_52_LAIR_CCW_JIGGY_PODIUM,
+	MUMBOTOKEN_53_LAIR_TOP_OF_PIPE_IN_ORANGE_CAULDRON_ROOM,
+	MUMBOTOKEN_54_LAIR_ABOVE_CC_ENTRANCE,
+	MUMBOTOKEN_55_LAIR_BEHIND_SARCOPHAGUS,
+	MUMBOTOKEN_56_LAIR_ADVENT_TOP_WINDOW,
+	MUMBOTOKEN_57_LAIR_BEHIND_MUMBO_IN_CRYPT,
+	MUMBOTOKEN_58_LAIR_ABOVE_NOTE_DOOR_WATER_AREA,
+	MUMBOTOKEN_59_LAIR_UNDERWATER_RBB_ENTRANCE_AREA,
+	MUMBOTOKEN_5A_LAIR_WHIPCRACK_NEAR_MMM_JIGGY_PODIUM,
+	MUMBOTOKEN_5B_CCW_SPRING_UNFINISHED_WOOD_TREEHOUSE,
+	MUMBOTOKEN_5C_CCW_SPRING_TOP_OF_BRANCH,
+	MUMBOTOKEN_5D_CCW_SPRING_FRONT_OF_EYRIE,
+	MUMBOTOKEN_5E_CCW_SPRING_THORN_FIELD_FRONT_OF_MUMBOS_SKULL,
+	MUMBOTOKEN_5F_CCW_SPRING_SNAREBEAR_NEAR_BIG_FLOWER,
+	MUMBOTOKEN_60_CCW_SPRING_SNAREBEAR_NEAR_ENTRANCE,
+	MUMBOTOKEN_61_CCW_SPRING_TOP_OF_BEEHIVE,
+	MUMBOTOKEN_62_CCW_SPRING_NABNUTS_HOUSE,
+	MUMBOTOKEN_63_CCW_SUMMER_PLATFORMS_BEFORE_EYRIES_NEST,
+	MUMBOTOKEN_64_CCW_SUMMER_BIG_FLOWER_FIELD,
+	MUMBOTOKEN_65_CCW_SUMMER_SNAREBEAR_NEAR_THORN_FIELD,
+	MUMBOTOKEN_66_CCW_SUMMER_TOP_OF_BRANCH,
+	MUMBOTOKEN_67_CCW_SUMMER_ENTRANCE_GNAWTYS_HOUSE,
+	MUMBOTOKEN_68_CCW_SUMMER_FLOATING_ABOVE_BIG_CLUCKER,
+	MUMBOTOKEN_69_CCW_SUMMER_INSIDE_MUMBOS_SKULL,
+	MUMBOTOKEN_6A_CCW_AUTUMN_FLOATING_ABOVE_BIG_CLUCKER,
+	MUMBOTOKEN_6B_CCW_AUTUMN_SNAREBEAR_NEAR_ENTRANCE,
+	MUMBOTOKEN_6C_CCW_AUTUMN_SNAREBEAR_TOP_OF_TREE,
+	MUMBOTOKEN_6D_CCW_AUTUMN_LEAF_NEAR_TREEHOUSE,
+	MUMBOTOKEN_6E_CCW_AUTUMN_TOP_OF_BRANCH,
+	MUMBOTOKEN_6F_CCW_WINTER_BIG_FLOWER,
+	MUMBOTOKEN_70_CCW_WINTER_FROZEN_RIVER_NEAR_FLIGHT_PAD,
+	MUMBOTOKEN_71_CCW_WINTER_BROKEN_BEEHIVE,
+	MUMBOTOKEN_72_CCW_WINTER_WALKWAY_FRONT_OF_NABNUTS_HOUSE,
+	MUMBOTOKEN_73_CCW_WINTER_SIR_SLUSH_BETWEEN_BIG_FLOWER_AND_MUMBOS_SKULL
+};
+
+const char* const MumboTokenNames[]
+{
+	"",
+	"Stump near Conga",
+	"Behind ruins",
+	"Under the ramp to Mumbo's Skull",
+	"Behind pink Jinjo",
+	"Inside Ticker's tower",
+	"Inside Salty Hippo",
+	"Inside Lockup 1",
+	"Inside Lockup 2",
+	"Salty Hippo's mast",
+	"Behind lighthouse door",
+	"On top of floating box",
+	"Underwater behind pillar",
+	"Bottom of the Pond",
+	"Floating above Shock Jump Pad",
+	"Behind Nipper",
+	"Chompa behind Clanker's tail",
+	"Above the level entrance",
+	"Tunnel to the right of Clanker",
+	"Alcove with open grate",
+	"Clanker's left tooth",
+	"Under a hut 1",
+	"Under a hut 2",
+	"Top of the pole next to big egg",
+	"Behind yellow Jinjo",
+	"Floating between hut and Croctus",
+	"Behind Mumbo's Skull",
+	"Alcove above the yellow Flibbits",
+	"Behind Tiptup",
+	"Inside Mr. Vile's",
+	"Inside Mumbo's Skull",
+	"Snowman left foot",
+	"Snowman right foot",
+	"Behind the pile of present boxes",
+	"Above the chimney's Flight Pad",
+	"Inside the Sir Slush near the Snowman's left foot",
+	"Inside the Sir Slush near the Snowman's right foot",
+	"Christmas tree's pot",
+	"Tip of the scarf",
+	"Water behind the Snowman",
+	"Inside Boggy's igloo",
+	"Top of Jinxy's nose",
+	"Sand at the right of Jinxy",
+	"Bottom of the moat",
+	"Top of the water pyramid",
+	"Front of the star door",
+	"Inside the memory game room",
+	"Behind Sandybutt's sarcophagus",
+	"Inside the water pyramid",
+	"Next to Rubee",
+	"Inside Jinxy",
+	"Hidden near the fountain",
+	"Near the front of Tumblar's shed",
+	"Alcove in the clock tower",
+	"Next to the maze's hedge ramp",
+	"In the maze",
+	"Behind the church",
+	"Inside the Whipcrack in the fountain",
+	"On top of the wood beam inside the church",
+	"On top of the stool inside the church",
+	"On top of Tumblar's shed",
+	"Inside Loggo / Inside barrel in cellar (Game bug: these two tokens share the same ID)",
+	"In chimney inside the dinning room",
+	"Inside the well",
+	"Inside the bedroom",
+	"Sink in Loggo's room",
+	"Top of the ship's chimney",
+	"Ship's prow",
+	"On a life boat",
+	"In front of Chompa at the left of the ship",
+	"At the toxic waste pond",
+	"Under the Chompa in the tower where the Witch Switch is",
+	"Under the Chompa inside the first blue container",
+	"On top of the box inside the second blue container",
+	"On top of the bunk in the cabin",
+	"Inside the navigation room",
+	"Inside the oven in the kitchen",
+	"Engine room's left pipe",
+	"Engine room's right pipe",
+	"Engine room's spinning platform",
+	"On top of the box inside the TNT room",
+	"Behind purple Cauldron",
+	"Room of the CCW Jiggy podium",
+	"On top of the pipe in the orange Cauldron room",
+	"Above the CC entrance",
+	"Behind the sarcophagus",
+	"Advent's top window",
+	"Behind Mumbo in the crypt",
+	"Above the note door in the water area",
+	"Underwater in the RBB entrance area",
+	"Whipcrack near the MMM Jiggy podium",
+	"[Spring] Unfinished treehouse",
+	"[Spring] On top of a branch",
+	"[Spring] In front of Eyrie",
+	"[Spring] Thorn field in front of Mumbo's Skull",
+	"[Spring] Snarebear near the big flower",
+	"[Spring] Snarebear near the entrance",
+	"[Spring] On top of the beehive",
+	"[Spring] Nabnut's house",
+	"[Summer] Platforms before Eyrie's nest",
+	"[Summer] Big flower's field",
+	"[Summer] Snarebear near the thorn field",
+	"[Summer] On top of a branch",
+	"[Summer] Entrance to Gnawty's house",
+	"[Summer] Floating above a Big Clucker",
+	"[Summer] Inside Mumbo's Skull",
+	"[Autumn] Floating above a Big Clucker",
+	"[Autumn] Snarebear near the entrance",
+	"[Autumn] Snarebear at the top of the tree",
+	"[Autumn] Leaf near the treehouse",
+	"[Autumn] On top of a branch",
+	"[Winter] Big flower",
+	"[Winter] Frozen river near the Flight Pad",
+	"[Winter] Broken beehive",
+	"[Winter] Walkway in front of Nabnut's house",
+	"[Winter] Sir Slush between the big flower and Mumbo's Skull"
+};
 
 #pragma endregion
 
