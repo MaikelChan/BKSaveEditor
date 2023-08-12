@@ -415,7 +415,7 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 
 		ImGui::TableSetColumnIndex(0);
 
-		PrintHeader("Unlocked Doors");
+		BeginProgressFlagsGroup("Unlocked Doors");
 		CheckboxProgressFlags(saveData, saveSlot, "50 Note Door", ProgressFlags::FILEPROG_3A_NOTE_DOOR_50_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "180 Note Door", ProgressFlags::FILEPROG_3B_NOTE_DOOR_180_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "260 Note Door", ProgressFlags::FILEPROG_3C_NOTE_DOOR_260_OPEN);
@@ -429,19 +429,22 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "864 Note Door", ProgressFlags::FILEPROG_44_NOTE_DOOR_864_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "882 Note Door", ProgressFlags::FILEPROG_45_NOTE_DOOR_882_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Grunty's Door", ProgressFlags::FILEPROG_E2_DOOR_OF_GRUNTY_OPEN);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Unlocked Grates");
+		BeginProgressFlagsGroup("Unlocked Grates");
 		CheckboxProgressFlags(saveData, saveSlot, "To BGS Puzzle", ProgressFlags::FILEPROG_1E_LAIR_GRATE_TO_BGS_PUZZLE_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "To MMM Puzzle", ProgressFlags::FILEPROG_CE_GRATE_TO_MMM_PUZZLE_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "To RBB Puzzle", ProgressFlags::FILEPROG_C2_GRATE_TO_RBB_PUZZLE_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "To Water Switch 3", ProgressFlags::FILEPROG_CD_GRATE_TO_WATER_SWITCH_3_OPEN);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Cutscenes");
+		BeginProgressFlagsGroup("Cutscenes");
 		CheckboxProgressFlags(saveData, saveSlot, "Enter Lair", ProgressFlags::FILEPROG_BD_ENTER_LAIR_CUTSCENE);
 		CheckboxProgressFlags(saveData, saveSlot, "MMM Dinning Room", ProgressFlags::FILEPROG_1D_MMM_DINNING_ROOM_CUTSCENE);
 		CheckboxProgressFlags(saveData, saveSlot, "Enter Furnace Fun", ProgressFlags::FILEPROG_F4_ENTER_FF_CUTSCENE);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Jiggies Placed");
+		BeginProgressFlagsGroup("Jiggies Placed");
 		InputProgressFlags(saveData, saveSlot, "MM Picture", ProgressFlags::FILEPROG_5D_MM_PUZZLE_PIECES_PLACED, 1, 1);
 		InputProgressFlags(saveData, saveSlot, "TTC Picture", ProgressFlags::FILEPROG_5E_TCC_PUZZLE_PIECES_PLACED, 2, 2);
 		InputProgressFlags(saveData, saveSlot, "CC Picture", ProgressFlags::FILEPROG_60_CC_PUZZLE_PIECES_PLACED, 3, 5);
@@ -453,8 +456,9 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		InputProgressFlags(saveData, saveSlot, "CCW Picture", ProgressFlags::FILEPROG_76_CCW_PUZZLE_PIECES_PLACED, 4, 15);
 		InputProgressFlags(saveData, saveSlot, "Grunty Picture", ProgressFlags::FILEPROG_7A_DOG_PUZZLE_PIECES_PLACED, 5, 25);
 		InputProgressFlags(saveData, saveSlot, "Honeycomb Picture", ProgressFlags::FILEPROG_7F_DOUBLE_HEALTH_PUZZLE_PIECES_PLACED, 3, 4);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Cauldrons");
+		BeginProgressFlagsGroup("Cauldrons");
 		CheckboxProgressFlags(saveData, saveSlot, "Pink 1 Active", ProgressFlags::FILEPROG_49_PINK_CAULDRON_1_ACTIVE);
 		CheckboxProgressFlags(saveData, saveSlot, "Pink 2 Active", ProgressFlags::FILEPROG_4A_PINK_CAULDRON_2_ACTIVE);
 		CheckboxProgressFlags(saveData, saveSlot, "Green 1 Active", ProgressFlags::FILEPROG_4B_GREEN_CAULDRON_1_ACTIVE);
@@ -466,8 +470,9 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "Unused? 1 Active", ProgressFlags::FILEPROG_4F_UNUSED_CAULDRON_1_ACTIVE);
 		CheckboxProgressFlags(saveData, saveSlot, "Unused? 2 Active", ProgressFlags::FILEPROG_50_UNUSED_CAULDRON_2_ACTIVE);
 		CheckboxProgressFlags(saveData, saveSlot, "Unlocked Cauldron Warp", ProgressFlags::FILEPROG_F5_COMPLETED_A_WARP_CAULDRON_SET);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Mumbo Jumbo");
+		BeginProgressFlagsGroup("Mumbo Jumbo");
 		CheckboxProgressFlags(saveData, saveSlot, "Has Met Mumbo", ProgressFlags::FILEPROG_11_HAS_MET_MUMBO);
 		CheckboxProgressFlags(saveData, saveSlot, "Has Transformed Before", ProgressFlags::FILEPROG_12_HAS_TRANSFORMED_BEFORE);
 		CheckboxProgressFlags(saveData, saveSlot, "Had Enough Tokens Before", ProgressFlags::FILEPROG_DC_HAS_HAD_ENOUGH_TOKENS_BEFORE);
@@ -477,16 +482,18 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "Paid Pumpkin Cost", ProgressFlags::FILEPROG_91_PAID_PUMPKIN_COST);
 		CheckboxProgressFlags(saveData, saveSlot, "Paid Bee Cost", ProgressFlags::FILEPROG_94_PAID_BEE_COST);
 		InputProgressFlags(saveData, saveSlot, "Mistakes Index", ProgressFlags::FILEPROG_BB_MUMBO_MISTAKE_INDEX, 2, 3);
+		EndProgressFlagsGroup();
 
 		ImGui::TableSetColumnIndex(1);
 
-		PrintHeader("Stats");
+		BeginProgressFlagsGroup("Stats");
 		CheckboxProgressFlags(saveData, saveSlot, "Double Health", ProgressFlags::FILEPROG_B9_DOUBLE_HEALTH);
 		CheckboxProgressFlags(saveData, saveSlot, "Cheato Blue Eggs", ProgressFlags::FILEPROG_BE_CHEATO_BLUEEGGS);
 		CheckboxProgressFlags(saveData, saveSlot, "Cheato Red Feathers", ProgressFlags::FILEPROG_BF_CHEATO_REDFEATHERS);
 		CheckboxProgressFlags(saveData, saveSlot, "Cheato Gold Feathers", ProgressFlags::FILEPROG_C0_CHEATO_GOLDFEATHERS);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Unlocked Worlds");
+		BeginProgressFlagsGroup("Unlocked Worlds");
 		CheckboxProgressFlags(saveData, saveSlot, "Mumbo's Mountain", ProgressFlags::FILEPROG_31_MM_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Treasure Trove Cove", ProgressFlags::FILEPROG_32_TTC_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Clanker's Cavern", ProgressFlags::FILEPROG_33_CC_OPEN);
@@ -496,9 +503,10 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "Mad Monster Mansion", ProgressFlags::FILEPROG_37_MMM_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Rusty Bucket Bay", ProgressFlags::FILEPROG_38_RBB_OPEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Click Clock Wood", ProgressFlags::FILEPROG_39_CCW_OPEN);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Entered Worlds");
-		CheckboxProgressFlags(saveData, saveSlot, "Mumbo's Mountain", ProgressFlags::FILEPROG_B0_HAS_ENTERED_MM);
+		BeginProgressFlagsGroup("Entered Worlds");
+		CheckboxProgressFlags(saveData, saveSlot, "Mumbo's Mountain##Entered", ProgressFlags::FILEPROG_B0_HAS_ENTERED_MM);
 		CheckboxProgressFlags(saveData, saveSlot, "Treasure Trove Cove", ProgressFlags::FILEPROG_B2_HAS_ENTERED_TTC);
 		CheckboxProgressFlags(saveData, saveSlot, "Clanker's Cavern", ProgressFlags::FILEPROG_B8_HAS_ENTERED_CC);
 		CheckboxProgressFlags(saveData, saveSlot, "Bubblegloop Swamp", ProgressFlags::FILEPROG_B1_HAS_ENTERED_BGS);
@@ -508,8 +516,9 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "Rusty Bucket Bay", ProgressFlags::FILEPROG_B4_HAS_ENTERED_RBB);
 		CheckboxProgressFlags(saveData, saveSlot, "Click Clock Wood", ProgressFlags::FILEPROG_B5_HAS_ENTERED_CCW);
 		CheckboxProgressFlags(saveData, saveSlot, "Final Fight", ProgressFlags::FILEPROG_CF_HAS_ENTERED_FINAL_FIGHT);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Texts Read");
+		BeginProgressFlagsGroup("Texts Read");
 		CheckboxProgressFlags(saveData, saveSlot, "Music Note", ProgressFlags::FILEPROG_3_MUSIC_NOTE_TEXT);
 		CheckboxProgressFlags(saveData, saveSlot, "Mumbo Token", ProgressFlags::FILEPROG_4_MUMBO_TOKEN_TEXT);
 		CheckboxProgressFlags(saveData, saveSlot, "Blue Egg", ProgressFlags::FILEPROG_5_BLUE_EGG_TEXT);
@@ -531,15 +540,17 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "Near Puzzle Podium", ProgressFlags::FILEPROG_A7_NEAR_PUZZLE_PODIUM_TEXT);
 		CheckboxProgressFlags(saveData, saveSlot, "Has Seen Trex", ProgressFlags::FILEPROG_BA_HAS_SEEN_TREX_TEXT);
 		CheckboxProgressFlags(saveData, saveSlot, "Baddies Escaped", ProgressFlags::FILEPROG_C1_BADDIES_ESCAPE_TEXT);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Final Battle");
+		BeginProgressFlagsGroup("Final Battle");
 		CheckboxProgressFlags(saveData, saveSlot, "Activated Jinjo Statue", ProgressFlags::FILEPROG_D1_HAS_ACTIVATED_A_JINJO_STATUE_IN_FINAL_FIGHT);
 		CheckboxProgressFlags(saveData, saveSlot, "Spawned Jinjo Statue", ProgressFlags::FILEPROG_D2_HAS_SPAWNED_A_JINJO_STATUE_IN_FINAL_FIGHT);
 		CheckboxProgressFlags(saveData, saveSlot, "Grunty Defeated", ProgressFlags::FILEPROG_FC_DEFEAT_GRUNTY);
+		EndProgressFlagsGroup();
 
 		ImGui::TableSetColumnIndex(2);
 
-		PrintHeader("Pressed Witch Switches");
+		BeginProgressFlagsGroup("Pressed Witch Switches");
 		CheckboxProgressFlags(saveData, saveSlot, "Lair Jump Pad", ProgressFlags::FILEPROG_C6_LAIR_JUMP_PAD_SWITCH_PRESSED);
 		CheckboxProgressFlags(saveData, saveSlot, "MM Jiggy", ProgressFlags::FILEPROG_18_MM_WITCH_SWITCH_JIGGY_PRESSED);
 		CheckboxProgressFlags(saveData, saveSlot, "TTC Jiggy", ProgressFlags::FILEPROG_1A_TTC_WITCH_SWITCH_JIGGY_PRESSED);
@@ -556,13 +567,15 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "RBB Jiggy", ProgressFlags::FILEPROG_1C_RBB_WITCH_SWITCH_JIGGY_PRESSED);
 		CheckboxProgressFlags(saveData, saveSlot, "CCW Jiggy", ProgressFlags::FILEPROG_46_CCW_WITCH_SWITCH_JIGGY_PRESSED);
 		CheckboxProgressFlags(saveData, saveSlot, "CCW Podium Switch", ProgressFlags::FILEPROG_53_CCW_PUZZLE_PODIUM_SWITCH_PRESSED);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Pressed Misc Switches");
+		BeginProgressFlagsGroup("Pressed Misc Switches");
 		CheckboxProgressFlags(saveData, saveSlot, "Water Switch 1", ProgressFlags::FILEPROG_22_WATER_SWITCH_1_PRESSED);
 		CheckboxProgressFlags(saveData, saveSlot, "Water Switch 2", ProgressFlags::FILEPROG_24_WATER_SWITCH_2_PRESSED);
 		CheckboxProgressFlags(saveData, saveSlot, "Water Switch 3", ProgressFlags::FILEPROG_26_WATER_SWITCH_3_PRESSED);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Level Events");
+		BeginProgressFlagsGroup("Level Events");
 		CheckboxProgressFlags(saveData, saveSlot, "Has Died", ProgressFlags::FILEPROG_A8_HAS_DIED);
 		CheckboxProgressFlags(saveData, saveSlot, "BGS Piranha Water", ProgressFlags::FILEPROG_F_HAS_TOUCHED_PIRAHANA_WATER);
 		CheckboxProgressFlags(saveData, saveSlot, "BGS Met Flibbits", ProgressFlags::FILEPROG_1B_MET_YELLOW_FLIBBITS);
@@ -593,10 +606,11 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "CCW Met Bees", ProgressFlags::FILEPROG_8F_MET_BEE_INFESTED_BEEHIVE);
 		CheckboxProgressFlags(saveData, saveSlot, "CCW Bramble Field", ProgressFlags::FILEPROG_AA_HAS_TOUCHED_CCW_BRAMBLE_FIELD);
 		CheckboxProgressFlags(saveData, saveSlot, "CCW Touched Icy Water", ProgressFlags::FILEPROG_DD_HAS_TOUCHED_CCW_ICY_WATER);
+		EndProgressFlagsGroup();
 
 		ImGui::TableSetColumnIndex(3);
 
-		PrintHeader("Brentilda");
+		BeginProgressFlagsGroup("Brentilda");
 		CheckboxProgressFlags(saveData, saveSlot, "Met Brentilda", ProgressFlags::FILEPROG_96_MET_BRENTILDA);
 		CheckboxProgressFlags(saveData, saveSlot, "Healed by Brentilda 1", ProgressFlags::FILEPROG_E9_HEALED_BY_BRENTILDA_1);
 		CheckboxProgressFlags(saveData, saveSlot, "Healed by Brentilda 2", ProgressFlags::FILEPROG_EA_HEALED_BY_BRENTILDA_2);
@@ -608,8 +622,9 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "Healed by Brentilda 8", ProgressFlags::FILEPROG_F0_HEALED_BY_BRENTILDA_8);
 		CheckboxProgressFlags(saveData, saveSlot, "Healed by Brentilda 9", ProgressFlags::FILEPROG_F1_HEALED_BY_BRENTILDA_9);
 		CheckboxProgressFlags(saveData, saveSlot, "Healed by Brentilda 10", ProgressFlags::FILEPROG_F2_HEALED_BY_BRENTILDA_10);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Broken Stuff");
+		BeginProgressFlagsGroup("Broken Stuff");
 		CheckboxProgressFlags(saveData, saveSlot, "Ice Ball to Cheato", ProgressFlags::FILEPROG_C3_ICE_BALL_TO_CHEATO_BROKEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Statue Eye", ProgressFlags::FILEPROG_C4_STATUE_EYE_BROKEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Rareware Box", ProgressFlags::FILEPROG_C5_RAREWARE_BOX_BROKEN);
@@ -618,14 +633,16 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "Cobweb Purple Cauldron", ProgressFlags::FILEPROG_CA_COBWEB_BLOCKING_PURPLE_CAULDRON_BROKEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Cobweb Flight Pad", ProgressFlags::FILEPROG_CB_LAIR_COBWEB_OVER_FLIGHTPAD_BROKEN);
 		CheckboxProgressFlags(saveData, saveSlot, "Cobweb Green Cauldron", ProgressFlags::FILEPROG_CC_LAIR_COBWEB_OVER_GREEN_CAULDRON_BROKEN);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Cheats Unlocked");
+		BeginProgressFlagsGroup("Cheats Unlocked");
 		CheckboxProgressFlags(saveData, saveSlot, "Cheato Blue Eggs", ProgressFlags::FILEPROG_AD_CHEATO_BLUEEGGS_UNLOCKED);
 		CheckboxProgressFlags(saveData, saveSlot, "Cheato Red Feathers", ProgressFlags::FILEPROG_AE_CHEATO_REDFEATHERS_UNLOCKED);
 		CheckboxProgressFlags(saveData, saveSlot, "Cheato Gold Feathers", ProgressFlags::FILEPROG_AF_CHEATO_GOLDFEATHERS_UNLOCKED);
 		InputProgressFlags(saveData, saveSlot, "Banned Cheats Entered", ProgressFlags::FILEPROG_FD_CHEATCODES_ENTERED, 2, 3);
+		EndProgressFlagsGroup();
 
-		PrintHeader("SM / Lair Events");
+		BeginProgressFlagsGroup("SM / Lair Events");
 		CheckboxProgressFlags(saveData, saveSlot, "Skipped Tutorial", ProgressFlags::FILEPROG_DB_SKIPPED_TUTORIAL);
 		CheckboxProgressFlags(saveData, saveSlot, "Stood on Jiggy Podium", ProgressFlags::FILEPROG_16_STOOD_ON_JIGSAW_PODIUM);
 		CheckboxProgressFlags(saveData, saveSlot, "Have Enough Jiggies", ProgressFlags::FILEPROG_17_HAS_HAD_ENOUGH_JIGSAW_PIECES);
@@ -646,8 +663,9 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "Water Level 3", ProgressFlags::FILEPROG_27_LAIR_WATER_LEVEL_3);
 		CheckboxProgressFlags(saveData, saveSlot, "Met Dingpot", ProgressFlags::FILEPROG_F3_MET_DINGPOT);
 		CheckboxProgressFlags(saveData, saveSlot, "Seen Grunty Podium Door", ProgressFlags::FILEPROG_F6_SEEN_DOOR_OF_GRUNTY_PUZZLE_PODIUM);
+		EndProgressFlagsGroup();
 
-		PrintHeader("Furnace Fun");
+		BeginProgressFlagsGroup("Furnace Fun");
 		CheckboxProgressFlags(saveData, saveSlot, "BK Instructions", ProgressFlags::FILEPROG_55_FF_BK_SQUARE_INSTRUCTIONS);
 		CheckboxProgressFlags(saveData, saveSlot, "Picture Instructions", ProgressFlags::FILEPROG_56_FF_PICTURE_SQUARE_INSTRUCTIONS);
 		CheckboxProgressFlags(saveData, saveSlot, "Music Instructions", ProgressFlags::FILEPROG_57_FF_MUSIC_SQAURE_INSTRUCTIONS);
@@ -658,6 +676,7 @@ void SaveEditorUI::RenderProgressFlagsSection(const SaveData& saveData, SaveSlot
 		CheckboxProgressFlags(saveData, saveSlot, "Game Complete", ProgressFlags::FILEPROG_A6_FURNACE_FUN_COMPLETE);
 		CheckboxProgressFlags(saveData, saveSlot, "Pattern Set", ProgressFlags::FILEPROG_5C_FF_PATTERN_SET);
 		InputProgressFlags(saveData, saveSlot, "Pattern", ProgressFlags::FILEPROG_D3_FF_PATTERN, 8, 255);
+		EndProgressFlagsGroup();
 
 		ImGui::EndTable();
 	}
@@ -771,4 +790,15 @@ void SaveEditorUI::PrintHeader(const char* label) const
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.5f, 0.6f, 1.0f));
 	ImGui::SeparatorText(label);
 	ImGui::PopStyleColor();
+}
+
+void SaveEditorUI::BeginProgressFlagsGroup(const char* label) const
+{
+	PrintHeader(label);
+	ImGui::PushID(label);
+}
+
+void SaveEditorUI::EndProgressFlagsGroup() const
+{
+	ImGui::PopID();
 }

@@ -39,4 +39,6 @@ private:
 	void CheckboxSnS(const SaveData& saveData, const char* label, const SnS unlockedSnsItem, const SnS collectedSnsItem) const;
 	void PrintChecksum(const uint32_t checksum) const;
 	void PrintHeader(const char* label) const;
+	void BeginProgressFlagsGroup(const char* label) const;
+	void EndProgressFlagsGroup() const;
 };
