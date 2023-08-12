@@ -705,6 +705,7 @@ public:
 
 	uint8_t GetMagic() const;
 	uint8_t GetSlotIndex() const;
+	void SetSlotIndex(const uint8_t slotIndex);
 
 	bool GetJiggy(const uint8_t jiggy) const;
 	void SetJiggy(const uint8_t jiggy, bool value);

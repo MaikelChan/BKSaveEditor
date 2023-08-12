@@ -27,7 +27,20 @@ uint8_t SaveSlot::GetMagic() const
 
 uint8_t SaveSlot::GetSlotIndex() const
 {
+	if (SlotIndex == 2) return 3;
+	if (SlotIndex == 3) return 2;
 	return SlotIndex;
+}
+
+void SaveSlot::SetSlotIndex(const uint8_t slotIndex)
+{
+	if (slotIndex < 1 || slotIndex > 3) return;
+
+	uint8_t index = slotIndex;
+	if (index == 2) index = 3;
+	else if (index == 3) index = 2;
+
+	SlotIndex = index;
 }
 
 bool SaveSlot::GetJiggy(const uint8_t jiggy) const
@@ -232,14 +245,10 @@ SaveSlot* SaveFile::GetRawSaveSlot(const uint8_t slotIndex)
 
 SaveSlot* SaveFile::GetSaveSlot(const uint8_t slotIndex)
 {
-	uint8_t index = slotIndex;
-	if (index == 1) index = 2;
-	else if (index == 2) index = 1;
-
 	for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
 	{
 		if (saveSlots[s].GetMagic() != SAVE_SLOT_MAGIC) continue;
-		if (saveSlots[s].GetSlotIndex() == index + 1) return &saveSlots[s];
+		if (saveSlots[s].GetSlotIndex() == slotIndex + 1) return &saveSlots[s];
 	}
 
 	return nullptr;

@@ -57,7 +57,7 @@ void MainUI::DoRender()
 				fileDialog.Open();
 			}
 
-			if (ImGui::MenuItem("Save"))
+			if (ImGui::MenuItem("Save", NULL, false, saveData.IsSaveFileLoaded()))
 			{
 				Save();
 			}
@@ -74,14 +74,27 @@ void MainUI::DoRender()
 
 		if (saveData.IsSaveFileLoaded() && ImGui::BeginMenu("Tools"))
 		{
-			for (int s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
+			for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
 			{
 				if (ImGui::BeginMenu(tabNames[s]))
 				{
-					//if (ImGui::MenuItem("100% Complete"))
-					//{
-					//	CompleteSlot(s);
-					//}
+					if (ImGui::BeginMenu("Copy"))
+					{
+						for (uint8_t ds = 0; ds < ACTUAL_NUM_SAVE_SLOTS; ds++)
+						{
+							if (s == ds) continue;
+
+							char menuName[27];
+							snprintf(menuName, 27, "To %s", tabNames[ds]);
+
+							if (ImGui::MenuItem(menuName))
+							{
+								CopySlot(s, ds);
+							}
+						}
+
+						ImGui::EndMenu();
+					}
 
 					if (ImGui::MenuItem("Delete"))
 					{
@@ -250,9 +263,41 @@ void MainUI::Save()
 	}
 }
 
-void MainUI::CompleteSlot(const uint8_t slotIndex) const
+void MainUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinationSlotIndex) const
 {
 	if (!saveData.IsSaveFileLoaded()) return;
+	if (originSlotIndex == destinationSlotIndex) return;
+
+	SaveSlot* origin = saveData.GetSaveFile()->GetSaveSlot(originSlotIndex);
+
+	if (origin == nullptr)
+	{
+		DeleteSlot(destinationSlotIndex);
+		return;
+	}
+
+	SaveSlot* destination = saveData.GetSaveFile()->GetSaveSlot(destinationSlotIndex);
+
+	if (destination != nullptr)
+	{
+		memcpy(destination, origin, SAVE_SLOT_SIZE);
+		destination->SetSlotIndex(destinationSlotIndex + 1);
+		destination->UpdateChecksum(saveData.NeedsEndianSwap());
+	}
+	else
+	{
+		for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
+		{
+			destination = saveData.GetSaveFile()->GetRawSaveSlot(s);
+			if (destination->GetMagic() == SAVE_SLOT_MAGIC) continue;
+
+			memcpy(destination, origin, SAVE_SLOT_SIZE);
+			destination->SetSlotIndex(destinationSlotIndex + 1);
+			destination->UpdateChecksum(saveData.NeedsEndianSwap());
+
+			break;
+		}
+	}
 }
 
 void MainUI::DeleteSlot(const uint8_t slotIndex) const
@@ -260,6 +305,7 @@ void MainUI::DeleteSlot(const uint8_t slotIndex) const
 	if (!saveData.IsSaveFileLoaded()) return;
 
 	SaveSlot* saveSlot = saveData.GetSaveFile()->GetSaveSlot(slotIndex);
+	if (saveSlot == nullptr) return;
 
 	memset(saveSlot, 0, SAVE_SLOT_SIZE);
 	saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
