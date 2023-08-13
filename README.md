@@ -12,6 +12,10 @@ The program runs on Windows and Linux and requires a GPU compatible with OpenGL 
 - It can edit pretty much everything, except probably some still unknown stuff.
 - It can copy and delete save slots.
 
+## Changelog
+
+You can check the changelog [here](https://github.com/MaikelChan/BKSaveEditor/blob/main/CHANGELOG.md).
+
 ## Screenshots
 
 ![](00.png)
