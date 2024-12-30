@@ -219,7 +219,7 @@ void MainUI::LoadingProcess() const
 
 	std::string message;
 
-	for (int s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
+	for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
 	{
 		SaveSlot* saveSlot = saveData.GetSaveFile()->GetSaveSlot(s);
 		if (!saveSlot) continue;

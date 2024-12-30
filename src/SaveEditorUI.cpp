@@ -34,7 +34,7 @@ void SaveEditorUI::DoRender()
 
 		if (saveFile && ImGui::BeginTabBar("Save Slots", tab_bar_flags))
 		{
-			for (int s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
+			for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
 			{
 				if (ImGui::BeginTabItem(tabNames[s]))
 				{
@@ -98,7 +98,7 @@ void SaveEditorUI::RenderLevelDataSection(const SaveData& saveData, SaveSlot* sa
 
 		ImGui::TableHeadersRow();
 
-		for (int l = 0; l < TOTAL_LEVEL_COUNT; l++)
+		for (uint8_t l = 0; l < TOTAL_LEVEL_COUNT; l++)
 		{
 			ImGui::PushID(l);
 
@@ -114,7 +114,7 @@ void SaveEditorUI::RenderLevelDataSection(const SaveData& saveData, SaveSlot* sa
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
 
-			for (int j = levelJiggiesIndexRanges[l].min; j <= levelJiggiesIndexRanges[l].max; j++)
+			for (uint8_t j = levelJiggiesIndexRanges[l].min; j <= levelJiggiesIndexRanges[l].max; j++)
 			{
 				if (levelJiggiesIndexRanges[l].Count() == 0) continue;
 
@@ -143,7 +143,7 @@ void SaveEditorUI::RenderLevelDataSection(const SaveData& saveData, SaveSlot* sa
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
 
-			for (int h = levelHoneycombsIndexRanges[l].min; h <= levelHoneycombsIndexRanges[l].max; h++)
+			for (uint8_t h = levelHoneycombsIndexRanges[l].min; h <= levelHoneycombsIndexRanges[l].max; h++)
 			{
 				if (levelHoneycombsIndexRanges[l].Count() == 0) continue;
 
@@ -255,7 +255,7 @@ void SaveEditorUI::RenderLevelDataSection(const SaveData& saveData, SaveSlot* sa
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
 
-			for (int t = levelMumboTokensIndexRanges[l].min; t <= levelMumboTokensIndexRanges[l].max; t++)
+			for (uint8_t t = levelMumboTokensIndexRanges[l].min; t <= levelMumboTokensIndexRanges[l].max; t++)
 			{
 				ImGui::PushID(t);
 
