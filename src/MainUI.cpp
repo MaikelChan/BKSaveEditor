@@ -18,7 +18,7 @@ MainUI::MainUI() : BaseUI(nullptr)
 	windowOpacity = 0.9f;
 
 	fileDialog.SetTitle("Open a Banjo-Kazooie save file");
-	fileDialog.SetTypeFilters({ ".eep", ".*" });
+	fileDialog.SetTypeFilters({ ".eep", ".sav", ".*" });
 
 	LoadConfig();
 }
