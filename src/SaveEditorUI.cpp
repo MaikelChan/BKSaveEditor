@@ -304,9 +304,9 @@ void SaveEditorUI::RenderAbilitiesItemsSection(const SaveData& saveData, SaveSlo
 {
 	if (!ImGui::BeginTabItem("Abilities / Items")) return;
 
-	ImGui::SeparatorText("Learned / Used Abilities");
+	ImGui::SeparatorText("Learned Abilities");
 
-	if (ImGui::BeginTable("AbilitiesTable", 4, 0))
+	if (ImGui::BeginTable("LearnedAbilitiesTable", 4, 0))
 	{
 		ImGui::TableSetupColumn("Column1", ImGuiTableColumnFlags_WidthStretch);
 		ImGui::TableSetupColumn("Column2", ImGuiTableColumnFlags_WidthStretch);
@@ -317,35 +317,71 @@ void SaveEditorUI::RenderAbilitiesItemsSection(const SaveData& saveData, SaveSlo
 
 		ImGui::TableSetColumnIndex(0);
 
-		CheckboxAbility(saveData, saveSlot, "Barge", Abilities::ABILITY_0_BARGE);
-		CheckboxAbility(saveData, saveSlot, "Beak Bomb", Abilities::ABILITY_1_BEAK_BOMB);
-		CheckboxAbility(saveData, saveSlot, "Beak Buster", Abilities::ABILITY_2_BEAK_BUSTER);
-		CheckboxAbility(saveData, saveSlot, "Camera Control", Abilities::ABILITY_3_CAMERA_CONTROL);
-		CheckboxAbility(saveData, saveSlot, "Claw Swipe", Abilities::ABILITY_4_CLAW_SWIPE);
+		CheckboxLearnedAbility(saveData, saveSlot, "Beak Barge", LearnableAbilities::ABILITY_0_BARGE);
+		CheckboxLearnedAbility(saveData, saveSlot, "Beak Bomb", LearnableAbilities::ABILITY_1_BEAK_BOMB);
+		CheckboxLearnedAbility(saveData, saveSlot, "Beak Buster", LearnableAbilities::ABILITY_2_BEAK_BUSTER);
+		CheckboxLearnedAbility(saveData, saveSlot, "Camera Control", LearnableAbilities::ABILITY_3_CAMERA_CONTROL);
+		CheckboxLearnedAbility(saveData, saveSlot, "Claw Swipe", LearnableAbilities::ABILITY_4_CLAW_SWIPE);
 
 		ImGui::TableSetColumnIndex(1);
 
-		CheckboxAbility(saveData, saveSlot, "Climb", Abilities::ABILITY_5_CLIMB);
-		CheckboxAbility(saveData, saveSlot, "Eggs", Abilities::ABILITY_6_EGGS);
-		CheckboxAbility(saveData, saveSlot, "Feathery Flap", Abilities::ABILITY_7_FEATHERY_FLAP);
-		CheckboxAbility(saveData, saveSlot, "Flap Flip", Abilities::ABILITY_8_FLAP_FLIP);
-		CheckboxAbility(saveData, saveSlot, "Flight", Abilities::ABILITY_9_FLIGHT);
+		CheckboxLearnedAbility(saveData, saveSlot, "Climb", LearnableAbilities::ABILITY_5_CLIMB);
+		CheckboxLearnedAbility(saveData, saveSlot, "Eggs", LearnableAbilities::ABILITY_6_EGGS);
+		CheckboxLearnedAbility(saveData, saveSlot, "Feathery Flap", LearnableAbilities::ABILITY_7_FEATHERY_FLAP);
+		CheckboxLearnedAbility(saveData, saveSlot, "Flap Flip", LearnableAbilities::ABILITY_8_FLAP_FLIP);
+		CheckboxLearnedAbility(saveData, saveSlot, "Flight", LearnableAbilities::ABILITY_9_FLIGHT);
 
 		ImGui::TableSetColumnIndex(2);
 
-		CheckboxAbility(saveData, saveSlot, "Jump Higher", Abilities::ABILITY_A_HOLD_A_JUMP_HIGHER);
-		CheckboxAbility(saveData, saveSlot, "Ratatat Rap", Abilities::ABILITY_B_RATATAT_RAP);
-		CheckboxAbility(saveData, saveSlot, "Roll", Abilities::ABILITY_C_ROLL);
-		CheckboxAbility(saveData, saveSlot, "Shock Jump", Abilities::ABILITY_D_SHOCK_JUMP);
-		CheckboxAbility(saveData, saveSlot, "Wading Boots", Abilities::ABILITY_E_WADING_BOOTS);
+		CheckboxLearnedAbility(saveData, saveSlot, "Jump Higher", LearnableAbilities::ABILITY_A_HOLD_A_JUMP_HIGHER);
+		CheckboxLearnedAbility(saveData, saveSlot, "Ratatat Rap", LearnableAbilities::ABILITY_B_RATATAT_RAP);
+		CheckboxLearnedAbility(saveData, saveSlot, "Roll", LearnableAbilities::ABILITY_C_ROLL);
+		CheckboxLearnedAbility(saveData, saveSlot, "Shock Jump", LearnableAbilities::ABILITY_D_SHOCK_JUMP);
+		CheckboxLearnedAbility(saveData, saveSlot, "Wading Boots", LearnableAbilities::ABILITY_E_WADING_BOOTS);
 
 		ImGui::TableSetColumnIndex(3);
 
-		CheckboxAbility(saveData, saveSlot, "Dive", Abilities::ABILITY_F_DIVE);
-		CheckboxAbility(saveData, saveSlot, "Talon Trot", Abilities::ABILITY_10_TALON_TROT);
-		CheckboxAbility(saveData, saveSlot, "Turbo Talon", Abilities::ABILITY_11_TURBO_TALON);
-		CheckboxAbility(saveData, saveSlot, "Wonderwing", Abilities::ABILITY_12_WONDERWING);
-		CheckboxAbility(saveData, saveSlot, "Open Notedoors", Abilities::ABILITY_13_1ST_NOTEDOOR);
+		CheckboxLearnedAbility(saveData, saveSlot, "Dive", LearnableAbilities::ABILITY_F_DIVE);
+		CheckboxLearnedAbility(saveData, saveSlot, "Talon Trot", LearnableAbilities::ABILITY_10_TALON_TROT);
+		CheckboxLearnedAbility(saveData, saveSlot, "Turbo Talon", LearnableAbilities::ABILITY_11_TURBO_TALON);
+		CheckboxLearnedAbility(saveData, saveSlot, "Wonderwing", LearnableAbilities::ABILITY_12_WONDERWING);
+		CheckboxLearnedAbility(saveData, saveSlot, "Open Notedoors", LearnableAbilities::ABILITY_13_1ST_NOTEDOOR);
+
+		ImGui::EndTable();
+	}
+
+	ImGui::SeparatorText("Used Abilities");
+
+	if (ImGui::BeginTable("UsedAbilitiesTable", 4, 0))
+	{
+		ImGui::TableSetupColumn("Column1", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Column2", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Column3", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Column4", ImGuiTableColumnFlags_WidthStretch);
+
+		ImGui::TableNextRow();
+
+		ImGui::TableSetColumnIndex(0);
+
+		CheckboxUsedAbility(saveData, saveSlot, "Jump Higher", UsableAbilities::ABILITY_USED_JUMP);
+		CheckboxUsedAbility(saveData, saveSlot, "Feathery Flap", UsableAbilities::ABILITY_USED_FEATHERY_FLAP);
+		CheckboxUsedAbility(saveData, saveSlot, "Flap Flip", UsableAbilities::ABILITY_USED_FLAP_FLIP);
+		CheckboxUsedAbility(saveData, saveSlot, "Dive", UsableAbilities::ABILITY_USED_SWIM);
+		CheckboxUsedAbility(saveData, saveSlot, "Climb", UsableAbilities::ABILITY_USED_CLIMB);
+
+		ImGui::TableSetColumnIndex(1);
+
+		CheckboxUsedAbility(saveData, saveSlot, "Beak Barge", UsableAbilities::ABILITY_USED_BEAK_BARGE);
+		CheckboxUsedAbility(saveData, saveSlot, "Eggs", UsableAbilities::ABILITY_USED_EGG);
+		CheckboxUsedAbility(saveData, saveSlot, "Flight", UsableAbilities::ABILITY_USED_FLY);
+		CheckboxUsedAbility(saveData, saveSlot, "Shock Jump", UsableAbilities::ABILITY_USED_SHOCK);
+		CheckboxUsedAbility(saveData, saveSlot, "Ratatat Rap", UsableAbilities::ABILITY_USED_PECK);
+
+		ImGui::TableSetColumnIndex(2);
+
+		CheckboxUsedAbility(saveData, saveSlot, "Claw Swipe", UsableAbilities::ABILITY_USED_CLAW);
+		CheckboxUsedAbility(saveData, saveSlot, "Roll", UsableAbilities::ABILITY_USED_ROLL);
+		CheckboxUsedAbility(saveData, saveSlot, "Has slid on a slope", UsableAbilities::ABILITY_USED_SLIDE);
 
 		ImGui::EndTable();
 	}
@@ -731,21 +767,20 @@ uint8_t SaveEditorUI::InputProgressFlags(const SaveData& saveData, SaveSlot* sav
 	return value;
 }
 
-void SaveEditorUI::CheckboxAbility(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const Abilities ability) const
+void SaveEditorUI::CheckboxLearnedAbility(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const LearnableAbilities ability) const
 {
 	bool learned = saveSlot->GetLearnedAbility(ability);
-	bool used = saveSlot->GetUsedAbility(ability);
 
-	char learnedId[64];
-	snprintf(learnedId, 64, "##%s Learned", label);
-
-	if (ImGui::Checkbox(learnedId, &learned))
+	if (ImGui::Checkbox(label, &learned))
 	{
 		saveSlot->SetLearnedAbility(ability, learned);
 		saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 	}
+}
 
-	ImGui::SameLine();
+void SaveEditorUI::CheckboxUsedAbility(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const UsableAbilities ability) const
+{
+	bool used = saveSlot->GetUsedAbility(ability);
 
 	if (ImGui::Checkbox(label, &used))
 	{

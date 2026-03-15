@@ -633,7 +633,7 @@ enum class HeldItems
 
 #pragma region Abilities
 
-enum class Abilities
+enum class LearnableAbilities
 {
 	ABILITY_0_BARGE = 0x0,
 	ABILITY_1_BEAK_BOMB = 0x1,
@@ -655,6 +655,23 @@ enum class Abilities
 	ABILITY_11_TURBO_TALON = 0x11,
 	ABILITY_12_WONDERWING = 0x12,
 	ABILITY_13_1ST_NOTEDOOR = 0x13
+};
+
+enum class UsableAbilities
+{
+	ABILITY_USED_JUMP = 0x0,
+	ABILITY_USED_FEATHERY_FLAP = 0x1,
+	ABILITY_USED_FLAP_FLIP = 0x2,
+	ABILITY_USED_SWIM = 0x3,
+	ABILITY_USED_CLIMB = 0x4,
+	ABILITY_USED_BEAK_BARGE = 0x5,
+	ABILITY_USED_SLIDE = 0x6,
+	ABILITY_USED_EGG = 0x7,
+	ABILITY_USED_FLY = 0x8,
+	ABILITY_USED_SHOCK = 0x9,
+	ABILITY_USED_PECK = 0xA,
+	ABILITY_USED_CLAW = 0xB,
+	ABILITY_USED_ROLL = 0xC
 };
 
 #pragma endregion
@@ -731,11 +748,11 @@ public:
 	uint8_t GetHeldItem(const HeldItems heldItem) const;
 	void SetHeldItem(const HeldItems heldItem, const uint8_t value);
 
-	bool GetLearnedAbility(const Abilities ability) const;
-	void SetLearnedAbility(const Abilities ability, const bool value);
+	bool GetLearnedAbility(const LearnableAbilities ability) const;
+	void SetLearnedAbility(const LearnableAbilities ability, const bool value);
 
-	bool GetUsedAbility(const Abilities ability) const;
-	void SetUsedAbility(const Abilities ability, const bool value);
+	bool GetUsedAbility(const UsableAbilities ability) const;
+	void SetUsedAbility(const UsableAbilities ability, const bool value);
 
 	uint32_t GetChecksum(const bool endianSwap) const;
 };

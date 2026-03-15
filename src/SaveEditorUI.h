@@ -33,7 +33,8 @@ private:
 
 	bool CheckboxProgressFlags(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag) const;
 	uint8_t InputProgressFlags(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag, const uint8_t bitsCount, const uint8_t maxValue) const;
-	void CheckboxAbility(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const Abilities ability) const;
+	void CheckboxLearnedAbility(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const LearnableAbilities ability) const;
+	void CheckboxUsedAbility(const SaveData& saveData, SaveSlot* saveSlot, const char* label, const UsableAbilities ability) const;
 	void CheckboxSnS(const SaveData& saveData, const char* label, const SnS unlockedSnsItem, const SnS collectedSnsItem) const;
 	void PrintChecksum(const uint32_t checksum) const;
 	void PrintHeader(const char* label) const;

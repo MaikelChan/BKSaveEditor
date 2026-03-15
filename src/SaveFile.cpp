@@ -155,7 +155,7 @@ void SaveSlot::SetHeldItem(const HeldItems heldItem, const uint8_t value)
 	Items[static_cast<int>(heldItem)] = value;
 }
 
-bool SaveSlot::GetLearnedAbility(const Abilities ability) const
+bool SaveSlot::GetLearnedAbility(const LearnableAbilities ability) const
 {
 	const uint8_t index = static_cast<uint8_t>(ability);
 	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(LearnedAbilities));
@@ -163,7 +163,7 @@ bool SaveSlot::GetLearnedAbility(const Abilities ability) const
 	return Utils::Swap32(*abilityValuesPtr) & (1 << index);
 }
 
-void SaveSlot::SetLearnedAbility(const Abilities ability, const bool value)
+void SaveSlot::SetLearnedAbility(const LearnableAbilities ability, const bool value)
 {
 	const uint8_t index = static_cast<uint8_t>(ability);
 	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(LearnedAbilities));
@@ -172,7 +172,7 @@ void SaveSlot::SetLearnedAbility(const Abilities ability, const bool value)
 	else *abilityValuesPtr &= Utils::Swap32(~(1 << index));
 }
 
-bool SaveSlot::GetUsedAbility(const Abilities ability) const
+bool SaveSlot::GetUsedAbility(const UsableAbilities ability) const
 {
 	const uint8_t index = static_cast<uint8_t>(ability);
 	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(UsedAbilities));
@@ -180,7 +180,7 @@ bool SaveSlot::GetUsedAbility(const Abilities ability) const
 	return Utils::Swap32(*abilityValuesPtr) & (1 << index);
 }
 
-void SaveSlot::SetUsedAbility(const Abilities ability, const bool value)
+void SaveSlot::SetUsedAbility(const UsableAbilities ability, const bool value)
 {
 	const uint8_t index = static_cast<uint8_t>(ability);
 	uint32_t* abilityValuesPtr = const_cast<uint32_t*>(reinterpret_cast<const uint32_t*>(UsedAbilities));
