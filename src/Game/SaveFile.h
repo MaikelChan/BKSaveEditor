@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#define SAVE_FILE_SIZE 0x200
+#define SAVE_DATA_SIZE 0x200
 
 #define TOTAL_NUM_SAVE_SLOTS 4
 #define ACTUAL_NUM_SAVE_SLOTS 3
@@ -773,19 +773,4 @@ public:
 	void SetSnsItem(const SnS snsItem, const bool value);
 
 	uint32_t GetChecksum(const bool endianSwap) const;
-};
-
-struct SaveFile
-{
-private:
-	SaveSlot saveSlots[TOTAL_NUM_SAVE_SLOTS] = {};
-	GlobalData globalData = {};
-
-public:
-	SaveSlot* GetRawSaveSlot(const uint8_t slotIndex);
-	SaveSlot* GetSaveSlot(const uint8_t slotIndex);
-	GlobalData* GetGlobalData();
-
-	static uint32_t TransformSeed(uint64_t* seed);
-	static uint32_t CalculateChecksum(uint8_t* start, uint8_t* end);
 };

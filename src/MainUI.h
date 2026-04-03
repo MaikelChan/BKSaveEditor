@@ -1,51 +1,62 @@
 #pragma once
 
+#include <filesystem>
+
 #include "BaseUI.h"
-class SaveEditorUI;
-class PopupDialog;
-class AboutWindow;
-#include "SaveData.h"
-#include <imgui/imgui.h>
-#include <imfilebrowser.h>
+
+#include "AboutWindow.h"
+#include "PopupDialog.h"
+#include "Game/GameMenuUI.h"
+#include "Game/SaveData.h"
+#include "Game/SaveEditorUI.h"
 
 #define CONFIG_FILE_NAME "config.ini"
 #define CONFIG_INI_SECTION "Config"
+#define DEFAULT_PATH ""
+#if SUPPORT_TRANSPARENCY
+#define DEFAULT_OPACITY 0.9f
+#endif
 
 class MainUI : public BaseUI
 {
 private:
-	SaveEditorUI* saveEditor;
-	PopupDialog* popupDialog;
-	AboutWindow* aboutWindow;
+	SaveEditorUI saveEditorUi;
+	GameMenuUI gameMenuUi;
+	PopupDialog popupDialogUi;
+	AboutWindow aboutWindowUi;
 
-	ImGui::FileBrowser fileDialog;
+	std::filesystem::path lastPath;
 
-	SaveData saveData;
-
-	std::string currentFilePath;
+	std::filesystem::path currentFile;
 	std::string currentFileName;
+	SaveData::Types currentFileType;
+	SaveData* currentSaveData;
 
+#if SUPPORT_TRANSPARENCY
 	float windowOpacity;
+#endif
 
 public:
-	MainUI();
+	MainUI(Window* window);
 	~MainUI();
 
-	inline const SaveData& GetSaveData() const { return saveData; }
+	inline bool IsSaveDataLoaded() const { return currentSaveData != nullptr; }
+	inline SaveData* GetSaveData() const { return currentSaveData; }
+#if SUPPORT_TRANSPARENCY
 	inline float GetWindowOpacity() const { return windowOpacity; }
+#endif
+
+	void OpenFileCallback(std::filesystem::path filePath);
 
 protected:
 	virtual void VisibilityChanged(const bool isVisible) override;
 	virtual void DoRender() override;
 
 private:
+	void ClearSaveData();
+	void LoadSaveData(const std::filesystem::path filePath);
+	void SaveSaveData();
+
 	void LoadConfig();
 	void SaveConfig() const;
-
-	void Load();
-	void LoadingProcess() const;
-	void Save();
-
-	void CopySlot(const uint8_t originSlotIndex, const uint8_t destinationSlotIndex) const;
-	void DeleteSlot(const uint8_t slotIndex) const;
 };

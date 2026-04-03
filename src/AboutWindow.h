@@ -6,10 +6,9 @@ class AboutWindow : public BaseUI
 {
 private:
 	char windowTitle[64];
-	char description[64];
 
 public:
-	AboutWindow(const BaseUI* parentUI);
+	AboutWindow(Window* window, BaseUI* parentUi);
 	~AboutWindow();
 
 protected:

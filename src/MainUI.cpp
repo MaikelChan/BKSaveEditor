@@ -1,24 +1,30 @@
-﻿#include "main.h"
-#include "MainUI.h"
-#include "SaveEditorUI.h"
-#include "PopupDialog.h"
-#include "AboutWindow.h"
+﻿#include "MainUI.h"
+
 #include <fstream>
+
 #include <SimpleIni.h>
+#include <imgui/imgui.h>
 
-MainUI::MainUI() : BaseUI(nullptr)
+#include "Window.h"
+
+MainUI::MainUI(Window* window) : BaseUI(window, nullptr),
+saveEditorUi(window, this),
+gameMenuUi(window, this, &saveEditorUi),
+popupDialogUi(window, this),
+aboutWindowUi(window, this)
 {
-	saveEditor = new SaveEditorUI(this);
-	aboutWindow = new AboutWindow(this);
-	popupDialog = new PopupDialog(this);
+	gameMenuUi.SetIsVisible(true);
 
-	currentFilePath.clear();
+	lastPath.clear();
+
+	currentFile.clear();
 	currentFileName.clear();
+	currentFileType = SaveData::Types::NotValid;
+	currentSaveData = nullptr;
 
-	windowOpacity = 0.9f;
-
-	fileDialog.SetTitle("Open a Banjo-Kazooie save file");
-	fileDialog.SetTypeFilters({ ".eep", ".sav", ".*" });
+#if SUPPORT_TRANSPARENCY
+	windowOpacity = DEFAULT_OPACITY;
+#endif
 
 	LoadConfig();
 }
@@ -26,15 +32,13 @@ MainUI::MainUI() : BaseUI(nullptr)
 MainUI::~MainUI()
 {
 	SaveConfig();
+	ClearSaveData();
+}
 
-	delete saveEditor;
-	saveEditor = nullptr;
-
-	delete popupDialog;
-	popupDialog = nullptr;
-
-	delete aboutWindow;
-	aboutWindow = nullptr;
+void MainUI::OpenFileCallback(std::filesystem::path filePath)
+{
+	MainUI::LoadSaveData(filePath);
+	MainUI::SaveConfig();
 }
 
 void MainUI::VisibilityChanged(const bool isVisible)
@@ -52,78 +56,67 @@ void MainUI::DoRender()
 		{
 			if (ImGui::MenuItem("Open..."))
 			{
-				fileDialog.Open();
+				auto callback = [](void* userdata, const char* const* filelist, int filter) -> void
+					{
+						if (filelist == nullptr)
+						{
+							printf("Error in OpenFileDialog: %s", SDL_GetError());
+							return;
+						}
+						else if (*filelist == nullptr)
+						{
+							// The user did not select any file.
+							return;
+						}
+
+						MainUI* mainUI = (MainUI*)userdata;
+						std::filesystem::path filePath = std::filesystem::u8path(filelist[0]);
+						mainUI->OpenFileCallback(filePath);
+					};
+
+				window->ShowOpenFileDialog(lastPath, (void*)this, callback);
 			}
 
-			if (ImGui::MenuItem("Save", NULL, false, saveData.IsSaveFileLoaded()))
+			if (ImGui::MenuItem("Save", NULL, false, IsSaveDataLoaded()))
 			{
-				Save();
+				SaveSaveData();
 			}
 
 			ImGui::Separator();
 
 			if (ImGui::MenuItem("Quit"))
 			{
-				CloseMainWindow();
+				window->Terminate();
 			}
 
 			ImGui::EndMenu();
 		}
 
-		if (saveData.IsSaveFileLoaded() && ImGui::BeginMenu("Tools"))
+		if (IsSaveDataLoaded())
 		{
-			for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
-			{
-				if (ImGui::BeginMenu(tabNames[s]))
-				{
-					if (ImGui::BeginMenu("Copy"))
-					{
-						for (uint8_t ds = 0; ds < ACTUAL_NUM_SAVE_SLOTS; ds++)
-						{
-							if (s == ds) continue;
-
-							char menuName[27];
-							snprintf(menuName, 27, "To %s", tabNames[ds]);
-
-							if (ImGui::MenuItem(menuName))
-							{
-								CopySlot(s, ds);
-							}
-						}
-
-						ImGui::EndMenu();
-					}
-
-					if (ImGui::MenuItem("Delete"))
-					{
-						DeleteSlot(s);
-					}
-
-					ImGui::EndMenu();
-				}
-			}
-
-			ImGui::EndMenu();
+			gameMenuUi.Render();
 		}
 
+#if SUPPORT_TRANSPARENCY
 		if (ImGui::BeginMenu("Settings"))
 		{
 			ImGui::SliderFloat("Window Opacity", &windowOpacity, 0.0f, 1.0f);
 
 			ImGui::EndMenu();
 		}
+#endif
 
 		if (ImGui::BeginMenu("Help"))
 		{
-			if (ImGui::MenuItem("About...", NULL, aboutWindow->GetIsVisible()))
+			if (ImGui::MenuItem("About...", NULL, aboutWindowUi.GetIsVisible()))
 			{
-				aboutWindow->ToggleIsVisible();
+				aboutWindowUi.ToggleIsVisible();
 			}
 
 			ImGui::EndMenu();
 		}
 
-		if (saveData.IsSaveFileLoaded())
+		if (IsSaveDataLoaded())
 		{
 			std::string fileText = std::string("Current file: ") + currentFileName;
 
@@ -136,19 +129,105 @@ void MainUI::DoRender()
 
 	//ImGui::ShowDemoWindow();
 
-	saveEditor->Render();
-	popupDialog->Render();
-	aboutWindow->Render();
+	saveEditorUi.Render();
+	popupDialogUi.Render();
+	aboutWindowUi.Render();
+}
 
-	fileDialog.Display();
+void MainUI::ClearSaveData()
+{
+	if (!IsSaveDataLoaded()) return;
 
-	if (fileDialog.HasSelected())
+	delete currentSaveData;
+	currentSaveData = nullptr;
+
+	lastPath.clear();
+	currentFile.clear();
+	currentFileName.clear();
+	currentFileType = SaveData::Types::NotValid;
+}
+
+void MainUI::LoadSaveData(const std::filesystem::path filePath)
+{
+	ClearSaveData();
+
+	std::ifstream stream = std::ifstream(filePath, std::ios::binary);
+
+	if (!stream || !stream.is_open())
 	{
-		Load();
-		SaveConfig();
+		popupDialogUi.SetMessage(MessageTypes::Error, "Error", "There was an error trying to open the file.");
+		popupDialogUi.SetIsVisible(true);
 
-		fileDialog.ClearSelected();
+		return;
 	}
+
+	stream.seekg(0, std::ios_base::end);
+	size_t size = stream.tellg();
+
+	if (size < SAVE_DATA_SIZE)
+	{
+		stream.close();
+
+		popupDialogUi.SetMessage(MessageTypes::Error, "Error", "The selected file is not a valid save file.");
+		popupDialogUi.SetIsVisible(true);
+
+		return;
+	}
+
+	SaveData* newSaveData = new SaveData();
+
+	stream.seekg(0, std::ios_base::beg);
+	stream.read((char*)newSaveData, SAVE_DATA_SIZE);
+	stream.close();
+
+	SaveData::InitializationResult result = newSaveData->CheckAndInitialize();
+	if (result.type == SaveData::Types::NotValid)
+	{
+		delete newSaveData;
+		newSaveData = nullptr;
+
+		popupDialogUi.SetMessage(MessageTypes::Error, "Error", result.message);
+		popupDialogUi.SetIsVisible(true);
+
+		return;
+	}
+
+	currentFileType = result.type;
+	currentSaveData = newSaveData;
+
+	lastPath = filePath.parent_path();
+	currentFile = filePath;
+	currentFileName = filePath.filename().u8string();
+
+	saveEditorUi.SetIsVisible(true);
+
+	if (!result.message.empty())
+	{
+		popupDialogUi.SetMessage(MessageTypes::Warning, "Warnings", result.message);
+		popupDialogUi.SetIsVisible(true);
+	}
+}
+
+void MainUI::SaveSaveData()
+{
+	if (!IsSaveDataLoaded()) return;
+
+	std::ofstream stream = std::ofstream(currentFile, std::ios::binary);
+
+	if (!stream || !stream.is_open())
+	{
+		popupDialogUi.SetMessage(MessageTypes::Error, "Error", std::string("Can't save file \"") + currentFile.u8string() + "\".");
+		popupDialogUi.SetIsVisible(true);
+
+		return;
+	}
+
+	currentSaveData->BeginSaving(currentFileType);
+
+	stream.write((char*)currentSaveData, SAVE_DATA_SIZE);
+	stream.close();
+
+	currentSaveData->FinishSaving(currentFileType);
 }
 
 void MainUI::LoadConfig()
@@ -159,12 +238,15 @@ void MainUI::LoadConfig()
 	SI_Error errorCode = ini.LoadFile(CONFIG_FILE_NAME);
 	if (errorCode < 0)
 	{
-		printf("Error converting INI config data to string format. Error code: %i.\n", errorCode);
+		if (errorCode == SI_FILE) printf("The config file \"%s\" is missing or corrupt. Creating a new one.\n", CONFIG_FILE_NAME);
+		else printf("Error loading config file \"%s\". Code: %i.\n", CONFIG_FILE_NAME, errorCode);
 		return;
 	};
 
-	fileDialog.SetDirectory(std::filesystem::u8path(ini.GetValue(CONFIG_INI_SECTION, "lastPath", fileDialog.GetDirectory().u8string().c_str())));
-	windowOpacity = (float)ini.GetDoubleValue(CONFIG_INI_SECTION, "windowOpacity", windowOpacity);
+	lastPath = std::filesystem::u8path(ini.GetValue(CONFIG_INI_SECTION, "lastPath", DEFAULT_PATH));
+#if SUPPORT_TRANSPARENCY
+	windowOpacity = (float)ini.GetDoubleValue(CONFIG_INI_SECTION, "windowOpacity", DEFAULT_OPACITY);
+#endif
 }
 
 void MainUI::SaveConfig() const
@@ -174,8 +256,10 @@ void MainUI::SaveConfig() const
 
 	SI_Error errorCode;
 
-	errorCode = ini.SetValue(CONFIG_INI_SECTION, "lastPath", fileDialog.GetDirectory().u8string().c_str());
+	errorCode = ini.SetValue(CONFIG_INI_SECTION, "lastPath", lastPath.u8string().c_str());
+#if SUPPORT_TRANSPARENCY
 	errorCode = ini.SetDoubleValue(CONFIG_INI_SECTION, "windowOpacity", windowOpacity);
+#endif
 
 	std::string data;
 	errorCode = ini.Save(data);
@@ -191,118 +275,4 @@ void MainUI::SaveConfig() const
 	{
 		printf("Error saving INI file to %s. Error code: %i.\n", CONFIG_FILE_NAME, errorCode);
 	};
-}
-
-void MainUI::Load()
-{
-	try
-	{
-		saveData.Load(fileDialog.GetSelected().string());
-
-		currentFilePath = fileDialog.GetSelected().string();
-		currentFileName = fileDialog.GetSelected().filename().string();
-
-		LoadingProcess();
-
-		saveEditor->SetIsVisible(true);
-	}
-	catch (const std::runtime_error& error)
-	{
-		popupDialog->SetMessage(MessageTypes::Error, "Error", error.what());
-		popupDialog->SetIsVisible(true);
-	}
-}
-
-void MainUI::LoadingProcess() const
-{
-	if (!saveData.IsSaveFileLoaded()) return;
-
-	std::string message;
-
-	for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
-	{
-		SaveSlot* saveSlot = saveData.GetSaveFile()->GetSaveSlot(s);
-		if (!saveSlot) continue;
-
-		if (!saveSlot->IsValid(saveData.NeedsEndianSwap()))
-		{
-			saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
-			message += std::string("Save ") + tabNames[s] + " is corrupted. Data might be completely wrong.\n\n";
-		}
-	}
-
-	if (!saveData.GetSaveFile()->GetGlobalData()->IsValid(saveData.NeedsEndianSwap()))
-	{
-		saveData.GetSaveFile()->GetGlobalData()->UpdateChecksum(saveData.NeedsEndianSwap());
-		message += "Global data is corrupted. Data might be completely wrong.\n\n";
-	}
-
-	if (!message.empty())
-	{
-		popupDialog->SetMessage(MessageTypes::Warning, "Load warnings", message);
-		popupDialog->SetIsVisible(true);
-	}
-}
-
-void MainUI::Save()
-{
-	if (!saveData.IsSaveFileLoaded()) return;
-
-	try
-	{
-		saveData.Save(currentFilePath);
-	}
-	catch (const std::runtime_error& error)
-	{
-		popupDialog->SetMessage(MessageTypes::Error, "Error", error.what());
-		popupDialog->SetIsVisible(true);
-	}
-}
-
-void MainUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinationSlotIndex) const
-{
-	if (!saveData.IsSaveFileLoaded()) return;
-	if (originSlotIndex == destinationSlotIndex) return;
-
-	SaveSlot* origin = saveData.GetSaveFile()->GetSaveSlot(originSlotIndex);
-
-	if (origin == nullptr)
-	{
-		DeleteSlot(destinationSlotIndex);
-		return;
-	}
-
-	SaveSlot* destination = saveData.GetSaveFile()->GetSaveSlot(destinationSlotIndex);
-
-	if (destination != nullptr)
-	{
-		memcpy(destination, origin, SAVE_SLOT_SIZE);
-		destination->SetSlotIndex(destinationSlotIndex + 1);
-		destination->UpdateChecksum(saveData.NeedsEndianSwap());
-	}
-	else
-	{
-		for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
-		{
-			destination = saveData.GetSaveFile()->GetRawSaveSlot(s);
-			if (destination->GetMagic() == SAVE_SLOT_MAGIC) continue;
-
-			memcpy(destination, origin, SAVE_SLOT_SIZE);
-			destination->SetSlotIndex(destinationSlotIndex + 1);
-			destination->UpdateChecksum(saveData.NeedsEndianSwap());
-
-			break;
-		}
-	}
-}
-
-void MainUI::DeleteSlot(const uint8_t slotIndex) const
-{
-	if (!saveData.IsSaveFileLoaded()) return;
-
-	SaveSlot* saveSlot = saveData.GetSaveFile()->GetSaveSlot(slotIndex);
-	if (saveSlot == nullptr) return;
-
-	memset(saveSlot, 0, SAVE_SLOT_SIZE);
-	saveSlot->UpdateChecksum(saveData.NeedsEndianSwap());
 }

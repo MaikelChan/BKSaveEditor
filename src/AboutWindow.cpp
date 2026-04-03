@@ -1,15 +1,15 @@
 #include "AboutWindow.h"
-#include "main.h"
+
+#include <imgui/imgui.h>
+#include <SDL3/SDL_version.h>
+
+#include "Window.h"
 #include "Config.h"
 
-#include <stdio.h>
-#include <imgui/imgui.h>
-#include <GLFW/glfw3.h>
-
-AboutWindow::AboutWindow(const BaseUI* parentUI) : BaseUI(parentUI)
+AboutWindow::AboutWindow(Window* window, BaseUI* parentUi) : BaseUI(window, parentUi)
 {
-	snprintf(windowTitle, 64, "About %s", WINDOW_TITLE);
-	snprintf(description, 64, "%s - v%s", WINDOW_TITLE, PROJECT_VER);
+	const char* title = window->GetParams().title.c_str();
+	snprintf(windowTitle, 64, "About %s - v%s", title, PROJECT_VER);
 }
 
 AboutWindow::~AboutWindow()
@@ -36,11 +36,14 @@ void AboutWindow::DoRender()
 
 	if (ImGui::BeginPopupModal(windowTitle, &isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse))
 	{
-		ImGui::SeparatorText(description);
-		ImGui::Text("By PacoChan.");
+		const WindowParams& params = window->GetParams();
+
+		ImGui::Text(params.description.c_str());
+		ImGui::NewLine();
+		ImGui::Text("By %s:", params.author.c_str());
 		ImGui::SameLine();
-		ImGui::TextLinkOpenURL("https://pacochan.net/software/bk-save-editor/");
-		ImGui::Text("\nThis is a save editor for the Nintendo 64 version of Banjo-Kazooie.\n\n");
+		ImGui::TextLinkOpenURL(params.url.c_str());
+		ImGui::NewLine();
 
 		ImGui::SeparatorText("Libraries");
 
@@ -48,17 +51,15 @@ void AboutWindow::DoRender()
 		ImGui::SameLine();
 		ImGui::TextLinkOpenURL("https://github.com/ocornut/imgui");
 
-		ImGui::BulletText("GLFW %i.%i.%i (Lib %i.%i.%i):", GLFW_VERSION_MAJOR, GLFW_VERSION_MINOR, GLFW_VERSION_REVISION, glfwMajor, glfwMinor, glfwRevision);
+		int sdlVersion = SDL_GetVersion();
+		const std::string& driverName = window->GetDriverName();
+		ImGui::BulletText("SDL %i.%i.%i (Lib %i.%i.%i, Backend \"%s\"):", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_MICRO_VERSION, SDL_VERSIONNUM_MAJOR(sdlVersion), SDL_VERSIONNUM_MINOR(sdlVersion), SDL_VERSIONNUM_MICRO(sdlVersion), driverName.c_str());
 		ImGui::SameLine();
-		ImGui::TextLinkOpenURL("https://www.glfw.org");
+		ImGui::TextLinkOpenURL("https://www.libsdl.org");
 
 		ImGui::BulletText("simpleini (Commit %s):", SIMPLEINI_COMMIT_HASH);
 		ImGui::SameLine();
 		ImGui::TextLinkOpenURL("https://github.com/brofield/simpleini");
-
-		ImGui::BulletText("imgui-filebrowser (Commit %s):", IMFILEBROWSER_COMMIT_HASH);
-		ImGui::SameLine();
-		ImGui::TextLinkOpenURL("https://github.com/AirGuanZ/imgui-filebrowser");
 
 		ImGui::EndPopup();
 	}

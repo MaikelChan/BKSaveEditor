@@ -1,20 +1,23 @@
 #pragma once
 
+class Window;
+
 class BaseUI
 {
 protected:
-	const BaseUI* parentUI;
+	Window* window;
+	BaseUI* parentUi;
 	bool isVisible;
 
 private:
 	bool previousIsVisible;
 
 public:
-	BaseUI(const BaseUI* parentUI);
+	BaseUI(Window* window, BaseUI* parentUi);
 	virtual ~BaseUI();
 
 	inline bool GetIsVisible() const { return isVisible; }
-	inline void SetIsVisible(const bool isVisible) { BaseUI::isVisible = isVisible; }
+	inline void SetIsVisible(const bool isVisible) { this->isVisible = isVisible; }
 	inline void ToggleIsVisible() { isVisible = !isVisible; }
 
 	void Render();
