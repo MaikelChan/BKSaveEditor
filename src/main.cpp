@@ -5,7 +5,6 @@
 #include <crtdbg.h>
 #endif
 
-#include <SDL3/SDL.h>
 #include <imgui/imgui.h>
 
 #include "Window.h"
@@ -13,7 +12,7 @@
 
 int RunMain()
 {
-	const SDL_DialogFileFilter openDialogFilters[] =
+	const FileDialogFilter openDialogFilters[] =
 	{
 		{ "N64 Saves (*.eep; *.sav)", "eep;sav" },
 		{ "All files (*.*)", "*" }
@@ -27,7 +26,7 @@ int RunMain()
 	windowParams.initialWidth = 800;
 	windowParams.initialHeight = 654;
 	windowParams.openDialogTitle = "Open a Banjo-Kazooie save file";
-	windowParams.openDialogFiltersCount = SDL_arraysize(openDialogFilters);
+	windowParams.openDialogFiltersCount = sizeof(openDialogFilters) / sizeof(openDialogFilters[0]);
 	windowParams.openDialogFilters = openDialogFilters;
 	windowParams.configureStyleCallback = [](ImVec4* colors)
 		{

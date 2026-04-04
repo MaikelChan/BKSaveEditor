@@ -16,6 +16,12 @@ struct ImFontAtlas;
 
 class BaseUI;
 
+struct FileDialogFilter
+{
+	const char* name;
+	const char* pattern;
+};
+
 struct WindowParams
 {
 	std::string title;
@@ -27,7 +33,7 @@ struct WindowParams
 	int32_t initialHeight;
 	std::string openDialogTitle;
 	int32_t openDialogFiltersCount;
-	const SDL_DialogFileFilter* openDialogFilters;
+	const FileDialogFilter* openDialogFilters;
 
 	std::function<void(ImVec4* colors)> configureStyleCallback;
 	std::function<void(ImFontAtlas* fontAtlas)> configureFontsCallback;
