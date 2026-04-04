@@ -23,6 +23,6 @@ public:
 	void Render();
 
 protected:
-	virtual void VisibilityChanged(const bool isVisible);
-	virtual void DoRender();
+	virtual void VisibilityChanged(const bool isVisible) = 0;
+	virtual void DoRender() = 0;
 };
