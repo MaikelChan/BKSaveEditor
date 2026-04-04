@@ -45,6 +45,8 @@ private:
 	std::string driverName;
 	bool isRunning = false;
 
+	float currentTaskbarProgress = -1.0f;
+
 public:
 	Window(const WindowParams& params);
 	~Window();
@@ -56,4 +58,5 @@ public:
 	void Terminate();
 
 	void ShowOpenFileDialog(std::filesystem::path defaultLocation, void* userData, SDL_DialogFileCallback callback) const;
+	void SetTaskbarProgress(const float value);
 };

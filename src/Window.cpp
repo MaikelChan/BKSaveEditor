@@ -275,3 +275,19 @@ void Window::ShowOpenFileDialog(std::filesystem::path defaultLocation, void* use
 
 	SDL_DestroyProperties(dialogProperties);
 }
+
+void Window::SetTaskbarProgress(const float value)
+{
+	if (currentTaskbarProgress == value) return;
+	currentTaskbarProgress = value;
+
+	if (value > 0.0f)
+	{
+		SDL_SetWindowProgressState(window, SDL_PROGRESS_STATE_NORMAL);
+		SDL_SetWindowProgressValue(window, value);
+	}
+	else
+	{
+		SDL_SetWindowProgressState(window, SDL_PROGRESS_STATE_NONE);
+	}
+}

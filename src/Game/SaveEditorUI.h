@@ -42,4 +42,6 @@ private:
 	void PrintHeader(const char* label) const;
 	void BeginProgressFlagsGroup(const char* label) const;
 	void EndProgressFlagsGroup() const;
+
+	uint8_t GetTotalJiggies(SaveSlot* saveSlot) const;
 };

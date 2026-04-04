@@ -4,6 +4,7 @@
 
 #include "../MainUI.h"
 #include "../Utils.h"
+#include "../Window.h"
 
 SaveEditorUI::SaveEditorUI(Window* window, BaseUI* parentUi) : BaseUI(window, parentUi)
 {
@@ -50,6 +51,8 @@ void SaveEditorUI::DoRender()
 						ImGui::SetCursorPosX((windowSize.x / 2.0f) - (size.x / 2.0f));
 						ImGui::SetCursorPosY((windowSize.y / 2.0f) - (size.y / 2.0f));
 						ImGui::Text("%s", emptyText);
+
+						window->SetTaskbarProgress(0.0f);
 					}
 					else
 					{
@@ -63,6 +66,8 @@ void SaveEditorUI::DoRender()
 
 							ImGui::EndTabBar();
 						}
+
+						window->SetTaskbarProgress((float)GetTotalJiggies(saveSlot) / (float)JIGGIES_COUNT);
 					}
 
 					ImGui::EndTabItem();
@@ -85,7 +90,6 @@ void SaveEditorUI::RenderLevelDataSection(SaveSlot* saveSlot)
 
 	if (ImGui::BeginTable("LevelsTable", 6, flags))
 	{
-		uint8_t totalJiggies = 0;
 		uint8_t totalHoneycombs = 0;
 		uint16_t totalNotes = 0;
 		uint32_t totalPlayTime = 0;
@@ -131,8 +135,6 @@ void SaveEditorUI::RenderLevelDataSection(SaveSlot* saveSlot)
 
 				if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
 					ImGui::SetTooltip("%s", levelJiggiesNames[j]);
-
-				if (value) totalJiggies++;
 
 				ImGui::PopID();
 
@@ -213,7 +215,7 @@ void SaveEditorUI::RenderLevelDataSection(SaveSlot* saveSlot)
 		ImGui::Text("Totals");
 
 		ImGui::TableSetColumnIndex(2);
-		ImGui::Text("%u / %u", totalJiggies, JIGGIES_COUNT);
+		ImGui::Text("%u / %u", GetTotalJiggies(saveSlot), JIGGIES_COUNT);
 
 		ImGui::TableSetColumnIndex(3);
 		ImGui::Text("%u / %u", totalHoneycombs, HONEYCOMB_COUNT);
@@ -836,4 +838,22 @@ void SaveEditorUI::BeginProgressFlagsGroup(const char* label) const
 void SaveEditorUI::EndProgressFlagsGroup() const
 {
 	ImGui::PopID();
+}
+
+uint8_t SaveEditorUI::GetTotalJiggies(SaveSlot* saveSlot) const
+{
+	if (saveSlot == nullptr) return 0;
+
+	uint8_t totalJiggies = 0;
+
+	for (uint8_t l = 0; l < TOTAL_LEVEL_COUNT; l++)
+	{
+		for (uint8_t j = levelJiggiesIndexRanges[l].min; j <= levelJiggiesIndexRanges[l].max; j++)
+		{
+			if (levelJiggiesIndexRanges[l].Count() == 0) continue;
+			if (saveSlot->GetJiggy(j)) totalJiggies++;
+		}
+	}
+
+	return totalJiggies;
 }
