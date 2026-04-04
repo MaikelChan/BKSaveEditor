@@ -15,8 +15,7 @@ int RunMain()
 {
 	const SDL_DialogFileFilter openDialogFilters[] =
 	{
-		{ "EEP Saves (*.eep)", "eep" },
-		{ "BIN Saves (*.bin)", "bin" },
+		{ "N64 Saves (*.eep; *.sav)", "eep;sav" },
 		{ "All files (*.*)", "*" }
 	};
 
