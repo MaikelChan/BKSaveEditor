@@ -19,7 +19,7 @@ aboutWindowUi(window, this)
 
 	currentFile.clear();
 	currentFileName.clear();
-	currentFileType = SaveData::Types::NotValid;
+	currentFileType = SaveDataTypes::NotValid;
 	currentSaveData = nullptr;
 
 #if SUPPORT_TRANSPARENCY
@@ -144,7 +144,7 @@ void MainUI::ClearSaveData()
 	lastPath.clear();
 	currentFile.clear();
 	currentFileName.clear();
-	currentFileType = SaveData::Types::NotValid;
+	currentFileType = SaveDataTypes::NotValid;
 }
 
 void MainUI::LoadSaveData(const std::filesystem::path filePath)
@@ -180,8 +180,8 @@ void MainUI::LoadSaveData(const std::filesystem::path filePath)
 	stream.read((char*)newSaveData, SAVE_DATA_SIZE);
 	stream.close();
 
-	SaveData::InitializationResult result = newSaveData->CheckAndInitialize();
-	if (result.type == SaveData::Types::NotValid)
+	SaveDataInitializationResult result = newSaveData->CheckAndInitialize();
+	if (result.type == SaveDataTypes::NotValid)
 	{
 		delete newSaveData;
 		newSaveData = nullptr;

@@ -80,7 +80,7 @@ void GameMenuUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinati
 	{
 		memcpy(destination, origin, SAVE_SLOT_SIZE); // TODO: Don't use memcpy
 		destination->SetSlotIndex(destinationSlotIndex + 1);
-		destination->UpdateChecksum(saveData->NeedsEndianSwap());
+		destination->UpdateChecksum(mainUi->GetSaveDataType());
 	}
 	else
 	{
@@ -91,7 +91,7 @@ void GameMenuUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinati
 
 			memcpy(destination, origin, SAVE_SLOT_SIZE);
 			destination->SetSlotIndex(destinationSlotIndex + 1);
-			destination->UpdateChecksum(saveData->NeedsEndianSwap());
+			destination->UpdateChecksum(mainUi->GetSaveDataType());
 
 			break;
 		}
@@ -108,5 +108,5 @@ void GameMenuUI::DeleteSlot(const uint8_t slotIndex) const
 	if (saveSlot == nullptr) return;
 
 	memset(saveSlot, 0, SAVE_SLOT_SIZE);
-	saveSlot->UpdateChecksum(saveData->NeedsEndianSwap());
+	saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
 }

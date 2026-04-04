@@ -29,7 +29,7 @@ private:
 
 	std::filesystem::path currentFile;
 	std::string currentFileName;
-	SaveData::Types currentFileType;
+	SaveDataTypes currentFileType;
 	SaveData* currentSaveData;
 
 #if SUPPORT_TRANSPARENCY
@@ -40,6 +40,7 @@ public:
 	MainUI(Window* window);
 	~MainUI();
 
+	inline SaveDataTypes GetSaveDataType() const { return currentFileType; }
 	inline bool IsSaveDataLoaded() const { return currentSaveData != nullptr; }
 	inline SaveData* GetSaveData() const { return currentSaveData; }
 #if SUPPORT_TRANSPARENCY

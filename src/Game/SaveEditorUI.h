@@ -28,16 +28,16 @@ protected:
 	virtual void DoRender() override;
 
 private:
-	void RenderLevelDataSection(const SaveData* saveData, SaveSlot* saveSlot);
-	void RenderAbilitiesItemsSection(const SaveData* saveData, SaveSlot* saveSlot);
-	void RenderProgressFlagsSection(const SaveData* saveData, SaveSlot* saveSlot);
-	void RenderGlobalDataSection(SaveData* saveData);
+	void RenderLevelDataSection(SaveSlot* saveSlot);
+	void RenderAbilitiesItemsSection(SaveSlot* saveSlot);
+	void RenderProgressFlagsSection(SaveSlot* saveSlot);
+	void RenderGlobalDataSection(GlobalData* globalData);
 
-	bool CheckboxProgressFlags(const SaveData* saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag) const;
-	uint8_t InputProgressFlags(const SaveData* saveData, SaveSlot* saveSlot, const char* label, const ProgressFlags flag, const uint8_t bitsCount, const uint8_t maxValue) const;
-	void CheckboxLearnedAbility(const SaveData* saveData, SaveSlot* saveSlot, const char* label, const LearnableAbilities ability) const;
-	void CheckboxUsedAbility(const SaveData* saveData, SaveSlot* saveSlot, const char* label, const UsableAbilities ability) const;
-	void CheckboxSnS(SaveData* saveData, const char* label, const SnS unlockedSnsItem, const SnS collectedSnsItem) const;
+	bool CheckboxProgressFlags(SaveSlot* saveSlot, const char* label, const ProgressFlags flag) const;
+	uint8_t InputProgressFlags(SaveSlot* saveSlot, const char* label, const ProgressFlags flag, const uint8_t bitsCount, const uint8_t maxValue) const;
+	void CheckboxLearnedAbility(SaveSlot* saveSlot, const char* label, const LearnableAbilities ability) const;
+	void CheckboxUsedAbility(SaveSlot* saveSlot, const char* label, const UsableAbilities ability) const;
+	void CheckboxSnS(GlobalData* globalData, const char* label, const SnS unlockedSnsItem, const SnS collectedSnsItem) const;
 	void PrintChecksum(const uint32_t checksum) const;
 	void PrintHeader(const char* label) const;
 	void BeginProgressFlagsGroup(const char* label) const;
