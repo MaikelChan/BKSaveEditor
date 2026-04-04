@@ -53,7 +53,12 @@ Window::Window(const WindowParams& params) : params(params)
 	SDL_SetBooleanProperty(deviceProperties, SDL_PROP_GPU_DEVICE_CREATE_SHADERS_MSL_BOOLEAN, true);
 	SDL_SetBooleanProperty(deviceProperties, SDL_PROP_GPU_DEVICE_CREATE_SHADERS_METALLIB_BOOLEAN, true);
 	SDL_SetBooleanProperty(deviceProperties, SDL_PROP_GPU_DEVICE_CREATE_DEBUGMODE_BOOLEAN, debugEnabled);
-	SDL_SetStringProperty(deviceProperties, SDL_PROP_GPU_DEVICE_CREATE_NAME_STRING, "vulkan");
+	SDL_SetBooleanProperty(deviceProperties, SDL_PROP_GPU_DEVICE_CREATE_FEATURE_CLIP_DISTANCE_BOOLEAN, false);
+	//SDL_SetBooleanProperty(deviceProperties, SDL_PROP_GPU_DEVICE_CREATE_FEATURE_DEPTH_CLAMPING_BOOLEAN, false); // Used by ImGui
+	SDL_SetBooleanProperty(deviceProperties, SDL_PROP_GPU_DEVICE_CREATE_FEATURE_INDIRECT_DRAW_FIRST_INSTANCE_BOOLEAN, false);
+	SDL_SetBooleanProperty(deviceProperties, SDL_PROP_GPU_DEVICE_CREATE_FEATURE_ANISOTROPY_BOOLEAN, false);
+	SDL_SetBooleanProperty(deviceProperties, SDL_PROP_GPU_DEVICE_CREATE_D3D12_ALLOW_FEWER_RESOURCE_SLOTS_BOOLEAN, false);
+	//SDL_SetStringProperty(deviceProperties, SDL_PROP_GPU_DEVICE_CREATE_NAME_STRING, "vulkan");
 	SDL_SetBooleanProperty(deviceProperties, SDL_PROP_GPU_DEVICE_CREATE_PREFERLOWPOWER_BOOLEAN, true);
 	gpuDevice = SDL_CreateGPUDeviceWithProperties(deviceProperties);
 	SDL_DestroyProperties(deviceProperties);
