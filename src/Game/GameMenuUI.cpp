@@ -3,8 +3,6 @@
 #include <imgui/imgui.h>
 
 #include "../MainUI.h"
-#include "SaveData.h"
-#include "SaveEditorUI.h"
 
 GameMenuUI::GameMenuUI(Window* window, BaseUI* parentUi, SaveEditorUI* saveEditorUi) : BaseUI(window, parentUi)
 {
@@ -78,7 +76,7 @@ void GameMenuUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinati
 
 	if (destination != nullptr)
 	{
-		memcpy(destination, origin, SAVE_SLOT_SIZE); // TODO: Don't use memcpy
+		std::copy(origin, origin + 1, destination);
 		destination->SetSlotIndex(destinationSlotIndex + 1);
 		destination->UpdateChecksum(mainUi->GetSaveDataType());
 	}
@@ -89,7 +87,7 @@ void GameMenuUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinati
 			destination = saveData->GetRawSaveSlot(s);
 			if (destination->GetMagic() == SAVE_SLOT_MAGIC) continue;
 
-			memcpy(destination, origin, SAVE_SLOT_SIZE);
+			std::copy(origin, origin + 1, destination);
 			destination->SetSlotIndex(destinationSlotIndex + 1);
 			destination->UpdateChecksum(mainUi->GetSaveDataType());
 
