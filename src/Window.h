@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <filesystem>
-#include <functional>
 #include <string>
 
 struct ImVec4;
@@ -26,6 +25,9 @@ struct FileDialogParams
 	FileDialogCallback callback;
 };
 
+typedef void (*ConfigureStyleCallback)(ImVec4* colors);
+typedef void (*ConfigureFontsCallback)(ImFontAtlas* fontAtlas);
+
 struct WindowParams
 {
 	std::string title;
@@ -39,8 +41,8 @@ struct WindowParams
 	int32_t openDialogFiltersCount;
 	const FileDialogFilter* openDialogFilters;
 
-	std::function<void(ImVec4* colors)> configureStyleCallback;
-	std::function<void(ImFontAtlas* fontAtlas)> configureFontsCallback;
+	ConfigureStyleCallback configureStyleCallback;
+	ConfigureFontsCallback configureFontsCallback;
 };
 
 class Window
@@ -48,6 +50,8 @@ class Window
 protected:
 	const WindowParams& params;
 	bool isRunning = false;
+
+	float currentWindowScale = -1.0f;
 
 public:
 	Window(const WindowParams& params);
@@ -63,4 +67,7 @@ public:
 
 	virtual void ShowOpenFileDialog(const FileDialogParams* fileDialogParams) const = 0;
 	virtual void SetTaskbarProgress(const float value) = 0;
+
+protected:
+	void SetupImGui(const bool initialize, const float windowScale);
 };

@@ -90,28 +90,7 @@ WindowSDL::WindowSDL(const WindowParams& params) : Window(params)
 
 	// Imgui
 
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-	io.IniFilename = NULL;
-
-	if (params.configureStyleCallback)
-	{
-		params.configureStyleCallback(ImGui::GetStyle().Colors);
-	}
-
-	if (params.configureFontsCallback)
-	{
-		params.configureFontsCallback(io.Fonts);
-	}
-
-	ImGuiStyle& style = ImGui::GetStyle();
-	style.ScaleAllSizes(mainScale);
-	style.FontScaleDpi = mainScale;
-
-	// Setup Platform/Renderer backends
+	SetupImGui(true, mainScale);
 
 	ImGui_ImplSDL3_InitForSDLGPU(window);
 	ImGui_ImplSDLGPU3_InitInfo init_info = {};
@@ -165,13 +144,26 @@ void WindowSDL::Run(BaseUI& ui)
 
 			switch (event.type)
 			{
-			case SDL_EVENT_QUIT:
-				isRunning = false;
-				break;
+				case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
+				{
+					float windowScale = SDL_GetWindowDisplayScale(window);
+					SDL_SetWindowSize(window, (int)(params.initialWidth * windowScale), (int)(params.initialHeight * windowScale));
+					SetupImGui(false, windowScale);
 
-			case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
-				if (event.window.windowID == SDL_GetWindowID(window)) isRunning = false;
-				break;
+					break;
+				}
+
+				case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+				{
+					if (event.window.windowID == SDL_GetWindowID(window)) isRunning = false;
+					break;
+				}
+
+				case SDL_EVENT_QUIT:
+				{
+					isRunning = false;
+					break;
+				}
 			}
 		}
 
