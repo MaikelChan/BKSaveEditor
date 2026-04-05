@@ -240,8 +240,9 @@ void WindowSDL::Run(BaseUI& ui)
 	ImGui::DestroyContext();
 }
 
-void WindowSDL::ShowOpenFileDialog(std::filesystem::path defaultLocation, const FileDialogParams* fileDialogParams) const
+void WindowSDL::ShowOpenFileDialog(const FileDialogParams* fileDialogParams) const
 {
+	if (fileDialogParams == nullptr) return;
 	if (window == nullptr) return;
 
 	SDL_PropertiesID dialogProperties = SDL_CreateProperties();
@@ -250,6 +251,8 @@ void WindowSDL::ShowOpenFileDialog(std::filesystem::path defaultLocation, const 
 	SDL_SetPointerProperty(dialogProperties, SDL_PROP_FILE_DIALOG_WINDOW_POINTER, window);
 	SDL_SetBooleanProperty(dialogProperties, SDL_PROP_FILE_DIALOG_MANY_BOOLEAN, false);
 	SDL_SetStringProperty(dialogProperties, SDL_PROP_FILE_DIALOG_TITLE_STRING, params.openDialogTitle.c_str());
+
+	std::filesystem::path defaultLocation = fileDialogParams->defaultLocation;
 
 	if (defaultLocation.empty())
 	{
@@ -292,7 +295,7 @@ void WindowSDL::SetTaskbarProgress(const float value)
 
 void WindowSDL::OpenFileDialogCallback(void* userdata, const char* const* filelist, int filter)
 {
-	FileDialogParams* fileDialogParams = (FileDialogParams*)userdata;
+	const FileDialogParams* fileDialogParams = (const FileDialogParams*)userdata;
 
 	if (fileDialogParams->callback == nullptr) return;
 

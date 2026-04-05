@@ -58,8 +58,9 @@ void MainUI::DoRender()
 			{
 				FileDialogParams* params = new FileDialogParams();
 				params->ui = this;
+				params->defaultLocation = lastPath;
 				params->callback = OpenFileDialogCallback;
-				window->ShowOpenFileDialog(lastPath, params);
+				window->ShowOpenFileDialog(params);
 			}
 
 			if (ImGui::MenuItem("Save", NULL, false, IsSaveDataLoaded()))
@@ -264,7 +265,7 @@ void MainUI::SaveConfig() const
 
 void MainUI::OpenFileDialogCallback(const FileDialogParams* fileDialogParams, const std::filesystem::path filePath, const char* error)
 {
-	MainUI* mainUi = (MainUI*)((FileDialogParams*)fileDialogParams)->ui;
+	MainUI* mainUi = (MainUI*)fileDialogParams->ui;
 	delete fileDialogParams;
 
 	if (error != nullptr)

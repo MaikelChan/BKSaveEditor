@@ -32,7 +32,7 @@ public:
 	void Run(BaseUI& ui) override;
 	void Terminate();
 
-	void ShowOpenFileDialog(std::filesystem::path defaultLocation, const FileDialogParams* fileDialogParams) const override;
+	void ShowOpenFileDialog(const FileDialogParams* fileDialogParams) const override;
 	void SetTaskbarProgress(const float value) override;
 
 private:

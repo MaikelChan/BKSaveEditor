@@ -22,6 +22,7 @@ struct FileDialogFilter
 struct FileDialogParams
 {
 	BaseUI* ui;
+	std::filesystem::path defaultLocation;
 	FileDialogCallback callback;
 };
 
@@ -60,6 +61,6 @@ public:
 	virtual void Run(BaseUI& ui) = 0;
 	void Terminate();
 
-	virtual void ShowOpenFileDialog(std::filesystem::path defaultLocation, const FileDialogParams* fileDialogParams) const = 0;
+	virtual void ShowOpenFileDialog(const FileDialogParams* fileDialogParams) const = 0;
 	virtual void SetTaskbarProgress(const float value) = 0;
 };
