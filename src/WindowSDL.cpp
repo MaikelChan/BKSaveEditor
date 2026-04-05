@@ -210,7 +210,7 @@ void WindowSDL::Run(BaseUI& ui)
 			// Setup and start a render pass
 			SDL_GPUColorTargetInfo target_info = {};
 			target_info.texture = swapchain_texture;
-			target_info.clear_color = SDL_FColor{ 0.1f * windowOpacity, 0.025f * windowOpacity, 0.05f * windowOpacity, windowOpacity };
+			target_info.clear_color = SDL_FColor{ params.backgroundColor.x * windowOpacity, params.backgroundColor.y * windowOpacity, params.backgroundColor.z * windowOpacity, windowOpacity };
 			target_info.load_op = SDL_GPU_LOADOP_CLEAR;
 			target_info.store_op = SDL_GPU_STOREOP_STORE;
 			target_info.mip_level = 0;

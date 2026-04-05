@@ -4,7 +4,8 @@
 #include <filesystem>
 #include <string>
 
-struct ImVec4;
+#include <imgui/imgui.h>
+
 struct ImFontAtlas;
 
 class BaseUI;
@@ -37,6 +38,7 @@ struct WindowParams
 
 	int32_t initialWidth;
 	int32_t initialHeight;
+	ImVec4 backgroundColor;
 	std::string openDialogTitle;
 	int32_t openDialogFiltersCount;
 	const FileDialogFilter* openDialogFilters;

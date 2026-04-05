@@ -760,7 +760,7 @@ uint8_t SaveEditorUI::InputProgressFlags(SaveSlot* saveSlot, const char* label, 
 {
 	uint8_t value = saveSlot->GetProgressValue(flag, bitsCount);
 
-	ImGui::SetNextItemWidth(28);
+	ImGui::SetNextItemWidth(32);
 	if (ImGui::InputScalar(label, ImGuiDataType_U8, &value, NULL, NULL, "%u"))
 	{
 		if (value > maxValue) value = maxValue;
@@ -819,12 +819,12 @@ void SaveEditorUI::CheckboxSnS(GlobalData* globalData, const char* label, const 
 void SaveEditorUI::PrintChecksum(const uint32_t checksum) const
 {
 	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - ImGui::CalcTextSize("Checksum: 0xFFFFFFFF").x - 32);
-	ImGui::TextColored(ImVec4(0.7f, 0.5f, 0.6f, 1.0f), "Checksum: 0x%x", checksum);
+	ImGui::TextColored(ImGui::GetStyle().Colors[ImGuiCol_TabHovered], "Checksum: 0x%x", checksum);
 }
 
 void SaveEditorUI::PrintHeader(const char* label) const
 {
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.5f, 0.6f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TabHovered]);
 	ImGui::SeparatorText(label);
 	ImGui::PopStyleColor();
 }

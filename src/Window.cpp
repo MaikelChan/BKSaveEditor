@@ -1,7 +1,5 @@
 #include "Window.h"
 
-#include <imgui/imgui.h>
-
 Window::Window(const WindowParams& params) : params(params)
 {
 
