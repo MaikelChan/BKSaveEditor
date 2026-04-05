@@ -7,7 +7,7 @@
 
 #include <imgui/imgui.h>
 
-#include "Window.h"
+#include "WindowSDL.h"
 #include "MainUI.h"
 
 int RunMain()
@@ -65,7 +65,7 @@ int RunMain()
 
 	try
 	{
-		Window window(windowParams);
+		WindowSDL window(windowParams);
 
 		MainUI mainUi(&window);
 		window.Run(mainUi);

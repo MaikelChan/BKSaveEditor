@@ -56,25 +56,10 @@ void MainUI::DoRender()
 		{
 			if (ImGui::MenuItem("Open..."))
 			{
-				auto callback = [](void* userdata, const char* const* filelist, int filter) -> void
-					{
-						if (filelist == nullptr)
-						{
-							printf("Error in OpenFileDialog: %s", SDL_GetError());
-							return;
-						}
-						else if (*filelist == nullptr)
-						{
-							// The user did not select any file.
-							return;
-						}
-
-						MainUI* mainUI = (MainUI*)userdata;
-						std::filesystem::path filePath = std::filesystem::u8path(filelist[0]);
-						mainUI->OpenFileCallback(filePath);
-					};
-
-				window->ShowOpenFileDialog(lastPath, (void*)this, callback);
+				FileDialogParams* params = new FileDialogParams();
+				params->ui = this;
+				params->callback = OpenFileDialogCallback;
+				window->ShowOpenFileDialog(lastPath, params);
 			}
 
 			if (ImGui::MenuItem("Save", NULL, false, IsSaveDataLoaded()))
@@ -275,4 +260,30 @@ void MainUI::SaveConfig() const
 	{
 		printf("Error saving INI file to %s. Error code: %i.\n", CONFIG_FILE_NAME, errorCode);
 	};
+}
+
+void MainUI::OpenFileDialogCallback(const FileDialogParams* fileDialogParams, const std::filesystem::path filePath, const char* error)
+{
+	MainUI* mainUi = (MainUI*)((FileDialogParams*)fileDialogParams)->ui;
+	delete fileDialogParams;
+
+	if (error != nullptr)
+	{
+		char errorText[256];
+		snprintf(errorText, 256, "Error in OpenFileDialog: %s", error);
+
+		mainUi->popupDialogUi.SetMessage(MessageTypes::Error, "Error", errorText);
+		mainUi->popupDialogUi.SetIsVisible(true);
+
+		return;
+	}
+	else
+	{
+		if (filePath.empty())
+		{
+			return;
+		}
+
+		mainUi->OpenFileCallback(filePath);
+	}
 }

@@ -10,6 +10,8 @@
 #include "Game/SaveData.h"
 #include "Game/SaveEditorUI.h"
 
+struct FileDialogParams;
+
 #define CONFIG_FILE_NAME "config.ini"
 #define CONFIG_INI_SECTION "Config"
 #define DEFAULT_PATH ""
@@ -60,4 +62,6 @@ private:
 
 	void LoadConfig();
 	void SaveConfig() const;
+
+	static void OpenFileDialogCallback(const FileDialogParams* fileDialogParams, const std::filesystem::path filePath, const char* error);
 };
