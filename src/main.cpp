@@ -11,7 +11,7 @@
 #include "MainUI.h"
 #include "WindowSDL.h"
 
-int RunMain()
+static int RunMain()
 {
 	const FileDialogFilter openDialogFilters[] =
 	{
@@ -26,7 +26,7 @@ int RunMain()
 	windowParams.url = "https://pacochan.net/software/bk-save-editor/";
 	windowParams.initialWidth = 800;
 	windowParams.initialHeight = 654;
-	windowParams.backgroundColor = ImVec4(0.12, 0.05f, 0.012f, 1.0f);
+	windowParams.backgroundColor = ImVec4(0.12f, 0.05f, 0.012f, 1.0f);
 	windowParams.openDialogTitle = "Open a Banjo-Kazooie save file";
 	windowParams.openDialogFiltersCount = sizeof(openDialogFilters) / sizeof(openDialogFilters[0]);
 	windowParams.openDialogFilters = openDialogFilters;
