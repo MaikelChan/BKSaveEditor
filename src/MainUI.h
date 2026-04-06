@@ -14,11 +14,11 @@ class SaveFile;
 
 struct FileDialogParams;
 
-#define CONFIG_FILE_NAME "config.ini"
-#define CONFIG_INI_SECTION "Config"
-#define DEFAULT_PATH ""
+constexpr char* CONFIG_FILE_NAME = "config.ini";
+constexpr char* CONFIG_INI_SECTION = "Config";
+constexpr char* DEFAULT_PATH = "";
 #if SUPPORT_TRANSPARENCY
-#define DEFAULT_OPACITY 0.9f
+constexpr float DEFAULT_OPACITY = 0.9f;
 #endif
 
 class MainUI : public BaseUI

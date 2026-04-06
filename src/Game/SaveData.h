@@ -5,13 +5,13 @@
 
 #include "SaveFile.h"
 
-#define SAVE_DATA_SIZE 0x200
+constexpr uint16_t SAVE_DATA_SIZE = 0x200;
 
-#define TOTAL_NUM_SAVE_SLOTS 4
-#define ACTUAL_NUM_SAVE_SLOTS 3
-#define SAVE_SLOT_MAGIC 0x11
-#define SAVE_SLOT_SIZE 0x78
-#define GLOBAL_DATA_SIZE 0x20
+constexpr uint8_t TOTAL_NUM_SAVE_SLOTS = 4;
+constexpr uint8_t ACTUAL_NUM_SAVE_SLOTS = 3;
+constexpr uint8_t SAVE_SLOT_MAGIC = 0x11;
+constexpr uint8_t SAVE_SLOT_SIZE = 0x78;
+constexpr uint8_t GLOBAL_DATA_SIZE = 0x20;
 
 struct Range
 {
@@ -23,7 +23,7 @@ struct Range
 
 #pragma region Levels_Data
 
-#define TOTAL_LEVEL_COUNT 11
+constexpr uint8_t TOTAL_LEVEL_COUNT = 11;
 
 const uint8_t levelIndices[TOTAL_LEVEL_COUNT]
 {
@@ -49,7 +49,7 @@ const char* const levelNames[TOTAL_LEVEL_COUNT]
 
 #pragma region Jiggies_Data
 
-#define JIGGIES_COUNT 100
+constexpr uint8_t JIGGIES_COUNT = 100;
 
 const Range levelJiggiesIndexRanges[TOTAL_LEVEL_COUNT]
 {
@@ -85,7 +85,7 @@ const char* const levelJiggiesNames[JIGGIES_COUNT + 1]
 
 #pragma region Honeycomb_Data
 
-#define HONEYCOMB_COUNT 24
+constexpr uint8_t HONEYCOMB_COUNT = 24;
 
 const Range levelHoneycombsIndexRanges[TOTAL_LEVEL_COUNT]
 {
@@ -121,8 +121,8 @@ const char* const levelHoneycombsNames[HONEYCOMB_COUNT + 1]
 
 #pragma region MumboTokens_Data
 
-#define MUMBO_TOKEN_COUNT 126
-#define ACTUAL_MUMBO_TOKEN_COUNT 115
+constexpr uint8_t MUMBO_TOKEN_COUNT = 126;
+constexpr uint8_t ACTUAL_MUMBO_TOKEN_COUNT = 115;
 
 const Range levelMumboTokensIndexRanges[TOTAL_LEVEL_COUNT]
 {
@@ -382,8 +382,8 @@ const char* const MumboTokenNames[ACTUAL_MUMBO_TOKEN_COUNT + 1]
 
 #pragma region Notes_Data
 
-#define NOTES_COUNT 900
-#define MAX_NOTES_PER_LEVEL 100
+constexpr uint16_t NOTES_COUNT = 900;
+constexpr uint8_t MAX_NOTES_PER_LEVEL = 100;
 
 const bool levelHasNotes[TOTAL_LEVEL_COUNT]
 {
@@ -618,10 +618,10 @@ enum class ProgressFlags
 
 #pragma region Items Held
 
-#define MAX_MUMBO_TOKENS 116
-#define MAX_EGGS 200
-#define MAX_RED_FEATHERS 100
-#define MAX_GOLD_FEATHERS 20
+constexpr uint8_t MAX_MUMBO_TOKENS = 116;
+constexpr uint8_t MAX_EGGS = 200;
+constexpr uint8_t MAX_RED_FEATHERS = 100;
+constexpr uint8_t MAX_GOLD_FEATHERS = 20;
 
 enum class HeldItems
 {
@@ -802,10 +802,10 @@ public:
 
 #pragma region Banjo Recompiled
 
-#define RECOMP_SAVE_DATA_SIZE 0x800
-#define RECOMP_EXTENDED_DATA_SIZE (RECOMP_SAVE_DATA_SIZE - SAVE_DATA_SIZE)
-#define RECOMP_SAVE_SLOT_SIZE 0x140
-#define RECOMP_GLOBAL_DATA_SIZE 0x100
+constexpr uint16_t RECOMP_SAVE_DATA_SIZE = 0x800;
+constexpr uint16_t RECOMP_EXTENDED_DATA_SIZE = (RECOMP_SAVE_DATA_SIZE - SAVE_DATA_SIZE);
+constexpr uint16_t RECOMP_SAVE_SLOT_SIZE = 0x140;
+constexpr uint16_t RECOMP_GLOBAL_DATA_SIZE = 0x100;
 
 class RecompSaveSlot
 {
