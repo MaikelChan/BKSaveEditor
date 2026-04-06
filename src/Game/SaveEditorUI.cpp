@@ -72,7 +72,7 @@ void SaveEditorUI::DoRender()
 								if (recompSlotIndex >= 0)
 								{
 									RecompSaveSlot* recompSaveSlot = recompSaveData->GetRawSaveSlot(recompSlotIndex);
-									RenderRecompDataSection(recompSaveSlot);
+									RenderRecompDataSection(saveSlot, recompSaveSlot);
 								}
 							}
 
@@ -755,7 +755,7 @@ void SaveEditorUI::RenderGlobalDataSection(GlobalData* globalData)
 	ImGui::EndTabItem();
 }
 
-void SaveEditorUI::RenderRecompDataSection(RecompSaveSlot* saveSlot)
+void SaveEditorUI::RenderRecompDataSection(SaveSlot* saveSlot, RecompSaveSlot* recompSaveSlot)
 {
 	if (!ImGui::BeginTabItem("Notes (Recomp)")) return;
 
@@ -770,7 +770,7 @@ void SaveEditorUI::RenderRecompDataSection(RecompSaveSlot* saveSlot)
 
 		ImGui::TableHeadersRow();
 
-		for (int l = 2; l < TOTAL_LEVEL_COUNT; l++)
+		for (uint8_t l = 2; l < TOTAL_LEVEL_COUNT; l++)
 		{
 			ImGui::PushID(l);
 
@@ -786,15 +786,19 @@ void SaveEditorUI::RenderRecompDataSection(RecompSaveSlot* saveSlot)
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 4));
 
+			uint8_t noteCount = 0;
+
 			for (uint8_t n = 0; n < MAX_NOTES_PER_LEVEL; n++)
 			{
 				ImGui::PushID(n);
 
-				bool value = saveSlot->GetNote(l - 2, n);
+				bool value = recompSaveSlot->GetNote(l - 2, n);
 				if (ImGui::Checkbox("##Note", &value))
 				{
-					saveSlot->SetNote(l - 2, n, value);
+					recompSaveSlot->SetNote(l - 2, n, value);
 				}
+
+				if (value) noteCount++;
 
 				if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
 					ImGui::SetTooltip("Note %u", n + 1);
@@ -802,6 +806,12 @@ void SaveEditorUI::RenderRecompDataSection(RecompSaveSlot* saveSlot)
 				ImGui::PopID();
 
 				if ((n + 1) % (MAX_NOTES_PER_LEVEL / 4) != 0) ImGui::SameLine();
+			}
+
+			if (noteCount > saveSlot->GetNotes(l))
+			{
+				saveSlot->SetNotes(l, noteCount);
+				saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 			}
 
 			ImGui::PopStyleVar();

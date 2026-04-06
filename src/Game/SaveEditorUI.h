@@ -32,7 +32,7 @@ private:
 	void RenderAbilitiesItemsSection(SaveSlot* saveSlot);
 	void RenderProgressFlagsSection(SaveSlot* saveSlot);
 	void RenderGlobalDataSection(GlobalData* globalData);
-	void RenderRecompDataSection(RecompSaveSlot* saveSlot);
+	void RenderRecompDataSection(SaveSlot* saveSlot, RecompSaveSlot* recompSaveSlot);
 
 	bool CheckboxProgressFlags(SaveSlot* saveSlot, const char* label, const ProgressFlags flag) const;
 	uint8_t InputProgressFlags(SaveSlot* saveSlot, const char* label, const ProgressFlags flag, const uint8_t bitsCount, const uint8_t maxValue) const;
