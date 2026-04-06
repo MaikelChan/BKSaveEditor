@@ -60,9 +60,9 @@ void GameMenuUI::DoRender()
 void GameMenuUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinationSlotIndex) const
 {
 	if (originSlotIndex == destinationSlotIndex) return;
-	if (!mainUi->IsSaveDataLoaded()) return;
+	if (!mainUi->IsSaveFileLoaded()) return;
 
-	SaveData* saveData = mainUi->GetSaveData();
+	SaveData* saveData = mainUi->GetSaveFile()->GetSaveData();
 
 	SaveSlot* origin = saveData->GetSaveSlot(originSlotIndex);
 
@@ -78,7 +78,7 @@ void GameMenuUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinati
 	{
 		std::copy(origin, origin + 1, destination);
 		destination->SetSlotIndex(destinationSlotIndex + 1);
-		destination->UpdateChecksum(mainUi->GetSaveDataType());
+		destination->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 	else
 	{
@@ -89,7 +89,7 @@ void GameMenuUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinati
 
 			std::copy(origin, origin + 1, destination);
 			destination->SetSlotIndex(destinationSlotIndex + 1);
-			destination->UpdateChecksum(mainUi->GetSaveDataType());
+			destination->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 
 			break;
 		}
@@ -98,13 +98,13 @@ void GameMenuUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinati
 
 void GameMenuUI::DeleteSlot(const uint8_t slotIndex) const
 {
-	if (!mainUi->IsSaveDataLoaded()) return;
+	if (!mainUi->IsSaveFileLoaded()) return;
 
-	SaveData* saveData = mainUi->GetSaveData();
+	SaveData* saveData = mainUi->GetSaveFile()->GetSaveData();
 
 	SaveSlot* saveSlot = saveData->GetSaveSlot(slotIndex);
 	if (saveSlot == nullptr) return;
 
 	memset(saveSlot, 0, SAVE_SLOT_SIZE);
-	saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+	saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 }

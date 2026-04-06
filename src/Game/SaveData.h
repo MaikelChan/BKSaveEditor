@@ -3,13 +3,7 @@
 #include <string>
 #include <cstdint>
 
-enum class SaveDataTypes { NotValid, BigEndian, LittleEndian };
-
-struct SaveDataInitializationResult
-{
-	SaveDataTypes type;
-	std::string message;
-};
+#include "SaveFile.h"
 
 #define SAVE_DATA_SIZE 0x200
 
@@ -726,8 +720,8 @@ private:
 
 public:
 	uint32_t CalculateChecksum() const;
-	void UpdateChecksum(const SaveDataTypes type);
-	bool IsValid(const SaveDataTypes type);
+	void UpdateChecksum(const SaveFileTypes type);
+	bool IsValid(const SaveFileTypes type);
 	void EndianSwap();
 
 	uint8_t GetMagic() const;
@@ -776,8 +770,8 @@ private:
 
 public:
 	uint32_t CalculateChecksum() const;
-	void UpdateChecksum(const SaveDataTypes type);
-	bool IsValid(const SaveDataTypes type);
+	void UpdateChecksum(const SaveFileTypes type);
+	bool IsValid(const SaveFileTypes type);
 	void EndianSwap();
 
 	bool GetSnsItem(const SnS snsItem) const;
@@ -795,16 +789,8 @@ private:
 public:
 	SaveData();
 
-	SaveDataInitializationResult CheckAndInitialize();
-	void BeginSaving(const SaveDataTypes type);
-	void FinishSaving(const SaveDataTypes type);
-
-private:
-	SaveDataTypes CalculateType() const;
 	void EndianSwap();
-	std::string CheckValidityAndFix(const SaveDataTypes type);
 
-public: // Banjo specific methods
 	SaveSlot* GetRawSaveSlot(const uint8_t slotIndex);
 	SaveSlot* GetSaveSlot(const uint8_t slotIndex);
 	int8_t GetSaveSlotActualIndex(const uint8_t slotIndex) const;
@@ -816,7 +802,8 @@ public: // Banjo specific methods
 
 #pragma region Banjo Recompiled
 
-#define RECOMP_SAVE_DATA_SIZE (0x800 - SAVE_DATA_SIZE)
+#define RECOMP_SAVE_DATA_SIZE 0x800
+#define RECOMP_EXTENDED_DATA_SIZE (RECOMP_SAVE_DATA_SIZE - SAVE_DATA_SIZE)
 #define RECOMP_SAVE_SLOT_SIZE 0x140
 #define RECOMP_GLOBAL_DATA_SIZE 0x100
 

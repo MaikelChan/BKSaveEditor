@@ -7,8 +7,10 @@
 #include "AboutWindow.h"
 #include "PopupDialog.h"
 #include "Game/GameMenuUI.h"
-#include "Game/SaveData.h"
+//#include "Game/SaveData.h"
 #include "Game/SaveEditorUI.h"
+
+class SaveFile;
 
 struct FileDialogParams;
 
@@ -31,8 +33,8 @@ private:
 
 	std::filesystem::path currentFile;
 	std::string currentFileName;
-	SaveDataTypes currentFileType;
-	SaveData* currentSaveData;
+
+	SaveFile* currentSaveFile;
 
 #if SUPPORT_TRANSPARENCY
 	float windowOpacity;
@@ -42,9 +44,9 @@ public:
 	MainUI(Window* window);
 	~MainUI();
 
-	inline SaveDataTypes GetSaveDataType() const { return currentFileType; }
-	inline bool IsSaveDataLoaded() const { return currentSaveData != nullptr; }
-	inline SaveData* GetSaveData() const { return currentSaveData; }
+	inline bool IsSaveFileLoaded() const { return currentSaveFile != nullptr; }
+	inline SaveFile* GetSaveFile() const { return currentSaveFile; }
+
 #if SUPPORT_TRANSPARENCY
 	inline float GetWindowOpacity() const { return windowOpacity; }
 #endif

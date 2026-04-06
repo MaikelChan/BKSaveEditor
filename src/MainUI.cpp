@@ -6,6 +6,7 @@
 #include <imgui/imgui.h>
 
 #include "Window.h"
+#include "Game/SaveFile.h"
 
 MainUI::MainUI(Window* window) : BaseUI(window, nullptr),
 saveEditorUi(window, this),
@@ -19,8 +20,7 @@ aboutWindowUi(window, this)
 
 	currentFile.clear();
 	currentFileName.clear();
-	currentFileType = SaveDataTypes::NotValid;
-	currentSaveData = nullptr;
+	currentSaveFile = nullptr;
 
 #if SUPPORT_TRANSPARENCY
 	windowOpacity = DEFAULT_OPACITY;
@@ -63,7 +63,7 @@ void MainUI::DoRender()
 				window->ShowOpenFileDialog(params);
 			}
 
-			if (ImGui::MenuItem("Save", NULL, false, IsSaveDataLoaded()))
+			if (ImGui::MenuItem("Save", NULL, false, IsSaveFileLoaded()))
 			{
 				SaveSaveData();
 			}
@@ -78,7 +78,7 @@ void MainUI::DoRender()
 			ImGui::EndMenu();
 		}
 
-		if (IsSaveDataLoaded())
+		if (IsSaveFileLoaded())
 		{
 			gameMenuUi.Render();
 		}
@@ -102,7 +102,7 @@ void MainUI::DoRender()
 			ImGui::EndMenu();
 		}
 
-		if (IsSaveDataLoaded())
+		if (IsSaveFileLoaded())
 		{
 			std::string fileText = std::string("Current file: ") + currentFileName;
 
@@ -122,15 +122,14 @@ void MainUI::DoRender()
 
 void MainUI::ClearSaveData()
 {
-	if (!IsSaveDataLoaded()) return;
+	if (!IsSaveFileLoaded()) return;
 
-	delete currentSaveData;
-	currentSaveData = nullptr;
+	delete currentSaveFile;
+	currentSaveFile = nullptr;
 
 	lastPath.clear();
 	currentFile.clear();
 	currentFileName.clear();
-	currentFileType = SaveDataTypes::NotValid;
 }
 
 void MainUI::LoadSaveData(const std::filesystem::path filePath)
@@ -160,43 +159,40 @@ void MainUI::LoadSaveData(const std::filesystem::path filePath)
 		return;
 	}
 
-	SaveData* newSaveData = new SaveData();
+	SaveFile* newSaveFile = new SaveFile();
 
 	stream.seekg(0, std::ios_base::beg);
-	stream.read((char*)newSaveData, SAVE_DATA_SIZE);
+	std::string result = newSaveFile->Read(stream, size);
 	stream.close();
 
-	SaveDataInitializationResult result = newSaveData->CheckAndInitialize();
-	if (result.type == SaveDataTypes::NotValid)
+	if (newSaveFile->GetFileType() == SaveFileTypes::NotValid)
 	{
-		delete newSaveData;
-		newSaveData = nullptr;
+		delete newSaveFile;
+		newSaveFile = nullptr;
 
-		popupDialogUi.SetMessage(MessageTypes::Error, "Error", result.message);
+		popupDialogUi.SetMessage(MessageTypes::Error, "Error", result);
 		popupDialogUi.SetIsVisible(true);
 
 		return;
 	}
 
-	currentFileType = result.type;
-	currentSaveData = newSaveData;
-
+	currentSaveFile = newSaveFile;
 	lastPath = filePath.parent_path();
 	currentFile = filePath;
 	currentFileName = filePath.filename().u8string();
 
 	saveEditorUi.SetIsVisible(true);
 
-	if (!result.message.empty())
+	if (!result.empty())
 	{
-		popupDialogUi.SetMessage(MessageTypes::Warning, "Warnings", result.message);
+		popupDialogUi.SetMessage(MessageTypes::Warning, "Warnings", result);
 		popupDialogUi.SetIsVisible(true);
 	}
 }
 
 void MainUI::SaveSaveData()
 {
-	if (!IsSaveDataLoaded()) return;
+	if (!IsSaveFileLoaded()) return;
 
 	std::ofstream stream = std::ofstream(currentFile, std::ios::binary);
 
@@ -208,12 +204,8 @@ void MainUI::SaveSaveData()
 		return;
 	}
 
-	currentSaveData->BeginSaving(currentFileType);
-
-	stream.write((char*)currentSaveData, SAVE_DATA_SIZE);
+	currentSaveFile->Write(stream);
 	stream.close();
-
-	currentSaveData->FinishSaving(currentFileType);
 }
 
 void MainUI::LoadConfig()

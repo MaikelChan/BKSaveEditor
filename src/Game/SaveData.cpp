@@ -11,19 +11,19 @@ uint32_t SaveSlot::CalculateChecksum() const
 	return SaveData::CalculateChecksum((uint8_t*)&Magic, (uint8_t*)&Checksum);
 }
 
-void SaveSlot::UpdateChecksum(const SaveDataTypes type)
+void SaveSlot::UpdateChecksum(const SaveFileTypes type)
 {
-	if (type == SaveDataTypes::BigEndian) EndianSwap();
+	if (type == SaveFileTypes::BigEndian) EndianSwap();
 	const uint32_t checksum = CalculateChecksum();
-	if (type == SaveDataTypes::BigEndian) EndianSwap();
+	if (type == SaveFileTypes::BigEndian) EndianSwap();
 	Checksum = checksum;
 }
 
-bool SaveSlot::IsValid(const SaveDataTypes type)
+bool SaveSlot::IsValid(const SaveFileTypes type)
 {
-	if (type == SaveDataTypes::BigEndian) EndianSwap();
+	if (type == SaveFileTypes::BigEndian) EndianSwap();
 	const uint32_t checksum = CalculateChecksum();
-	if (type == SaveDataTypes::BigEndian) EndianSwap();
+	if (type == SaveFileTypes::BigEndian) EndianSwap();
 	return Checksum == checksum;
 }
 
@@ -219,19 +219,19 @@ uint32_t GlobalData::CalculateChecksum() const
 	return SaveData::CalculateChecksum((uint8_t*)&SnsItems, (uint8_t*)&Checksum);
 }
 
-void GlobalData::UpdateChecksum(const SaveDataTypes type)
+void GlobalData::UpdateChecksum(const SaveFileTypes type)
 {
-	if (type == SaveDataTypes::BigEndian) EndianSwap();
+	if (type == SaveFileTypes::BigEndian) EndianSwap();
 	const uint32_t checksum = CalculateChecksum();
-	if (type == SaveDataTypes::BigEndian) EndianSwap();
+	if (type == SaveFileTypes::BigEndian) EndianSwap();
 	Checksum = checksum;
 }
 
-bool GlobalData::IsValid(const SaveDataTypes type)
+bool GlobalData::IsValid(const SaveFileTypes type)
 {
-	if (type == SaveDataTypes::BigEndian) EndianSwap();
+	if (type == SaveFileTypes::BigEndian) EndianSwap();
 	const uint32_t checksum = CalculateChecksum();
-	if (type == SaveDataTypes::BigEndian) EndianSwap();
+	if (type == SaveFileTypes::BigEndian) EndianSwap();
 	return Checksum == checksum;
 }
 
@@ -270,64 +270,6 @@ SaveData::SaveData()
 	assert(sizeof(SaveData) == SAVE_DATA_SIZE);
 }
 
-SaveDataInitializationResult SaveData::CheckAndInitialize()
-{
-	SaveDataTypes type = CalculateType();
-
-	if (type == SaveDataTypes::NotValid)
-	{
-		return { SaveDataTypes::NotValid, "The selected file is not a valid Banjo-Kazooie save file." };
-	}
-	else if (type == SaveDataTypes::BigEndian)
-	{
-		EndianSwap();
-	}
-
-	std::string warnings = CheckValidityAndFix(type);
-
-	return { type, warnings };
-}
-
-void SaveData::BeginSaving(const SaveDataTypes type)
-{
-	for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
-	{
-		SaveSlot* saveSlot = GetSaveSlot(s);
-		if (saveSlot == nullptr) continue;
-
-		saveSlot->UpdateChecksum(type);
-	}
-
-	globalData.UpdateChecksum(type);
-
-	if (type == SaveDataTypes::BigEndian) EndianSwap();
-}
-
-void SaveData::FinishSaving(const SaveDataTypes type)
-{
-	if (type == SaveDataTypes::BigEndian) EndianSwap();
-}
-
-SaveDataTypes SaveData::CalculateType() const
-{
-	for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
-	{
-		SaveSlot slot = saveSlots[s];
-
-		uint32_t calculatedChecksum = slot.CalculateChecksum();
-		uint32_t slotChecksum = slot.GetChecksum();
-		if (calculatedChecksum == slotChecksum) return SaveDataTypes::LittleEndian;
-		if (calculatedChecksum == Utils::Swap32(slotChecksum)) return SaveDataTypes::BigEndian;
-	}
-
-	uint32_t calculatedChecksum = globalData.CalculateChecksum();
-	uint32_t globalDataChecksum = globalData.GetChecksum();
-	if (calculatedChecksum == globalDataChecksum) return SaveDataTypes::LittleEndian;
-	if (calculatedChecksum == Utils::Swap32(globalDataChecksum)) return SaveDataTypes::BigEndian;
-
-	return SaveDataTypes::NotValid;
-}
-
 void SaveData::EndianSwap()
 {
 	for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
@@ -338,30 +280,7 @@ void SaveData::EndianSwap()
 		saveSlot->EndianSwap();
 	}
 
-	globalData.EndianSwap();
-}
-
-std::string SaveData::CheckValidityAndFix(const SaveDataTypes type)
-{
-	std::string message;
-
-	for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
-	{
-		SaveSlot* saveSlot = GetSaveSlot(s);
-		if (saveSlot == nullptr) continue;
-
-		if (!saveSlot->IsValid(type))
-		{
-			message += std::string("Save slot ") + std::to_string(s) + " has a wrong checksum. Data could be invalid.\n\n";
-		}
-	}
-
-	if (!globalData.IsValid(type))
-	{
-		message += "Global Data has a wrong checksum. Data could be invalid.\n\n";
-	}
-
-	return message;
+	GetGlobalData()->EndianSwap();
 }
 
 SaveSlot* SaveData::GetRawSaveSlot(const uint8_t slotIndex)
@@ -488,7 +407,7 @@ void RecompSaveSlot::SetNote(uint8_t levelIndex, uint8_t noteIndex, bool collect
 RecompSaveData::RecompSaveData()
 {
 	assert(sizeof(RecompSaveSlot) == RECOMP_SAVE_SLOT_SIZE);
-	assert(sizeof(RecompSaveData) == RECOMP_SAVE_DATA_SIZE);
+	assert(sizeof(RecompSaveData) == RECOMP_EXTENDED_DATA_SIZE);
 }
 
 RecompSaveSlot* RecompSaveData::GetRawSaveSlot(const uint8_t slotIndex)

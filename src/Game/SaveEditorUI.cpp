@@ -33,8 +33,8 @@ void SaveEditorUI::DoRender()
 	{
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
-		SaveData* saveData = mainUi->GetSaveData();
-		RecompSaveData* recompSaveData = mainUi->GetRecompSaveData();
+		SaveData* saveData = mainUi->GetSaveFile()->GetSaveData();
+		RecompSaveData* recompSaveData = mainUi->GetSaveFile()->GetRecompSaveData();
 
 		if (saveData && ImGui::BeginTabBar("Save Slots", tab_bar_flags))
 		{
@@ -142,7 +142,7 @@ void SaveEditorUI::RenderLevelDataSection(SaveSlot* saveSlot)
 				if (ImGui::Checkbox("##Jiggy", &value))
 				{
 					saveSlot->SetJiggy(j, value);
-					saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+					saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 				}
 
 				if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
@@ -169,7 +169,7 @@ void SaveEditorUI::RenderLevelDataSection(SaveSlot* saveSlot)
 				if (ImGui::Checkbox("##Honeycomb", &value))
 				{
 					saveSlot->SetHoneycomb(h, value);
-					saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+					saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 				}
 
 				if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
@@ -193,7 +193,7 @@ void SaveEditorUI::RenderLevelDataSection(SaveSlot* saveSlot)
 				{
 					if (noteValue > MAX_NOTES_PER_LEVEL) noteValue = MAX_NOTES_PER_LEVEL;
 					saveSlot->SetNotes(l, noteValue);
-					saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+					saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 				}
 
 				totalNotes += noteValue;
@@ -205,7 +205,7 @@ void SaveEditorUI::RenderLevelDataSection(SaveSlot* saveSlot)
 			if (ImGui::InputScalar("##Play Time", ImGuiDataType_U16, &time, NULL, NULL, "%u"))
 			{
 				saveSlot->SetPlayTime(l, time);
-				saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+				saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 			}
 
 			if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
@@ -279,7 +279,7 @@ void SaveEditorUI::RenderLevelDataSection(SaveSlot* saveSlot)
 				if (ImGui::Checkbox("##Token", &value))
 				{
 					saveSlot->SetMumboToken(t, value);
-					saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+					saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 				}
 
 				if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
@@ -411,7 +411,7 @@ void SaveEditorUI::RenderAbilitiesItemsSection(SaveSlot* saveSlot)
 	{
 		if (mumboTokens > MAX_MUMBO_TOKENS) mumboTokens = MAX_MUMBO_TOKENS;
 		saveSlot->SetHeldItem(HeldItems::MumboTokens, mumboTokens);
-		saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+		saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 
 	uint8_t eggs = saveSlot->GetHeldItem(HeldItems::Eggs);
@@ -419,7 +419,7 @@ void SaveEditorUI::RenderAbilitiesItemsSection(SaveSlot* saveSlot)
 	{
 		if (eggs > MAX_EGGS) eggs = MAX_EGGS;
 		saveSlot->SetHeldItem(HeldItems::Eggs, eggs);
-		saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+		saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 
 	uint8_t redFeathers = saveSlot->GetHeldItem(HeldItems::RedFeathers);
@@ -427,7 +427,7 @@ void SaveEditorUI::RenderAbilitiesItemsSection(SaveSlot* saveSlot)
 	{
 		if (redFeathers > MAX_RED_FEATHERS) redFeathers = MAX_RED_FEATHERS;
 		saveSlot->SetHeldItem(HeldItems::RedFeathers, redFeathers);
-		saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+		saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 
 	uint8_t goldFeathers = saveSlot->GetHeldItem(HeldItems::GoldFeathers);
@@ -435,7 +435,7 @@ void SaveEditorUI::RenderAbilitiesItemsSection(SaveSlot* saveSlot)
 	{
 		if (goldFeathers > MAX_GOLD_FEATHERS) goldFeathers = MAX_GOLD_FEATHERS;
 		saveSlot->SetHeldItem(HeldItems::GoldFeathers, goldFeathers);
-		saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+		saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 
 	uint8_t jiggies = saveSlot->GetHeldItem(HeldItems::Jiggies);
@@ -443,7 +443,7 @@ void SaveEditorUI::RenderAbilitiesItemsSection(SaveSlot* saveSlot)
 	{
 		if (jiggies > JIGGIES_COUNT) jiggies = JIGGIES_COUNT;
 		saveSlot->SetHeldItem(HeldItems::Jiggies, jiggies);
-		saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+		saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 
 	ImGui::PopItemWidth();
@@ -801,7 +801,7 @@ void SaveEditorUI::RenderRecompDataSection(RecompSaveSlot* saveSlot)
 
 				ImGui::PopID();
 
-				if ((n+1) % (MAX_NOTES_PER_LEVEL / 4)  != 0) ImGui::SameLine();
+				if ((n + 1) % (MAX_NOTES_PER_LEVEL / 4) != 0) ImGui::SameLine();
 			}
 
 			ImGui::PopStyleVar();
@@ -822,7 +822,7 @@ bool SaveEditorUI::CheckboxProgressFlags(SaveSlot* saveSlot, const char* label, 
 	if (ImGui::Checkbox(label, &value))
 	{
 		saveSlot->SetProgressFlag(flag, value);
-		saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+		saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 
 	return value;
@@ -837,7 +837,7 @@ uint8_t SaveEditorUI::InputProgressFlags(SaveSlot* saveSlot, const char* label, 
 	{
 		if (value > maxValue) value = maxValue;
 		saveSlot->SetProgressValue(flag, bitsCount, value);
-		saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+		saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 
 	return value;
@@ -850,7 +850,7 @@ void SaveEditorUI::CheckboxLearnedAbility(SaveSlot* saveSlot, const char* label,
 	if (ImGui::Checkbox(label, &learned))
 	{
 		saveSlot->SetLearnedAbility(ability, learned);
-		saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+		saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 }
 
@@ -861,7 +861,7 @@ void SaveEditorUI::CheckboxUsedAbility(SaveSlot* saveSlot, const char* label, co
 	if (ImGui::Checkbox(label, &used))
 	{
 		saveSlot->SetUsedAbility(ability, used);
-		saveSlot->UpdateChecksum(mainUi->GetSaveDataType());
+		saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 }
 
@@ -876,7 +876,7 @@ void SaveEditorUI::CheckboxSnS(GlobalData* globalData, const char* label, const 
 	if (ImGui::Checkbox(unlockedId, &unlocked))
 	{
 		globalData->SetSnsItem(unlockedSnsItem, unlocked);
-		globalData->UpdateChecksum(mainUi->GetSaveDataType());
+		globalData->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 
 	ImGui::SameLine();
@@ -884,7 +884,7 @@ void SaveEditorUI::CheckboxSnS(GlobalData* globalData, const char* label, const 
 	if (ImGui::Checkbox(label, &collected))
 	{
 		globalData->SetSnsItem(collectedSnsItem, collected);
-		globalData->UpdateChecksum(mainUi->GetSaveDataType());
+		globalData->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 	}
 }
 
