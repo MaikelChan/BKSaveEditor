@@ -38,7 +38,7 @@ void SaveEditorUI::DoRender()
 
 		if (saveData && ImGui::BeginTabBar("Save Slots", tab_bar_flags))
 		{
-			for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
+			for (uint8_t s = 0; s < TOTAL_SAVE_SLOTS; s++)
 			{
 				if (ImGui::BeginTabItem(tabNames[s]))
 				{
@@ -67,13 +67,8 @@ void SaveEditorUI::DoRender()
 
 							if (recompSaveData != nullptr)
 							{
-								int8_t recompSlotIndex = saveData->GetSaveSlotActualIndex(s);
-
-								if (recompSlotIndex >= 0)
-								{
-									RecompSaveSlot* recompSaveSlot = recompSaveData->GetRawSaveSlot(recompSlotIndex);
-									RenderRecompDataSection(saveSlot, recompSaveSlot);
-								}
+								RecompSaveSlot* recompSaveSlot = recompSaveData->GetSaveSlot(saveData, s);
+								if (recompSaveSlot != nullptr) RenderRecompDataSection(saveSlot, recompSaveSlot);
 							}
 
 							ImGui::EndTabBar();

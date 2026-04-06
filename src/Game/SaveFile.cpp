@@ -73,7 +73,7 @@ std::string SaveFile::Read(std::ifstream& stream, const size_t streamSize)
 
 	std::string warningMessages;
 
-	for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
+	for (uint8_t s = 0; s < TOTAL_SAVE_SLOTS; s++)
 	{
 		SaveSlot* saveSlot = newSaveData->GetSaveSlot(s);
 		if (saveSlot == nullptr) continue;
@@ -101,7 +101,7 @@ void SaveFile::Write(std::ofstream& stream)
 {
 	// Refresh all checksums
 
-	for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
+	for (uint8_t s = 0; s < TOTAL_SAVE_SLOTS; s++)
 	{
 		SaveSlot* saveSlot = saveData->GetSaveSlot(s);
 		if (saveSlot == nullptr) continue;
@@ -131,9 +131,9 @@ SaveFileTypes SaveFile::CalculateType(SaveData* saveData)
 {
 	if (saveData == nullptr) return SaveFileTypes::NotValid;
 
-	for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
+	for (uint8_t is = 0; is < TOTAL_INTERNAL_SAVE_SLOTS; is++)
 	{
-		SaveSlot* slot = saveData->GetRawSaveSlot(s);
+		SaveSlot* slot = saveData->GetInternalSaveSlot(is);
 
 		uint32_t calculatedChecksum = slot->CalculateChecksum();
 		uint32_t slotChecksum = slot->GetChecksum();

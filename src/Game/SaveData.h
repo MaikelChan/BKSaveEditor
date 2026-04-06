@@ -7,8 +7,8 @@
 
 constexpr uint16_t SAVE_DATA_SIZE = 0x200;
 
-constexpr uint8_t TOTAL_NUM_SAVE_SLOTS = 4;
-constexpr uint8_t ACTUAL_NUM_SAVE_SLOTS = 3;
+constexpr uint8_t TOTAL_INTERNAL_SAVE_SLOTS = 4;
+constexpr uint8_t TOTAL_SAVE_SLOTS = 3;
 constexpr uint8_t SAVE_SLOT_MAGIC = 0x11;
 constexpr uint8_t SAVE_SLOT_SIZE = 0x78;
 constexpr uint8_t GLOBAL_DATA_SIZE = 0x20;
@@ -783,7 +783,7 @@ public:
 class SaveData
 {
 private:
-	SaveSlot saveSlots[TOTAL_NUM_SAVE_SLOTS] = {};
+	SaveSlot saveSlots[TOTAL_INTERNAL_SAVE_SLOTS] = {};
 	GlobalData globalData = {};
 
 public:
@@ -791,9 +791,10 @@ public:
 
 	void EndianSwap();
 
-	SaveSlot* GetRawSaveSlot(const uint8_t slotIndex);
+	int8_t GetInternalSaveSlotIndex(const uint8_t slotIndex) const;
+	SaveSlot* GetInternalSaveSlot(const uint8_t internalSlotIndex);
 	SaveSlot* GetSaveSlot(const uint8_t slotIndex);
-	int8_t GetSaveSlotActualIndex(const uint8_t slotIndex) const;
+	SaveSlot* FindEmptyInternalSaveSlot();
 	GlobalData* GetGlobalData();
 
 	static uint32_t TransformSeed(uint64_t* seed);
@@ -821,13 +822,14 @@ public:
 class RecompSaveData
 {
 private:
-	RecompSaveSlot saveSlots[TOTAL_NUM_SAVE_SLOTS] = {};
+	RecompSaveSlot saveSlots[TOTAL_INTERNAL_SAVE_SLOTS] = {};
 	uint8_t globalData[RECOMP_GLOBAL_DATA_SIZE] = {};
 
 public:
 	RecompSaveData();
 
-	RecompSaveSlot* GetRawSaveSlot(const uint8_t slotIndex);
+	RecompSaveSlot* GetInternalSaveSlot(const uint8_t iternalSlotIndex);
+	RecompSaveSlot* GetSaveSlot(const SaveData* saveData, const uint8_t slotIndex);
 };
 
 #pragma endregion

@@ -272,7 +272,7 @@ SaveData::SaveData()
 
 void SaveData::EndianSwap()
 {
-	for (uint8_t s = 0; s < ACTUAL_NUM_SAVE_SLOTS; s++)
+	for (uint8_t s = 0; s < TOTAL_SAVE_SLOTS; s++)
 	{
 		SaveSlot* saveSlot = GetSaveSlot(s);
 		if (saveSlot == nullptr) continue;
@@ -283,28 +283,37 @@ void SaveData::EndianSwap()
 	GetGlobalData()->EndianSwap();
 }
 
-SaveSlot* SaveData::GetRawSaveSlot(const uint8_t slotIndex)
+int8_t SaveData::GetInternalSaveSlotIndex(const uint8_t slotIndex) const
 {
-	return &saveSlots[slotIndex];
-}
-
-SaveSlot* SaveData::GetSaveSlot(const uint8_t slotIndex)
-{
-	int8_t actualIndex = GetSaveSlotActualIndex(slotIndex);
-	if (actualIndex < 0) return nullptr;
-
-	return &saveSlots[actualIndex];
-}
-
-int8_t SaveData::GetSaveSlotActualIndex(const uint8_t slotIndex) const
-{
-	for (int8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
+	for (int8_t s = 0; s < TOTAL_INTERNAL_SAVE_SLOTS; s++)
 	{
 		if (saveSlots[s].GetMagic() != SAVE_SLOT_MAGIC) continue;
 		if (saveSlots[s].GetSlotIndex() == slotIndex + 1) return s;
 	}
 
 	return -1;
+}
+
+SaveSlot* SaveData::GetInternalSaveSlot(const uint8_t internalSlotIndex)
+{
+	return &saveSlots[internalSlotIndex];
+}
+
+SaveSlot* SaveData::GetSaveSlot(const uint8_t slotIndex)
+{
+	int8_t internalSlotIndex = GetInternalSaveSlotIndex(slotIndex);
+	return internalSlotIndex >= 0 ? GetInternalSaveSlot(internalSlotIndex) : nullptr;
+}
+
+SaveSlot* SaveData::FindEmptyInternalSaveSlot()
+{
+	for (uint8_t is = 0; is < TOTAL_INTERNAL_SAVE_SLOTS; is++)
+	{
+		SaveSlot* saveSlot = GetInternalSaveSlot(is);
+		if (saveSlot->GetMagic() != SAVE_SLOT_MAGIC) return saveSlot;
+	}
+
+	return nullptr;
 }
 
 GlobalData* SaveData::GetGlobalData()
@@ -410,9 +419,15 @@ RecompSaveData::RecompSaveData()
 	assert(sizeof(RecompSaveData) == RECOMP_EXTENDED_DATA_SIZE);
 }
 
-RecompSaveSlot* RecompSaveData::GetRawSaveSlot(const uint8_t slotIndex)
+RecompSaveSlot* RecompSaveData::GetInternalSaveSlot(const uint8_t iternalSlotIndex)
 {
-	return &saveSlots[slotIndex];
+	return &saveSlots[iternalSlotIndex];
+}
+
+RecompSaveSlot* RecompSaveData::GetSaveSlot(const SaveData* saveData, const uint8_t slotIndex)
+{
+	int8_t internalSlotIndex = saveData->GetInternalSaveSlotIndex(slotIndex);
+	return internalSlotIndex >= 0 ? GetInternalSaveSlot(internalSlotIndex) : nullptr;
 }
 
 #pragma endregion
