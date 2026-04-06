@@ -7,8 +7,9 @@
 
 #include <imgui/imgui.h>
 
-#include "WindowSDL.h"
+#include "Config.h"
 #include "MainUI.h"
+#include "WindowSDL.h"
 
 int RunMain()
 {
@@ -19,7 +20,7 @@ int RunMain()
 	};
 
 	WindowParams windowParams = {};
-	windowParams.title = "Banjo-Kazooie - Save Editor";
+	windowParams.title = std::string("Banjo-Kazooie - Save Editor - v") + PROJECT_VER;
 	windowParams.description = "This is a save editor for the Nintendo 64 version of Banjo-Kazooie.";
 	windowParams.author = "PacoChan";
 	windowParams.url = "https://pacochan.net/software/bk-save-editor/";

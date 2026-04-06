@@ -8,7 +8,7 @@
 AboutWindow::AboutWindow(Window* window, BaseUI* parentUi) : BaseUI(window, parentUi)
 {
 	const char* title = window->GetParams().title.c_str();
-	snprintf(windowTitle, 64, "About %s - v%s", title, PROJECT_VER);
+	snprintf(windowTitle, 64, "About %s", title);
 }
 
 AboutWindow::~AboutWindow()
