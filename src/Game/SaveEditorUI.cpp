@@ -25,6 +25,8 @@ void SaveEditorUI::DoRender()
 {
 	BaseUI::DoRender();
 
+	if (!mainUi->IsSaveFileLoaded()) return;
+
 	const ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->WorkPos);
 	ImGui::SetNextWindowSize(viewport->WorkSize);

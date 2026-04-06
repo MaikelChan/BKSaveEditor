@@ -124,6 +124,8 @@ void MainUI::ClearSaveData()
 {
 	if (!IsSaveFileLoaded()) return;
 
+	saveEditorUi.SetIsVisible(false);
+
 	delete currentSaveFile;
 	currentSaveFile = nullptr;
 
