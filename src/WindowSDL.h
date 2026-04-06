@@ -2,9 +2,6 @@
 
 #include "Window.h"
 
-#include <filesystem>
-#include <string>
-
 struct SDL_Window;
 struct SDL_GPUDevice;
 struct SDL_DialogFileFilter;

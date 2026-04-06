@@ -1,4 +1,5 @@
 #include "PopupDialog.h"
+
 #include <imgui/imgui.h>
 
 PopupDialog::PopupDialog(Window* window, BaseUI* parentUi) : BaseUI(window, parentUi)

@@ -323,45 +323,10 @@ GlobalData* SaveData::GetGlobalData()
 
 uint32_t SaveData::TransformSeed(uint64_t* seed)
 {
-	// ld         $a3, 0x0($a0)
-	// dsll32     $a2, $a3, 31
-	// dsll       $a1, $a3, 31
-	// dsrl       $a2, $a2, 31
-	// dsrl32     $a1, $a1, 0
-	// dsll32     $a3, $a3, 12
-	// or         $a2, $a2, $a1
-	// dsrl32     $a3, $a3, 0
-	// xor        $a2, $a2, $a3
-	// dsrl       $a3, $a2, 20
-	// andi       $a3, $a3, 0xFFF
-	// xor        $a3, $a3, $a2
-	// dsll32     $v0, $a3, 0
-	// sd         $a3, 0x0($a0)
-	// jr         $ra
-	// dsra32     $v0, $v0, 0
+	*seed = ((*seed << 63) >> 31 | (*seed << 31) >> 32) ^ (*seed << 44) >> 32;
+	*seed = ((*seed >> 20) & 0xfff) ^ *seed;
 
-	uint64_t a1 = 0;
-	uint64_t a2 = 0;
-	uint64_t a3 = 0;
-	uint64_t v0 = 0;
-
-	a3 = *seed;
-	a2 = a3 << (31 + 32);
-	a1 = a3 << 31;
-	a2 = a2 >> 31;
-	a1 = a1 >> (0 + 32);
-	a3 = a3 << (12 + 32);
-	a2 = a2 | a1;
-	a3 = a3 >> (0 + 32);
-	a2 = a2 ^ a3;
-	a3 = a2 >> 20;
-	a3 = a3 & 0xfff;
-	a3 = a3 ^ a2;
-	v0 = a3 << (0 + 32);
-	*seed = a3;
-	v0 = v0 >> (0 + 32);
-
-	return (uint32_t)v0;
+	return (uint32_t)*seed;
 }
 
 uint32_t SaveData::CalculateChecksum(const uint8_t* start, const uint8_t* end)
@@ -371,22 +336,19 @@ uint32_t SaveData::CalculateChecksum(const uint8_t* start, const uint8_t* end)
 	uint64_t seed = 0x8F809F473108B3C1;
 	uint32_t crc1 = 0;
 	uint32_t crc2 = 0;
-	uint32_t tmp;
 
 	for (p = start; p < end; p++)
 	{
 		seed += (uint64_t)(*p) << (shift & 15);
-		tmp = TransformSeed(&seed);
+		crc1 ^= TransformSeed(&seed);
 		shift += 7;
-		crc1 ^= tmp;
 	}
 
 	for (p = end - 1; p >= start; p--)
 	{
 		seed += (uint64_t)(*p) << (shift & 15);
-		tmp = TransformSeed(&seed);
+		crc2 ^= TransformSeed(&seed);
 		shift += 3;
-		crc2 ^= tmp;
 	}
 
 	return crc1 ^ crc2;
