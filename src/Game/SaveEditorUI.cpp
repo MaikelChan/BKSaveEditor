@@ -34,6 +34,7 @@ void SaveEditorUI::DoRender()
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
 		SaveData* saveData = mainUi->GetSaveData();
+		RecompSaveData* recompSaveData = mainUi->GetRecompSaveData();
 
 		if (saveData && ImGui::BeginTabBar("Save Slots", tab_bar_flags))
 		{
@@ -63,6 +64,17 @@ void SaveEditorUI::DoRender()
 							RenderLevelDataSection(saveSlot);
 							RenderAbilitiesItemsSection(saveSlot);
 							RenderProgressFlagsSection(saveSlot);
+
+							if (recompSaveData != nullptr)
+							{
+								int8_t recompSlotIndex = saveData->GetSaveSlotActualIndex(s);
+
+								if (recompSlotIndex >= 0)
+								{
+									RecompSaveSlot* recompSaveSlot = recompSaveData->GetRawSaveSlot(recompSlotIndex);
+									RenderRecompDataSection(recompSaveSlot);
+								}
+							}
 
 							ImGui::EndTabBar();
 						}
@@ -739,6 +751,66 @@ void SaveEditorUI::RenderGlobalDataSection(GlobalData* globalData)
 	CheckboxSnS(globalData, "Red Egg", SnS::UNLOCKED_RED_EGG, SnS::COLLECTED_RED_EGG);
 	CheckboxSnS(globalData, "Yellow Egg", SnS::UNLOCKED_YELLOW_EGG, SnS::COLLECTED_YELLOW_EGG);
 	CheckboxSnS(globalData, "Ice Key", SnS::UNLOCKED_ICE_KEY, SnS::COLLECTED_ICE_KEY);
+
+	ImGui::EndTabItem();
+}
+
+void SaveEditorUI::RenderRecompDataSection(RecompSaveSlot* saveSlot)
+{
+	if (!ImGui::BeginTabItem("Notes (Recomp)")) return;
+
+	ImGuiTableFlags flags = ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_ScrollY;
+
+	if (ImGui::BeginTable("RecompNotesTable", 3, flags))
+	{
+		ImGui::TableSetupScrollFreeze(0, 1);
+		ImGui::TableSetupColumn("#");
+		ImGui::TableSetupColumn("Level Name");
+		ImGui::TableSetupColumn("Notes");
+
+		ImGui::TableHeadersRow();
+
+		for (int l = 2; l < TOTAL_LEVEL_COUNT; l++)
+		{
+			ImGui::PushID(l);
+
+			ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("%i", l + 1);
+
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text("%s", levelNames[l]);
+
+			ImGui::TableSetColumnIndex(2);
+
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 4));
+
+			for (uint8_t n = 0; n < MAX_NOTES_PER_LEVEL; n++)
+			{
+				ImGui::PushID(n);
+
+				bool value = saveSlot->GetNote(l - 2, n);
+				if (ImGui::Checkbox("##Note", &value))
+				{
+					saveSlot->SetNote(l - 2, n, value);
+				}
+
+				if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
+					ImGui::SetTooltip("Note %u", n + 1);
+
+				ImGui::PopID();
+
+				if ((n+1) % (MAX_NOTES_PER_LEVEL / 4)  != 0) ImGui::SameLine();
+			}
+
+			ImGui::PopStyleVar();
+
+			ImGui::PopID();
+		}
+
+		ImGui::EndTable();
+	}
 
 	ImGui::EndTabItem();
 }

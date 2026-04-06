@@ -807,8 +807,40 @@ private:
 public: // Banjo specific methods
 	SaveSlot* GetRawSaveSlot(const uint8_t slotIndex);
 	SaveSlot* GetSaveSlot(const uint8_t slotIndex);
+	int8_t GetSaveSlotActualIndex(const uint8_t slotIndex) const;
 	GlobalData* GetGlobalData();
 
 	static uint32_t TransformSeed(uint64_t* seed);
 	static uint32_t CalculateChecksum(const uint8_t* start, const uint8_t* end);
 };
+
+#pragma region Banjo Recompiled
+
+#define RECOMP_SAVE_DATA_SIZE (0x800 - SAVE_DATA_SIZE)
+#define RECOMP_SAVE_SLOT_SIZE 0x140
+#define RECOMP_GLOBAL_DATA_SIZE 0x100
+
+class RecompSaveSlot
+{
+private:
+	uint8_t levelNotes[TOTAL_LEVEL_COUNT - 2][32];
+	uint8_t padding[32];
+
+public:
+	bool GetNote(uint8_t levelIndex, uint8_t noteIndex) const;
+	void SetNote(uint8_t levelIndex, uint8_t noteIndex, bool collected);
+};
+
+class RecompSaveData
+{
+private:
+	RecompSaveSlot saveSlots[TOTAL_NUM_SAVE_SLOTS] = {};
+	uint8_t globalData[RECOMP_GLOBAL_DATA_SIZE] = {};
+
+public:
+	RecompSaveData();
+
+	RecompSaveSlot* GetRawSaveSlot(const uint8_t slotIndex);
+};
+
+#pragma endregion

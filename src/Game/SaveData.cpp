@@ -371,13 +371,21 @@ SaveSlot* SaveData::GetRawSaveSlot(const uint8_t slotIndex)
 
 SaveSlot* SaveData::GetSaveSlot(const uint8_t slotIndex)
 {
-	for (uint8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
+	int8_t actualIndex = GetSaveSlotActualIndex(slotIndex);
+	if (actualIndex < 0) return nullptr;
+
+	return &saveSlots[actualIndex];
+}
+
+int8_t SaveData::GetSaveSlotActualIndex(const uint8_t slotIndex) const
+{
+	for (int8_t s = 0; s < TOTAL_NUM_SAVE_SLOTS; s++)
 	{
 		if (saveSlots[s].GetMagic() != SAVE_SLOT_MAGIC) continue;
-		if (saveSlots[s].GetSlotIndex() == slotIndex + 1) return &saveSlots[s];
+		if (saveSlots[s].GetSlotIndex() == slotIndex + 1) return s;
 	}
 
-	return nullptr;
+	return -1;
 }
 
 GlobalData* SaveData::GetGlobalData()
@@ -454,6 +462,38 @@ uint32_t SaveData::CalculateChecksum(const uint8_t* start, const uint8_t* end)
 	}
 
 	return crc1 ^ crc2;
+}
+
+#pragma endregion
+
+#pragma region Banjo Recompiled
+
+bool RecompSaveSlot::GetNote(uint8_t levelIndex, uint8_t noteIndex) const
+{
+	uint8_t byteIndex = noteIndex / 8;
+	uint8_t bitIndex = noteIndex % 8;
+
+	return (levelNotes[levelIndex][byteIndex] & (1 << bitIndex)) != 0;
+}
+
+void RecompSaveSlot::SetNote(uint8_t levelIndex, uint8_t noteIndex, bool collected)
+{
+	uint8_t byteIndex = noteIndex / 8;
+	uint8_t bitIndex = noteIndex % 8;
+
+	if (collected)	levelNotes[levelIndex][byteIndex] |= (1 << bitIndex);
+	else levelNotes[levelIndex][byteIndex] &= ~(1 << bitIndex);
+}
+
+RecompSaveData::RecompSaveData()
+{
+	assert(sizeof(RecompSaveSlot) == RECOMP_SAVE_SLOT_SIZE);
+	assert(sizeof(RecompSaveData) == RECOMP_SAVE_DATA_SIZE);
+}
+
+RecompSaveSlot* RecompSaveData::GetRawSaveSlot(const uint8_t slotIndex)
+{
+	return &saveSlots[slotIndex];
 }
 
 #pragma endregion

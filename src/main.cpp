@@ -15,7 +15,7 @@ int RunMain()
 {
 	const FileDialogFilter openDialogFilters[] =
 	{
-		{ "N64 Saves (*.eep; *.sav)", "eep;sav" },
+		{ "N64 Saves (*.eep; *.sav; *.bin)", "eep;sav;bin" },
 		{ "All files (*.*)", "*" }
 	};
 
