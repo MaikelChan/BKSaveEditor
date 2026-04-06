@@ -14,10 +14,17 @@ class SaveFile;
 
 struct FileDialogParams;
 
+constexpr uint8_t MAX_RECENT_FILES = 5;
+
 constexpr char* CONFIG_FILE_NAME = "config.ini";
 constexpr char* CONFIG_INI_SECTION = "Config";
+constexpr char* CONFIG_LAST_PATH = "lastPath";
+constexpr char* CONFIG_RECENT_FILE_PREFIX = "recentFile_";
+
 constexpr char* DEFAULT_PATH = "";
+
 #if SUPPORT_TRANSPARENCY
+constexpr char* CONFIG_WINDOW_OPACITY = "windowOpacity";
 constexpr float DEFAULT_OPACITY = 0.9f;
 #endif
 
@@ -30,9 +37,7 @@ private:
 	AboutWindow aboutWindowUi;
 
 	std::filesystem::path lastPath;
-
-	std::filesystem::path currentFile;
-	std::string currentFileName;
+	std::vector<std::filesystem::path> recentFiles;
 
 	SaveFile* currentSaveFile;
 

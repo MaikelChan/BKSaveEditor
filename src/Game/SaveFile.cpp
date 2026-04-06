@@ -8,6 +8,8 @@ SaveFile::SaveFile()
 	saveData = nullptr;
 	recompSaveData = nullptr;
 
+	filePath.clear();
+	fileName.clear();
 	fileType = SaveFileTypes::NotValid;
 }
 

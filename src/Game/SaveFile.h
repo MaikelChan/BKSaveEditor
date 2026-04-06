@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <fstream>
 
 class SaveData;
@@ -13,6 +14,8 @@ private:
 	SaveData* saveData;
 	RecompSaveData* recompSaveData;
 
+	std::filesystem::path filePath;
+	std::string fileName;
 	SaveFileTypes fileType;
 
 public:
@@ -25,6 +28,9 @@ public:
 	inline SaveData* GetSaveData() const { return saveData; }
 	inline RecompSaveData* GetRecompSaveData() const { return recompSaveData; }
 
+	inline std::filesystem::path GetFilePath() const { return filePath; }
+	inline void SetFilePath(std::filesystem::path filePath) { this->filePath = filePath; fileName = filePath.filename().u8string(); }
+	inline std::string GetFileName() const { return fileName; }
 	inline SaveFileTypes GetFileType() const { return fileType; }
 
 private:
