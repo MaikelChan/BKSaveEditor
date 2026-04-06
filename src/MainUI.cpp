@@ -6,7 +6,6 @@
 #include <imgui/imgui.h>
 
 #include "Window.h"
-#include "Game/SaveFile.h"
 
 MainUI::MainUI(Window* window) : BaseUI(window, nullptr),
 saveEditorUi(window, this),
@@ -16,9 +15,7 @@ aboutWindowUi(window, this)
 {
 	gameMenuUi.SetIsVisible(true);
 
-	lastPath.clear();
 	recentFiles.clear();
-
 	currentSaveFile = nullptr;
 
 #if SUPPORT_TRANSPARENCY
@@ -55,6 +52,9 @@ void MainUI::DoRender()
 		{
 			if (ImGui::MenuItem("Open..."))
 			{
+				std::filesystem::path lastPath = DEFAULT_PATH;
+				if (recentFiles.size() > 0) lastPath = recentFiles[0].parent_path();
+
 				FileDialogParams* params = new FileDialogParams();
 				params->ui = this;
 				params->defaultLocation = lastPath;
@@ -143,8 +143,6 @@ void MainUI::ClearSaveData()
 
 	delete currentSaveFile;
 	currentSaveFile = nullptr;
-
-	lastPath.clear();
 }
 
 void MainUI::LoadSaveData(const std::filesystem::path filePath)
@@ -194,7 +192,6 @@ void MainUI::LoadSaveData(const std::filesystem::path filePath)
 	newSaveFile->SetFilePath(filePath);
 
 	currentSaveFile = newSaveFile;
-	lastPath = filePath.parent_path();
 
 	for (uint8_t f = 0; f < recentFiles.size(); f++)
 	{
@@ -247,7 +244,6 @@ void MainUI::LoadConfig()
 		return;
 	};
 
-	lastPath = std::filesystem::u8path(ini.GetValue(CONFIG_INI_SECTION, CONFIG_LAST_PATH, DEFAULT_PATH));
 #if SUPPORT_TRANSPARENCY
 	windowOpacity = (float)ini.GetDoubleValue(CONFIG_INI_SECTION, CONFIG_WINDOW_OPACITY, DEFAULT_OPACITY);
 #endif
@@ -256,7 +252,7 @@ void MainUI::LoadConfig()
 	for (uint8_t f = 0; f < MAX_RECENT_FILES; f++)
 	{
 		char key[16];
-		snprintf(key, 16, "%s%u", CONFIG_RECENT_FILE_PREFIX, f);
+		snprintf(key, 16, CONFIG_RECENT_FILE, f);
 
 		std::filesystem::path filePath = std::filesystem::u8path(ini.GetValue(CONFIG_INI_SECTION, key, DEFAULT_PATH));
 		if (filePath.empty()) continue;
@@ -272,7 +268,6 @@ void MainUI::SaveConfig() const
 
 	SI_Error errorCode;
 
-	errorCode = ini.SetValue(CONFIG_INI_SECTION, CONFIG_LAST_PATH, lastPath.u8string().c_str());
 #if SUPPORT_TRANSPARENCY
 	errorCode = ini.SetDoubleValue(CONFIG_INI_SECTION, CONFIG_WINDOW_OPACITY, windowOpacity);
 #endif
@@ -280,7 +275,7 @@ void MainUI::SaveConfig() const
 	for (uint8_t f = 0; f < recentFiles.size(); f++)
 	{
 		char key[16];
-		snprintf(key, 16, "%s%u", CONFIG_RECENT_FILE_PREFIX, f);
+		snprintf(key, 16, CONFIG_RECENT_FILE, f);
 		errorCode = ini.SetValue(CONFIG_INI_SECTION, key, recentFiles[f].u8string().c_str());
 	}
 

@@ -7,19 +7,16 @@
 #include "AboutWindow.h"
 #include "PopupDialog.h"
 #include "Game/GameMenuUI.h"
-//#include "Game/SaveData.h"
 #include "Game/SaveEditorUI.h"
 
 class SaveFile;
-
 struct FileDialogParams;
 
 constexpr uint8_t MAX_RECENT_FILES = 5;
 
 constexpr char* CONFIG_FILE_NAME = "config.ini";
 constexpr char* CONFIG_INI_SECTION = "Config";
-constexpr char* CONFIG_LAST_PATH = "lastPath";
-constexpr char* CONFIG_RECENT_FILE_PREFIX = "recentFile_";
+constexpr char* CONFIG_RECENT_FILE = "recentFile_%u";
 
 constexpr char* DEFAULT_PATH = "";
 
@@ -36,7 +33,6 @@ private:
 	PopupDialog popupDialogUi;
 	AboutWindow aboutWindowUi;
 
-	std::filesystem::path lastPath;
 	std::vector<std::filesystem::path> recentFiles;
 
 	SaveFile* currentSaveFile;
