@@ -64,7 +64,8 @@ void GameMenuUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinati
 
 	SaveData* saveData = mainUi->GetSaveFile()->GetSaveData();
 
-	SaveSlot* origin = saveData->GetSaveSlot(originSlotIndex);
+	int8_t originSlotActualIndex = mainUi->GetSaveFile()->GetSaveData()->GetSaveSlotActualIndex(originSlotIndex);
+	SaveSlot* origin = originSlotActualIndex >= 0 ? saveData->GetRawSaveSlot(originSlotActualIndex) : nullptr;
 
 	if (origin == nullptr)
 	{
@@ -72,7 +73,8 @@ void GameMenuUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinati
 		return;
 	}
 
-	SaveSlot* destination = saveData->GetSaveSlot(destinationSlotIndex);
+	int8_t destinationSlotActualIndex = mainUi->GetSaveFile()->GetSaveData()->GetSaveSlotActualIndex(destinationSlotIndex);
+	SaveSlot* destination = destinationSlotActualIndex >= 0 ? saveData->GetRawSaveSlot(destinationSlotActualIndex) : nullptr;
 
 	if (destination != nullptr)
 	{
@@ -87,12 +89,22 @@ void GameMenuUI::CopySlot(const uint8_t originSlotIndex, const uint8_t destinati
 			destination = saveData->GetRawSaveSlot(s);
 			if (destination->GetMagic() == SAVE_SLOT_MAGIC) continue;
 
+			destinationSlotActualIndex = s;
+
 			std::copy(origin, origin + 1, destination);
 			destination->SetSlotIndex(destinationSlotIndex + 1);
 			destination->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
 
 			break;
 		}
+	}
+
+	if (mainUi->GetSaveFile()->GetRecompSaveData() != nullptr)
+	{
+		RecompSaveSlot* recompSlot = mainUi->GetSaveFile()->GetRecompSaveData()->GetRawSaveSlot(originSlotActualIndex);
+		RecompSaveSlot* destinationRecompSlot = mainUi->GetSaveFile()->GetRecompSaveData()->GetRawSaveSlot(destinationSlotActualIndex);
+
+		std::copy(recompSlot, recompSlot + 1, destinationRecompSlot);
 	}
 }
 
@@ -101,10 +113,17 @@ void GameMenuUI::DeleteSlot(const uint8_t slotIndex) const
 	if (!mainUi->IsSaveFileLoaded()) return;
 
 	SaveData* saveData = mainUi->GetSaveFile()->GetSaveData();
+	int8_t slotActualIndex = mainUi->GetSaveFile()->GetSaveData()->GetSaveSlotActualIndex(slotIndex);
 
-	SaveSlot* saveSlot = saveData->GetSaveSlot(slotIndex);
+	SaveSlot* saveSlot = slotActualIndex >= 0 ? saveData->GetRawSaveSlot(slotActualIndex) : nullptr;
 	if (saveSlot == nullptr) return;
 
 	memset(saveSlot, 0, SAVE_SLOT_SIZE);
 	saveSlot->UpdateChecksum(mainUi->GetSaveFile()->GetFileType());
+
+	if (mainUi->GetSaveFile()->GetRecompSaveData() != nullptr)
+	{
+		RecompSaveSlot* recompSaveSlot = mainUi->GetSaveFile()->GetRecompSaveData()->GetRawSaveSlot(slotActualIndex);
+		memset(recompSaveSlot, 0, RECOMP_SAVE_SLOT_SIZE);
+	}
 }
