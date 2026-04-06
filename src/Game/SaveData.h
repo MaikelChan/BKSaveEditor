@@ -69,16 +69,16 @@ const Range levelJiggiesIndexRanges[TOTAL_LEVEL_COUNT]
 const char* const levelJiggiesNames[JIGGIES_COUNT + 1]
 {
 	"",
-	"Jinjos",      "Ticker's Tower",   "Mumbo's Skull",   "Juju",              "Huts",             "Ruins",           "Hill",             "Orange Pads",       "Chimpy",           "Conga"           , // Mumbo's Mountain
-	"Jinjos",      "Lighthouse",       "Alcove 1",        "Alcove 2",          "Pond",             "Sand Castle",     "Red X",            "Nipper",            "Lockup",           "Blubber"         , // Treasure Trove Cove
-	"Jinjos",      "Snippets",         "Clanker Raised",  "Bolt",              "Tail",             "Long Pipe",       "Tooth",            "Rings",             "Slow Sawblades",   "Fast Sawblades"  , // Clanker's Cavern
-	"Jinjos",      "Elevated Walkway", "Pink Egg",        "Croctus",           "Huts",             "Flibbits",        "Maze",             "Tanktup",           "Tiptup",           "Mr. Vile"        , // Bubblegloop Swamp
-	"Jinjos",      "Bounce on Boggy",  "Pipe",            "Second Boggy Race", "Snowman Buttons",  "Presents",        "Christmas Tree",   "First Boggy Race",  "Sir Slush",        "Wozza"           , // Freezeezy Peak
-	"First Jiggy", "MM Witch Switch",  "CC Witch Switch", "TTC Witch Switch",  "BGS Witch Switch", "FP Witch Switch", "MMM Witch Switch", "GV Witch Switch",   "RBB Witch Switch", "CCW Witch Switch", // Gruntilda's Lair
-	"Jinjos",      "Grabba",           "Shyinx",          "Matching Game",     "Maze",             "Water Pyramid",   "Histup",           "Gobi 1",            "Gobi 2",           "Ancient Ones"    , // Gobi's Valley
-	"Jinjos",      "House",            "Eyrie",           "Nabnut",            "Gnawty",           "Zubbas",          "Flower",           "Summer Leaf Jumps", "Tree Top",         "Top Room"        , // Click Clock Wood
-	"Jinjos",      "Warehouse",        "Snorkel",         "Whistle",           "Funnel",           "Boss Boom Box",   "Propellor",        "Captain's Cabin",   "Crane Cage",       "Engine Room"     , // Rusty Bucket Bay
-	"Jinjos",      "Well",             "Napper",          "Cellar",            "Church Roof",      "Motzhand",        "Rain Barrel",      "Tumblar",           "Flower Pots",      "Loggo"             // Mad Monster Mansion
+	"Jinjos",      "Ticker's Tower",   "Mumbo's Skull",   "Juju",              "Huts",             "Ruins",           "Hill",               "Orange Pads",       "Chimpy",           "Conga"           , // Mumbo's Mountain
+	"Jinjos",      "Lighthouse",       "Alcove 1",        "Alcove 2",          "Pond",             "Sand Castle",     "Red X",              "Nipper",            "Lockup",           "Blubber"         , // Treasure Trove Cove
+	"Jinjos",      "Snippets",         "Clanker Raised",  "Bolt",              "Clanker's Tail",   "Long Pipe",       "Tooth",              "Rings",             "Slow Sawblades",   "Fast Sawblades"  , // Clanker's Cavern
+	"Jinjos",      "Elevated Walkway", "Pink Egg",        "Croctus",           "Huts",             "Flibbits",        "Maze",               "Tanktup",           "Tiptup",           "Mr. Vile"        , // Bubblegloop Swamp
+	"Jinjos",      "Bounce on Boggy",  "Pipe",            "Second Boggy Race", "Snowman Buttons",  "Presents",        "Christmas Tree",     "First Boggy Race",  "Sir Slush",        "Wozza"           , // Freezeezy Peak
+	"First Jiggy", "MM Witch Switch",  "CC Witch Switch", "TTC Witch Switch",  "BGS Witch Switch", "FP Witch Switch", "MMM Witch Switch",   "GV Witch Switch",   "RBB Witch Switch", "CCW Witch Switch", // Gruntilda's Lair
+	"Jinjos",      "Grabba",           "Jinxy",           "Matching Game",     "Maze",             "Water Pyramid",   "Histup",             "Gobi 1",            "Gobi 2",           "Ancient Ones"    , // Gobi's Valley
+	"Jinjos",      "House",            "Eyrie",           "Nabnut",            "Gnawty",           "The Zubbas",      "Flower",             "Summer Leaf Jumps", "Tree Top",         "Top Room"        , // Click Clock Wood
+	"Jinjos",      "Warehouse",        "Snorkel",         "Whistle",           "Funnel",           "Boss Boom Box",   "Propellor",          "Captain's Cabin",   "Crane Cage",       "Engine Room"     , // Rusty Bucket Bay
+	"Jinjos",      "Well",             "Napper",          "Cellar",            "Church Roof",      "Motzhand",        "Rain Gutter Bottom", "Tumblar",           "Flower Pots",      "Loggo"             // Mad Monster Mansion
 };
 
 #pragma endregion
@@ -306,7 +306,7 @@ const char* const MumboTokenNames[ACTUAL_MUMBO_TOKEN_COUNT + 1]
 	"Bottom of the moat",
 	"Top of the water pyramid",
 	"Front of the star door",
-	"Inside the memory game room",
+	"Inside the matching game room",
 	"Behind Sandybutt's sarcophagus",
 	"Inside the water pyramid",
 	"Next to Rubee",
