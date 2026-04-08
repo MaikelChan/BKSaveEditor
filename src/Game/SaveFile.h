@@ -29,7 +29,7 @@ public:
 	inline RecompSaveData* GetRecompSaveData() const { return recompSaveData; }
 
 	inline std::filesystem::path GetFilePath() const { return filePath; }
-	inline void SetFilePath(std::filesystem::path filePath) { this->filePath = filePath; fileName = filePath.filename().u8string(); }
+	inline void SetFilePath(std::filesystem::path _filePath) { filePath = _filePath; fileName = _filePath.filename().u8string(); }
 	inline std::string GetFileName() const { return fileName; }
 	inline SaveFileTypes GetFileType() const { return fileType; }
 

@@ -37,9 +37,9 @@ void MainUI::OpenFileCallback(std::filesystem::path filePath)
 	MainUI::SaveConfig();
 }
 
-void MainUI::VisibilityChanged(const bool isVisible)
+void MainUI::VisibilityChanged(const bool _isVisible)
 {
-	BaseUI::VisibilityChanged(isVisible);
+	BaseUI::VisibilityChanged(_isVisible);
 }
 
 void MainUI::DoRender()

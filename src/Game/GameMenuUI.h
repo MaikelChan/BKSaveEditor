@@ -18,8 +18,8 @@ public:
 	~GameMenuUI();
 
 protected:
-	virtual void VisibilityChanged(const bool isVisible) override;
-	virtual void DoRender() override;
+	void VisibilityChanged(const bool _isVisible) override;
+	void DoRender() override;
 
 private:
 	void CopySlot(const uint8_t originSlotIndex, const uint8_t destinationSlotIndex) const;

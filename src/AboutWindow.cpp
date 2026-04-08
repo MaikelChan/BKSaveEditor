@@ -16,11 +16,11 @@ AboutWindow::~AboutWindow()
 
 }
 
-void AboutWindow::VisibilityChanged(const bool isVisible)
+void AboutWindow::VisibilityChanged(const bool _isVisible)
 {
-	BaseUI::VisibilityChanged(isVisible);
+	BaseUI::VisibilityChanged(_isVisible);
 
-	if (isVisible)
+	if (_isVisible)
 	{
 		ImGui::OpenPopup(windowTitle);
 	}

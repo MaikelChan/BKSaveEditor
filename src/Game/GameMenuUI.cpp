@@ -14,7 +14,7 @@ GameMenuUI::~GameMenuUI()
 {
 }
 
-void GameMenuUI::VisibilityChanged(const bool isVisible)
+void GameMenuUI::VisibilityChanged(const bool _isVisible)
 {
 }
 

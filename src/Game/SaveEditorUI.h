@@ -24,8 +24,8 @@ public:
 	~SaveEditorUI();
 
 protected:
-	virtual void VisibilityChanged(const bool isVisible) override;
-	virtual void DoRender() override;
+	void VisibilityChanged(const bool _isVisible) override;
+	void DoRender() override;
 
 private:
 	void RenderLevelDataSection(SaveSlot* saveSlot);
