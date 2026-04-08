@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <vector>
 
 #include "BaseUI.h"
 
@@ -14,14 +15,14 @@ struct FileDialogParams;
 
 constexpr uint8_t MAX_RECENT_FILES = 5;
 
-constexpr char* CONFIG_FILE_NAME = "config.ini";
-constexpr char* CONFIG_INI_SECTION = "Config";
-constexpr char* CONFIG_RECENT_FILE = "recentFile_%u";
+constexpr const char* CONFIG_FILE_NAME = "config.ini";
+constexpr const char* CONFIG_INI_SECTION = "Config";
+constexpr const char* CONFIG_RECENT_FILE = "recentFile_%u";
 
-constexpr char* DEFAULT_PATH = "";
+constexpr const char* DEFAULT_PATH = "";
 
 #if SUPPORT_TRANSPARENCY
-constexpr char* CONFIG_WINDOW_OPACITY = "windowOpacity";
+constexpr const char* CONFIG_WINDOW_OPACITY = "windowOpacity";
 constexpr float DEFAULT_OPACITY = 0.9f;
 #endif
 

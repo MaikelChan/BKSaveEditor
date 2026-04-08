@@ -1,4 +1,4 @@
-﻿#if !NDEBUG
+﻿#if defined(_MSC_VER) && !defined(NDEBUG)
 // Test leaks with _CrtDumpMemoryLeaks()
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -105,7 +105,7 @@ int main()
 
 	int result = RunMain();
 
-#if !NDEBUG
+#if defined(_MSC_VER) && !defined(NDEBUG)
 	// Cause an intentional leak to check if the leak detector is working
 
 	char* leakTest = new char[10];

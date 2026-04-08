@@ -1,9 +1,9 @@
 #pragma once
 
-constexpr char* PROJECT_NAME = "@PROJECT_NAME@";
-constexpr char* PROJECT_VER = "@PROJECT_VERSION@";
-constexpr char* PROJECT_VER_MAJOR = "@PROJECT_VERSION_MAJOR@";
-constexpr char* PROJECT_VER_MINOR = "@PROJECT_VERSION_MINOR@";
-constexpr char* PTOJECT_VER_PATCH = "@PROJECT_VERSION_PATCH@";
+constexpr const char* PROJECT_NAME = "@PROJECT_NAME@";
+constexpr const char* PROJECT_VER = "@PROJECT_VERSION@";
+constexpr const char* PROJECT_VER_MAJOR = "@PROJECT_VERSION_MAJOR@";
+constexpr const char* PROJECT_VER_MINOR = "@PROJECT_VERSION_MINOR@";
+constexpr const char* PTOJECT_VER_PATCH = "@PROJECT_VERSION_PATCH@";
 
-constexpr char* SIMPLEINI_COMMIT_HASH = "bfcc0d2";
+constexpr const char* SIMPLEINI_COMMIT_HASH = "bfcc0d2";
