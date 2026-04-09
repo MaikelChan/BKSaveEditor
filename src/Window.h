@@ -60,6 +60,7 @@ public:
 	virtual ~Window();
 
 	const WindowParams& GetParams() const { return params; }
+	const float GetWindowScale() const { return currentWindowScale; }
 
 	virtual const char* GetBackendInfo() const = 0;
 	virtual const char* GetBackendUrl() const = 0;

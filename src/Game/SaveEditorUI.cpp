@@ -127,7 +127,7 @@ void SaveEditorUI::RenderLevelDataSection(SaveSlot* saveSlot)
 
 			ImGui::TableSetColumnIndex(2);
 
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4 * window->GetWindowScale(), 0));
 
 			for (uint8_t j = levelJiggiesIndexRanges[l].min; j <= levelJiggiesIndexRanges[l].max; j++)
 			{
@@ -154,7 +154,7 @@ void SaveEditorUI::RenderLevelDataSection(SaveSlot* saveSlot)
 
 			ImGui::TableSetColumnIndex(3);
 
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4 * window->GetWindowScale(), 0));
 
 			for (uint8_t h = levelHoneycombsIndexRanges[l].min; h <= levelHoneycombsIndexRanges[l].max; h++)
 			{
@@ -266,7 +266,7 @@ void SaveEditorUI::RenderLevelDataSection(SaveSlot* saveSlot)
 
 			ImGui::TableSetColumnIndex(2);
 
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4 * window->GetWindowScale(), 0));
 
 			for (uint8_t t = levelMumboTokensIndexRanges[l].min; t <= levelMumboTokensIndexRanges[l].max; t++)
 			{
@@ -781,7 +781,7 @@ void SaveEditorUI::RenderRecompDataSection(SaveSlot* saveSlot, RecompSaveSlot* r
 
 			ImGui::TableSetColumnIndex(2);
 
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 4));
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4 * window->GetWindowScale(), 4 * window->GetWindowScale()));
 
 			uint8_t noteCount = 0;
 
