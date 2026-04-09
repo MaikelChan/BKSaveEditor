@@ -754,7 +754,7 @@ void SaveEditorUI::RenderGlobalDataSection(GlobalData* globalData)
 
 void SaveEditorUI::RenderRecompDataSection(SaveSlot* saveSlot, RecompSaveSlot* recompSaveSlot)
 {
-	if (!ImGui::BeginTabItem("Notes (Recomp)")) return;
+	if (!ImGui::BeginTabItem("Notes (Banjo Recompiled)")) return;
 
 	ImGuiTableFlags flags = ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_ScrollY;
 
