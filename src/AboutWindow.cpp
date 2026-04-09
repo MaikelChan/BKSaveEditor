@@ -37,7 +37,7 @@ void AboutWindow::DoRender()
 	{
 		const WindowParams& params = window->GetParams();
 
-		ImGui::Text(params.description.c_str());
+		ImGui::Text("%s", params.description.c_str());
 		ImGui::NewLine();
 		ImGui::Text("By %s:", params.author.c_str());
 		ImGui::SameLine();
@@ -50,7 +50,7 @@ void AboutWindow::DoRender()
 		ImGui::SameLine();
 		ImGui::TextLinkOpenURL("https://github.com/ocornut/imgui");
 
-		ImGui::BulletText(window->GetBackendInfo());
+		ImGui::BulletText("%s", window->GetBackendInfo());
 		ImGui::SameLine();
 		ImGui::TextLinkOpenURL(window->GetBackendUrl());
 
