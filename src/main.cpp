@@ -21,7 +21,7 @@ static int RunMain()
 
 	WindowParams windowParams = {};
 	windowParams.title = std::string("Banjo-Kazooie - Save Editor - v") + PROJECT_VER;
-	windowParams.description = "This is a save editor for the Nintendo 64 version of Banjo-Kazooie.";
+	windowParams.description = "This is a save editor for the Nintendo 64 version of Banjo-Kazooie and the Banjo Recompiled PC port.";
 	windowParams.author = "PacoChan";
 	windowParams.url = "https://pacochan.net/software/bk-save-editor/";
 	windowParams.initialWidth = 800;

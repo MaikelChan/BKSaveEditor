@@ -401,7 +401,7 @@ void SaveEditorUI::RenderAbilitiesItemsSection(SaveSlot* saveSlot)
 
 	ImGui::SeparatorText("Held Items");
 
-	ImGui::PushItemWidth(40);
+	ImGui::PushItemWidth(40 * window->GetWindowScale());
 
 	uint8_t mumboTokens = saveSlot->GetHeldItem(HeldItems::MumboTokens);
 	if (ImGui::InputScalar("Mumbo Tokens", ImGuiDataType_U8, &mumboTokens, NULL, NULL, "%u"))
@@ -839,7 +839,7 @@ uint8_t SaveEditorUI::InputProgressFlags(SaveSlot* saveSlot, const char* label, 
 {
 	uint8_t value = saveSlot->GetProgressValue(flag, bitsCount);
 
-	ImGui::SetNextItemWidth(32);
+	ImGui::SetNextItemWidth(32 * window->GetWindowScale());
 	if (ImGui::InputScalar(label, ImGuiDataType_U8, &value, NULL, NULL, "%u"))
 	{
 		if (value > maxValue) value = maxValue;
@@ -897,7 +897,7 @@ void SaveEditorUI::CheckboxSnS(GlobalData* globalData, const char* label, const 
 
 void SaveEditorUI::PrintChecksum(const uint32_t checksum) const
 {
-	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - ImGui::CalcTextSize("Checksum: 0xFFFFFFFF").x - 32);
+	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - ImGui::CalcTextSize("Checksum: 0xFFFFFFFF").x - (16 * window->GetWindowScale()));
 	ImGui::TextColored(ImGui::GetStyle().Colors[ImGuiCol_TabHovered], "Checksum: 0x%x", checksum);
 }
 
