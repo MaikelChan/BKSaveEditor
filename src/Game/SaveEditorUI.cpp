@@ -25,7 +25,11 @@ void SaveEditorUI::DoRender()
 {
 	BaseUI::DoRender();
 
-	if (!mainUi->IsSaveFileLoaded()) return;
+	if (!mainUi->IsSaveFileLoaded())
+	{
+		window->SetTaskbarProgress(0.0f);
+		return;
+	}
 
 	const ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->WorkPos);

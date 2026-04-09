@@ -140,6 +140,7 @@ void MainUI::ClearSaveData()
 	if (!IsSaveFileLoaded()) return;
 
 	saveEditorUi.SetIsVisible(false);
+	window->SetTaskbarProgress(0.0f);
 
 	delete currentSaveFile;
 	currentSaveFile = nullptr;
