@@ -12,7 +12,7 @@ FILETYPE 1 // VFT_APP
 	    BLOCK "040904E4"
 	    {
 		    VALUE "CompanyName", "PacoChan"
-		    VALUE "FileDescription", "This is a save editor for the Nintendo 64 version of Banjo-Kazooie."
+		    VALUE "FileDescription", "This is a save editor for the Nintendo 64 version of Banjo-Kazooie and the Banjo Recompiled PC port."
 		    VALUE "FileVersion", "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@.0"
 		    VALUE "InternalName", "@PROJECT_NAME@.exe"
 		    VALUE "LegalCopyright", "PacoChan"

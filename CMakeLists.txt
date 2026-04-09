@@ -80,5 +80,5 @@ FetchContent_MakeAvailable(SDL3)
 
 # Main project ------------------------------------------------------------------------------------
 
-project ("BKSaveEditor" VERSION "1.1.0")
+project ("BKSaveEditor" VERSION "1.1.1")
 add_subdirectory ("src")
