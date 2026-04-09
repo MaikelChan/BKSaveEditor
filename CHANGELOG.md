@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-04-09
+### Fixed
+- Improved scaling of some elements on higher DPI displays.
+- Fixed outdated description in the About window.
+- Make sure the taskbar progress bar is set to 0 when trying to open an invalid file.
+
 ## [1.1.0] - 2026-04-09
 ### Changed
 - Added support for save files from Banjo Recompiled on PC. You can toggle on or off each and every note collectible in the game.
