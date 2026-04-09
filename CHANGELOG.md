@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The program now supports higher DPI, and it will scale all its UI accordingly. The program will also resize in real-time when moving the window between monitors with different DPI settings.
 - It uses a new font that will look better when it's scaled up.
 - Changed the color scheme, which was previously copied and pasted from the Super Mario 64 save editor. Now it uses browns and yellows, which match better the colors of Banjo, Jiggies, Notes, etc.
+- Now the program will show a progress bar in the taskbar that represents the percentage of Jiggies obtained in the current save slot (This might depend on the operating system and/or desktop environment).
+- The program now saves a list of the 5 more recent opened files, for easier access.
 - Added the option for opening .sav files in the Open file dialog. Thanks to [da-pwo](https://github.com/da-pwo).
 - Other small improvements to improve code maintainability.
 
