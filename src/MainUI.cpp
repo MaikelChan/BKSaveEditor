@@ -5,6 +5,7 @@
 #include <SimpleIni.h>
 #include <imgui/imgui.h>
 
+#include "Game/SaveFile.h"
 #include "Window.h"
 
 MainUI::MainUI(Window* window) : BaseUI(window, nullptr),
@@ -18,10 +19,6 @@ aboutWindowUi(window, this)
 	recentFiles.clear();
 	currentSaveFile = nullptr;
 
-#if SUPPORT_TRANSPARENCY
-	windowOpacity = DEFAULT_OPACITY;
-#endif
-
 	LoadConfig();
 }
 
@@ -29,6 +26,12 @@ MainUI::~MainUI()
 {
 	SaveConfig();
 	ClearSaveData();
+}
+
+void MainUI::ShowMessage(const MessageTypes type, const std::string title, const std::string message)
+{
+	popupDialogUi.SetMessage(type, title, message);
+	popupDialogUi.SetIsVisible(true);
 }
 
 void MainUI::OpenFileCallback(std::filesystem::path filePath)
@@ -101,7 +104,11 @@ void MainUI::DoRender()
 #if SUPPORT_TRANSPARENCY
 		if (ImGui::BeginMenu("Settings"))
 		{
-			ImGui::SliderFloat("Window Opacity", &windowOpacity, 0.0f, 1.0f);
+			float windowOpacity = window->GetOpacity();
+			if (ImGui::SliderFloat("Window Opacity", &windowOpacity, 0.0f, 1.0f))
+			{
+				window->SetOpacity(windowOpacity);
+			}
 
 			ImGui::EndMenu();
 		}
@@ -154,9 +161,7 @@ void MainUI::LoadSaveData(const std::filesystem::path filePath)
 
 	if (!stream || !stream.is_open())
 	{
-		popupDialogUi.SetMessage(MessageTypes::Error, "Error", "There was an error trying to open the file.");
-		popupDialogUi.SetIsVisible(true);
-
+		ShowMessage(MessageTypes::Error, "Error", "There was an error trying to open the file.");
 		return;
 	}
 
@@ -167,8 +172,7 @@ void MainUI::LoadSaveData(const std::filesystem::path filePath)
 	{
 		stream.close();
 
-		popupDialogUi.SetMessage(MessageTypes::Error, "Error", "The selected file is not a valid save file.");
-		popupDialogUi.SetIsVisible(true);
+		ShowMessage(MessageTypes::Error, "Error", "The selected file is not a valid save file.");
 
 		return;
 	}
@@ -184,8 +188,7 @@ void MainUI::LoadSaveData(const std::filesystem::path filePath)
 		delete newSaveFile;
 		newSaveFile = nullptr;
 
-		popupDialogUi.SetMessage(MessageTypes::Error, "Error", result);
-		popupDialogUi.SetIsVisible(true);
+		ShowMessage(MessageTypes::Error, "Error", result);
 
 		return;
 	}
@@ -209,8 +212,7 @@ void MainUI::LoadSaveData(const std::filesystem::path filePath)
 
 	if (!result.empty())
 	{
-		popupDialogUi.SetMessage(MessageTypes::Warning, "Warnings", result);
-		popupDialogUi.SetIsVisible(true);
+		ShowMessage(MessageTypes::Warning, "Warnings", result);
 	}
 }
 
@@ -222,9 +224,7 @@ void MainUI::SaveSaveData()
 
 	if (!stream || !stream.is_open())
 	{
-		popupDialogUi.SetMessage(MessageTypes::Error, "Error", std::string("Can't save file \"") + currentSaveFile->GetFilePath().u8string() + "\".");
-		popupDialogUi.SetIsVisible(true);
-
+		ShowMessage(MessageTypes::Error, "Error", std::string("Can't save file \"") + currentSaveFile->GetFilePath().u8string() + "\".");
 		return;
 	}
 
@@ -246,7 +246,7 @@ void MainUI::LoadConfig()
 	};
 
 #if SUPPORT_TRANSPARENCY
-	windowOpacity = (float)ini.GetDoubleValue(CONFIG_INI_SECTION, CONFIG_WINDOW_OPACITY, DEFAULT_OPACITY);
+	window->SetOpacity((float)ini.GetDoubleValue(CONFIG_INI_SECTION, CONFIG_WINDOW_OPACITY, DEFAULT_OPACITY));
 #endif
 
 	recentFiles.clear();
@@ -270,7 +270,7 @@ void MainUI::SaveConfig() const
 	SI_Error errorCode;
 
 #if SUPPORT_TRANSPARENCY
-	errorCode = ini.SetDoubleValue(CONFIG_INI_SECTION, CONFIG_WINDOW_OPACITY, windowOpacity);
+	errorCode = ini.SetDoubleValue(CONFIG_INI_SECTION, CONFIG_WINDOW_OPACITY, window->GetOpacity());
 #endif
 
 	for (uint8_t f = 0; f < recentFiles.size(); f++)
@@ -306,8 +306,7 @@ void MainUI::OpenFileDialogCallback(const FileDialogParams* fileDialogParams, co
 		char errorText[256];
 		snprintf(errorText, 256, "Error in OpenFileDialog: %s", error);
 
-		mainUi->popupDialogUi.SetMessage(MessageTypes::Error, "Error", errorText);
-		mainUi->popupDialogUi.SetIsVisible(true);
+		mainUi->ShowMessage(MessageTypes::Error, "Error", errorText);
 
 		return;
 	}
